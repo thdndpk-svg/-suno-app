@@ -214,14 +214,14 @@
       }
 
       const intro = structure === '인트로 포함' ? '[인트로]\n조용한 불빛이 번져간다\n오늘의 마음이 깨어난다\n\n' : '';
-      const verse1 = useLong ? '[1절]\n' + a + ' 같은 밤이 천천히 내려온다\n' + b + ' 같은 마음이 가슴에 남아돈다\n작은 숨결마저 또렷하게 들려온다\n흘러간 계절도 다시 피어오른다\n멀어진 시간도 다시 가까워진다\n이 순간만은 오래 머물러준다\n\n' : '[1절]\n' + a + ' 같은 밤이 천천히 내려온다\n' + b + ' 같은 마음이 가슴에 남아돈다\n작은 숨결마저 또렷하게 들려온다\n\n';
-      const pre = '[프리코러스]\n한 걸음 더 가까워지는 순간\n가슴속 떨림이 더 커져간다\n\n';
-      const chorus = useLong ? '[후렴]\n이 노래는 오래 마음에 남는다\n조용한 밤을 가득 물들인다\n흐르던 시간도 멈춘 것처럼\n오늘의 감정이 더 선명해진다\n멀리 흩어진 숨결도 모여와\n지금 이 순간을 깊게 만든다\n\n' : '[후렴]\n이 노래는 오래 마음에 남는다\n조용한 밤을 가득 물들인다\n흐르던 시간도 멈춘 것처럼\n오늘의 감정이 더 선명해진다\n\n';
-      const verse2 = useLong ? '[2절]\n' + c + ' 같은 장면이 다시 떠오른다\n' + d + ' 같은 온기가 곁에 머문다\n말하지 못했던 진심을 꺼내본다\n이 노래가 그 마음을 대신한다\n희미한 달빛 아래 서성이다가\n조용한 미소로 서로를 바라본다\n\n' : '[2절]\n' + c + ' 같은 장면이 다시 떠오른다\n' + d + ' 같은 온기가 곁에 머문다\n말하지 못했던 진심을 꺼내본다\n이 노래가 그 마음을 대신한다\n\n';
+      const verse1 = useLong ? '[Verse 1]\n' + a + ' 같은 밤이 천천히 내려온다\n' + b + ' 같은 마음이 가슴에 남아돈다\n작은 숨결마저 또렷하게 들려온다\n흘러간 계절도 다시 피어오른다\n멀어진 시간도 다시 가까워진다\n이 순간만은 오래 머물러준다\n\n' : '[Verse 1]\n' + a + ' 같은 밤이 천천히 내려온다\n' + b + ' 같은 마음이 가슴에 남아돈다\n작은 숨결마저 또렷하게 들려온다\n\n';
+      const pre = '[Pre-Chorus]\n한 걸음 더 가까워지는 순간\n가슴속 떨림이 더 커져간다\n\n';
+      const chorus = useLong ? '[Chorus]\n이 노래는 오래 마음에 남는다\n조용한 밤을 가득 물들인다\n흐르던 시간도 멈춘 것처럼\n오늘의 감정이 더 선명해진다\n멀리 흩어진 숨결도 모여와\n지금 이 순간을 깊게 만든다\n\n' : '[Chorus]\n이 노래는 오래 마음에 남는다\n조용한 밤을 가득 물들인다\n흐르던 시간도 멈춘 것처럼\n오늘의 감정이 더 선명해진다\n\n';
+      const verse2 = useLong ? '[Verse 2]\n' + c + ' 같은 장면이 다시 떠오른다\n' + d + ' 같은 온기가 곁에 머문다\n말하지 못했던 진심을 꺼내본다\n이 노래가 그 마음을 대신한다\n희미한 달빛 아래 서성이다가\n조용한 미소로 서로를 바라본다\n\n' : '[Verse 2]\n' + c + ' 같은 장면이 다시 떠오른다\n' + d + ' 같은 온기가 곁에 머문다\n말하지 못했던 진심을 꺼내본다\n이 노래가 그 마음을 대신한다\n\n';
       const bridge = structure === '브릿지 포함' ? '\n[브릿지]\n잠시 멈춰 선 시간 끝에서\n우리의 마음을 다시 안아본다\n' : '';
       const hookText = hook === '후렴 강하게' ? '\n[후렴 강조]\n더 크게 더 진하게 마음에 남는다\n' : hook === '후렴 2회 반복' ? '\n[후렴 반복]\n한 번 더 깊게 불러본다\n' : hook === '쇼츠형 훅 강조' ? '\n[훅]\n짧고 강하게 바로 꽂힌다\n' : '';
       const rapText = rap === '중간 랩 1회' ? '\n[랩]\n리듬 위로 감정을 더 올려\n' : rap === '중간 랩 2회' ? '\n[랩]\n리듬 위로 감정을 더 올려\n\n[랩2]\n분위기를 더 크게 살려\n' : '';
-      const finalChorus = useVeryLong ? '[마지막 후렴]\n이 노래는 오래 마음에 남는다\n오늘의 밤을 끝없이 물들인다\n스쳐간 계절도 다시 피어나듯\n지금의 감정이 더 크게 번져간다\n이 멜로디가 멀리 흘러가도\n우리의 순간은 여기 남아있다\n끝나지 않을 울림처럼\n조용히 다시 피어나고 있다' : '[마지막 후렴]\n이 노래는 오래 마음에 남는다\n오늘의 밤을 끝없이 물들인다\n스쳐간 계절도 다시 피어나듯\n지금의 감정이 더 크게 번져간다';
+      const finalChorus = useVeryLong ? '[Final Chorus]\n이 노래는 오래 마음에 남는다\n오늘의 밤을 끝없이 물들인다\n스쳐간 계절도 다시 피어나듯\n지금의 감정이 더 크게 번져간다\n이 멜로디가 멀리 흘러가도\n우리의 순간은 여기 남아있다\n끝나지 않을 울림처럼\n조용히 다시 피어나고 있다' : '[Final Chorus]\n이 노래는 오래 마음에 남는다\n오늘의 밤을 끝없이 물들인다\n스쳐간 계절도 다시 피어나듯\n지금의 감정이 더 크게 번져간다';
       return intro + verse1 + pre + chorus + verse2 + pre + bridge + hookText + rapText + '\n' + finalChorus;
     }
 
@@ -341,8 +341,10 @@
 
     function generateSongs() {
       const count = Number(val('count')) || 10;
-      songs = [];
-      for (let i = 0; i < count; i++) songs.push(makeSong(i));
+      const startIndex = songs.length;
+      for (let i = 0; i < count; i++) {
+        songs.push(makeSong(startIndex + i));
+      }
       seed += count;
       queueIndex = 0;
       renderSongs(); updateKpi(); saveApp();
@@ -441,15 +443,84 @@ function generateAlbumCover() {
 }
 
 function generateYouTubePack() {
-  const topic = val('topic') || 'Emotion';
-  const genre = val('genre');
+  const topic = val('topic') || '감성';
+  const genre = val('genre') || '발라드';
   const count = songs.length || 10;
-  document.getElementById('youtubeBox').innerText = 'YouTube Title Ideas\n' + topic + ' ' + genre + ' Playlist | Best ' + count + ' Songs Tonight\nSongs You Will Replay All Night | ' + genre + ' Mix\n\nDescription\nA ' + genre + ' playlist with ' + count + ' songs built for replay and mood.\n\nTags\n' + genre + ', playlist, AI music, Suno, mood music';
+
+  const titles = [
+    `지금 가장 많이 듣는 ${genre} 감성 플레이리스트 🌙 한번 틀면 끝까지 듣게 되는 노래 ${count}곡`,
+    `밤에 들으면 더 좋은 ${genre} 모음 🎧 감성 터지는 노래 ${count}곡`,
+    `요즘 유튜브에서 뜨는 ${genre} 감성 노래 모음 | 계속 듣게 되는 플레이리스트`,
+    `잠들기 전에 듣는 ${genre} 감성 음악 🌌 마음이 편해지는 노래 ${count}곡`,
+    `한번 들으면 반복하게 되는 ${genre} 감성 노래 모음 🎶 최고의 플레이리스트`
+  ];
+
+  const description = `${genre} 감성 음악 ${count}곡을 모은 플레이리스트입니다.
+
+잔잔한 밤, 드라이브, 공부, 휴식할 때 듣기 좋은 음악으로 구성했습니다.
+
+좋아요와 구독은 채널 운영에 큰 힘이 됩니다.`;
+
+const tags = [
+    `#${genre}`,
+    `#${genre}플레이리스트`,
+    '#감성노래',
+    '#감성음악',
+    '#노래모음',
+    '#플레이리스트',
+    '#koreanmusic',
+    '#koreanplaylist',
+    '#koreanballad',
+    '#kpopplaylist',
+    '#studymusic',
+    '#relaxingmusic',
+    '#nightmusic',
+    '#emotionalsongs',
+    '#musicplaylist',
+    '#drivemusic',
+    '#latenightsongs',
+    '#healingmusic',
+    '#koreanemotionalmusic'
+  ];
+
+  const timeline = buildTimeline();
+
+  const text = `유튜브 조회수형 제목 후보
+
+${titles.join(" ")}
+
+설명 ${description}
+
+타임라인 ${timeline}
+
+추천 태그 ${tags.join(" ")}`;
+
+document.getElementById('youtubeBox').innerText = text;
   saveApp();
 }
 
 function saveProject() { saveApp(); alert('프로젝트 저장 완료'); }
 function loadProject() { if (loadApp()) { renderSongs(); updateKpi(); alert('프로젝트 불러오기 완료'); } else alert('저장된 프로젝트 없음'); }
+function buildTimeline() {
+  if (!songs.length) return '00:00 첫 곡';
+  let seconds = 0;
+  const lines = [];
+  songs.forEach(function(song) {
+    const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const ss = String(seconds % 60).padStart(2, '0');
+    lines.push(`${mm}:${ss} ${song.title}`);
+    const len = song.length || '3분';
+    let add = 180;
+    if (len === '2분 30초') add = 150;
+    else if (len === '3분 30초') add = 210;
+    else if (len === '4분') add = 240;
+    else if (len === '자동조절') add = 180;
+    seconds += add;
+  });
+  return lines.join('
+
+'); }
+
 function exportTXT() {
   let text = '';
   songs.forEach(function(s, i) { text += '\n' + (i + 1) + '. ' + s.title + '\n[STYLE]\n' + s.style + '\n[LYRICS]\n' + s.lyrics + '\n'; });
