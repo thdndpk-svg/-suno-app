@@ -9,10 +9,7 @@
     .wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
     .card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
     h1, h2, h3, p { margin-top: 0; }
-    textarea, select, input {
-      width: 100%; padding: 12px; border-radius: 14px; border: 1px solid #d8d8d8; font-size: 16px;
-      margin-top: 8px; margin-bottom: 12px; background: #fff;
-    }
+    textarea, select, input { width: 100%; padding: 12px; border-radius: 14px; border: 1px solid #d8d8d8; font-size: 16px; margin-top: 8px; margin-bottom: 12px; background: #fff; }
     textarea { min-height: 90px; resize: vertical; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .btn { width: 100%; border: 0; border-radius: 14px; padding: 14px; font-size: 16px; cursor: pointer; margin-top: 8px; }
@@ -87,6 +84,7 @@
       <select id="gender">
         <option>남성</option>
         <option>여성</option>
+        <option>남녀 듀엣</option>
       </select>
     </div>
     <div>
@@ -95,6 +93,33 @@
         <option>허스키</option>
         <option>명랑한</option>
         <option>맑은</option>
+        <option>가녀린</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <label>랩 추가</label>
+      <select id="rapMode">
+        <option>없음</option>
+        <option>중간 랩 1회</option>
+        <option>중간 랩 2회</option>
+      </select>
+    </div>
+    <div>
+      <label>악기 선택</label>
+      <select id="instrument">
+        <option>피아노</option>
+        <option>어쿠스틱 기타</option>
+        <option>일렉기타</option>
+        <option>신스</option>
+        <option>바이올린</option>
+        <option>색소폰</option>
+        <option>드럼</option>
+        <option>베이스</option>
+        <option>플루트</option>
+        <option>트럼펫</option>
       </select>
     </div>
   </div>
@@ -146,12 +171,33 @@
     const voiceStyleMap = {
       "허스키": "husky voice",
       "명랑한": "bright cheerful voice",
-      "맑은": "clear clean voice"
+      "맑은": "clear clean voice",
+      "가녀린": "soft delicate voice"
+    };
+
+    const rapModeMap = {
+      "없음": "no rap section",
+      "중간 랩 1회": "one mid-song rap section",
+      "중간 랩 2회": "two mid-song rap sections"
+    };
+
+    const instrumentMap = {
+      "피아노": "piano",
+      "어쿠스틱 기타": "acoustic guitar",
+      "일렉기타": "electric guitar",
+      "신스": "synth",
+      "바이올린": "violin",
+      "색소폰": "saxophone",
+      "드럼": "drums",
+      "베이스": "bass",
+      "플루트": "flute",
+      "트럼펫": "trumpet"
     };
 
     const genderStyleMap = {
       "남성": "male vocal",
-      "여성": "female vocal"
+      "여성": "female vocal",
+      "남녀 듀엣": "male and female duet vocals"
     };
 
     const conceptMap = {
@@ -195,114 +241,57 @@
       return `${concept} ${moodWord}`;
     }
 
-    function buildLyrics(topic, genre, language, mood, index, keywords) {
-      const keyText = keywords ? (language === '영어' ? `
-Theme: ${keywords}` : `
-핵심어: ${keywords}`) : '';
+    function buildRapText(language, rapMode) {
+      if (rapMode === '없음') return '';
+      if (language === '영어') {
+        if (rapMode === '중간 랩 2회') {
+          return `\n\n[Rap]\nFast words in the middle of the night\nTurning every heartbeat into light\n\n[Rap 2]\nRide the rhythm, never slowing down\nLift this feeling higher through the sound`;
+        }
+        return `\n\n[Rap]\nFast words in the middle of the night\nTurning every heartbeat into light`;
+      }
+      if (rapMode === '중간 랩 2회') {
+        return `\n\n[랩]\n한밤의 리듬 위로 감정을 더 올려\n심장 뛰는 속도에 맞춰 분위길 더 키워\n\n[랩2]\n흔들리던 마음도 지금은 빛이 돼\n이 순간의 떨림이 더 크게 번져가`;
+      }
+      return `\n\n[랩]\n한밤의 리듬 위로 감정을 더 올려\n심장 뛰는 속도에 맞춰 분위길 더 키워`;
+    }
+
+    function buildLyrics(topic, genre, language, mood, index, keywords, rapMode) {
+      const keyText = keywords ? (language === '영어' ? `\nTheme: ${keywords}` : `\n핵심어: ${keywords}`) : '';
+      const rapText = buildRapText(language, rapMode);
       const concepts = inferConcepts(topic, language);
       const a = concepts[index % concepts.length];
       const b = concepts[(index + 1) % concepts.length];
       const c = concepts[(index + 2) % concepts.length];
 
       if (language === '영어') {
-        return `[Verse 1]
-In the glow of ${a}, I feel my heart awake
-Every little step with you turns silence into grace
-The memory of ${b} keeps shining in the dark
-
-[Chorus]
-Stay with me through this ${c}
-Make this melody warm and bright
-Let our story live inside the light${keyText}`;
+        return `[Verse 1]\nIn the glow of ${a}, I feel my heart awake\nEvery little step with you turns silence into grace\nThe memory of ${b} keeps shining in the dark\n\n[Chorus]\nStay with me through this ${c}\nMake this melody warm and bright\nLet our story live inside the light${rapText}${keyText}`;
       }
       if (genre === '트로트') {
-        return `[Verse 1]
-${a} 속을 걸으며 오늘도 마음이 웃는다
-그래도 ${b} 같은 정은 가슴에 오래 남는다
-흘러가는 세월 속에도 ${c}은 다시 피어난다
-
-[Chorus]
-아 이 마음아 참 따뜻하구나
-웃다가도 설레는 밤이 또 온다
-오늘 이 노래로 기분 좋게 불러본다${keyText}`;
+        return `[Verse 1]\n${a} 속을 걸으며 오늘도 마음이 웃는다\n그래도 ${b} 같은 정은 가슴에 오래 남는다\n흘러가는 세월 속에도 ${c}은 다시 피어난다\n\n[Chorus]\n아 이 마음아 참 따뜻하구나\n웃다가도 설레는 밤이 또 온다\n오늘 이 노래로 기분 좋게 불러본다${rapText}${keyText}`;
       }
       if (genre === '발라드') {
-        return `[Verse 1]
-${a} 속에서 너를 조용히 떠올린다
-하지만 ${b} 같은 기억은 더 선명해진다
-지나간 시간 끝에도 ${c}은 아직 남아있다
-
-[Chorus]
-이 마음이 다시 너에게 닿을까
-따뜻한 순간들이 흐를 수 있게
-이 노래 끝에 작은 고백을 남긴다${keyText}`;
+        return `[Verse 1]\n${a} 속에서 너를 조용히 떠올린다\n하지만 ${b} 같은 기억은 더 선명해진다\n지나간 시간 끝에도 ${c}은 아직 남아있다\n\n[Chorus]\n이 마음이 다시 너에게 닿을까\n따뜻한 순간들이 흐를 수 있게\n이 노래 끝에 작은 고백을 남긴다${rapText}${keyText}`;
       }
       if (genre === '락') {
-        return `[Verse 1]
-${a} 같은 장면이 심장을 더 흔든다
-그래도 ${b} 같은 열정은 멈추지 않는다
-뜨거운 밤 끝에서 ${c}은 더 크게 번져간다
-
-[Chorus]
-지금 이 순간 더 크게 외쳐본다
-무너진 벽도 모두 넘을 수 있게
-이 함성으로 우리를 다시 깨운다${keyText}`;
+        return `[Verse 1]\n${a} 같은 장면이 심장을 더 흔든다\n그래도 ${b} 같은 열정은 멈추지 않는다\n뜨거운 밤 끝에서 ${c}은 더 크게 번져간다\n\n[Chorus]\n지금 이 순간 더 크게 외쳐본다\n무너진 벽도 모두 넘을 수 있게\n이 함성으로 우리를 다시 깨운다${rapText}${keyText}`;
       }
       if (genre === '힙합') {
-        return `[Verse 1]
-${a} 위를 걷는 발걸음이 리듬을 만든다
-그래서 ${b} 같은 감정도 비트 위로 번진다
-오늘의 무드 속에 ${c}은 더 선명하게 남는다
-
-[Hook]
-이 밤의 vibe 위로 더 높이 올라가
-흔들리던 순간도 전부 내 편이 된다
-지금 이 리듬으로 새로운 장면을 만든다${keyText}`;
+        return `[Verse 1]\n${a} 위를 걷는 발걸음이 리듬을 만든다\n그래서 ${b} 같은 감정도 비트 위로 번진다\n오늘의 무드 속에 ${c}은 더 선명하게 남는다\n\n[Hook]\n이 밤의 vibe 위로 더 높이 올라가\n흔들리던 순간도 전부 내 편이 된다\n지금 이 리듬으로 새로운 장면을 만든다${rapText}${keyText}`;
       }
       if (genre === '카페음악') {
-        return `[Verse 1]
-${a} 같은 오후가 창가에 조용히 앉는다
-그래서 ${b} 같은 공기도 더 부드럽게 흐른다
-느린 시간 틈에서 ${c}은 잔잔하게 번져간다
-
-[Chorus]
-이 순간이 조금 더 오래 머물면 좋겠다
-바쁜 하루 끝에도 편안히 쉴 수 있게
-작은 멜로디로 마음을 따뜻하게 감싼다${keyText}`;
+        return `[Verse 1]\n${a} 같은 오후가 창가에 조용히 앉는다\n그래서 ${b} 같은 공기도 더 부드럽게 흐른다\n느린 시간 틈에서 ${c}은 잔잔하게 번져간다\n\n[Chorus]\n이 순간이 조금 더 오래 머물면 좋겠다\n바쁜 하루 끝에도 편안히 쉴 수 있게\n작은 멜로디로 마음을 따뜻하게 감싼다${rapText}${keyText}`;
       }
-      return `[Verse 1]
-${a} 같은 불빛이 오늘 밤을 물들인다
-그래서 ${b} 같은 떨림도 더 크게 살아난다
-눈부신 장면 끝에서 ${c}은 다시 시작된다
-
-[Chorus]
-이 밤을 더 선명하게 밝혀줘
-한 번 들으면 오래 남을 순간처럼
-지금 우리만의 무드를 완성해간다${keyText}`;
+      return `[Verse 1]\n${a} 같은 불빛이 오늘 밤을 물들인다\n그래서 ${b} 같은 떨림도 더 크게 살아난다\n눈부신 장면 끝에서 ${c}은 다시 시작된다\n\n[Chorus]\n이 밤을 더 선명하게 밝혀줘\n한 번 들으면 오래 남을 순간처럼\n지금 우리만의 무드를 완성해간다${rapText}${keyText}`;
     }
 
     function buildPrompt(song) {
-      return `제목: ${song.title}
-장르: ${song.genre}
-언어: ${song.language}
-무드: ${song.mood}
-싱어: ${song.gender}
-목소리 스타일: ${song.voiceStyle}
-길이: 3분
-스타일: ${song.style}
-가사:
-${song.lyrics}
-
-제작 요청:
-위 제목, 스타일, 가사로 완성도 높은 곡을 제작해줘. 후렴은 강하게, 멜로디는 기억에 남게 구성해줘.`;
+      return `제목: ${song.title}\n장르: ${song.genre}\n언어: ${song.language}\n무드: ${song.mood}\n싱어: ${song.gender}\n목소리 스타일: ${song.voiceStyle}\n랩 구성: ${song.rapMode}\n주요 악기: ${song.instrument}\n길이: 3분\n스타일: ${song.style}\n가사:\n${song.lyrics}\n\n제작 요청:\n위 제목, 스타일, 가사로 완성도 높은 곡을 제작해줘. 후렴은 강하게, 멜로디는 기억에 남게 구성해줘.`;
     }
 
-    function buildAlbumPack(topic, genre, mood, language, gender, voiceStyle, keywords, songs) {
+    function buildAlbumPack(topic, genre, mood, language, gender, voiceStyle, rapMode, instrument, keywords, songs) {
       const concepts = inferConcepts(topic, language);
       const lead = concepts[0] || topic || '감성';
-      const albumTitle = language === '영어'
-        ? `${lead} ${genre} Playlist`
-        : `${lead} ${genre} 플레이리스트`;
+      const albumTitle = language === '영어' ? `${lead} ${genre} Playlist` : `${lead} ${genre} 플레이리스트`;
 
       const youtubeTitles = language === '영어'
         ? [
@@ -317,58 +306,29 @@ ${song.lyrics}
           ];
 
       const thumbnailPhrases = language === '영어'
-        ? [
-            `${genre} PLAYLIST`,
-            `LATE NIGHT VIBES`,
-            `${lead.toUpperCase()} MOOD`,
-            `${songs.length} SONGS`,
-            `PRESS PLAY`
-          ]
-        : [
-            `${genre} 모음집`,
-            `지금 듣기 좋은 노래`,
-            `${lead} 감성`,
-            `${songs.length}곡 연속재생`,
-            `한 번 틀면 끝까지`
-          ];
+        ? [`${genre} PLAYLIST`, `LATE NIGHT VIBES`, `${lead.toUpperCase()} MOOD`, `${songs.length} SONGS`, `PRESS PLAY`]
+        : [`${genre} 모음집`, `지금 듣기 좋은 노래`, `${lead} 감성`, `${songs.length}곡 연속재생`, `한 번 틀면 끝까지`];
 
       const description = language === '영어'
-        ? `This ${songs.length}-track ${genre} album is built around ${lead} mood, ${voiceStyle} vocals, and a ${gender.toLowerCase()} singer tone. It is designed as a replayable YouTube listening set with around 3-minute songs, memorable hooks, and a consistent atmosphere.
-
-Track list:
-${songs.map(s => `${s.no}. ${s.title}`).join('
-')}
-
-Keywords: ${keywords || lead}`
-        : `이번 ${songs.length}곡 앨범은 ${lead} 분위기를 중심으로, ${voiceStyle} 보컬과 ${gender} 싱어 톤에 맞춰 만든 ${genre} 모음집입니다. 전체 곡은 3분 안팎으로 맞추고, 후렴이 기억에 남도록 구성한 유튜브 업로드용 플레이리스트입니다.
-
-트랙리스트:
-${songs.map(s => `${s.no}. ${s.title}`).join('
-')}
-
-핵심 키워드: ${keywords || lead}`;
+        ? `This ${songs.length}-track ${genre} album is built around ${lead} mood, ${voiceStyle} vocals, ${gender.toLowerCase()} singer tone, ${rapMode.toLowerCase()}, and ${instrument.toLowerCase()} driven arrangement. It is designed as a replayable YouTube listening set with around 3-minute songs, memorable hooks, and a consistent atmosphere.\n\nTrack list:\n${songs.map(s => `${s.no}. ${s.title}`).join('\n')}\n\nKeywords: ${keywords || lead}`
+        : `이번 ${songs.length}곡 앨범은 ${lead} 분위기를 중심으로, ${voiceStyle} 보컬과 ${gender} 싱어 톤, ${rapMode} 구성, ${instrument} 중심 사운드로 맞춘 ${genre} 모음집입니다. 전체 곡은 3분 안팎으로 맞추고, 후렴이 기억에 남도록 구성한 유튜브 업로드용 플레이리스트입니다.\n\n트랙리스트:\n${songs.map(s => `${s.no}. ${s.title}`).join('\n')}\n\n핵심 키워드: ${keywords || lead}`;
 
       const tags = language === '영어'
-        ? [genre, `${genre} playlist`, `${lead} mood`, `${voiceStyle} vocal`, `${gender} singer`, 'AI music', 'Suno music', '3 minute songs', 'album mix', 'late night music']
-        : [genre, `${genre}모음집`, `${lead}감성`, `${voiceStyle}보컬`, `${gender}보컬`, 'AI음악', '수노음악', '3분노래', '앨범모음', '감성플레이리스트'];
+        ? [genre, `${genre} playlist`, `${lead} mood`, `${voiceStyle} vocal`, `${gender} singer`, rapMode, instrument, 'AI music', 'Suno music', '3 minute songs', 'album mix', 'late night music']
+        : [genre, `${genre}모음집`, `${lead}감성`, `${voiceStyle}보컬`, `${gender}보컬`, rapMode, instrument, 'AI음악', '수노음악', '3분노래', '앨범모음', '감성플레이리스트'];
 
       return { albumTitle, youtubeTitles, thumbnailPhrases, description, tags };
     }
 
     function renderAlbumPack() {
       const box = document.getElementById('albumPack');
-      if (!albumData) {
-        box.innerHTML = '';
-        return;
-      }
+      if (!albumData) { box.innerHTML = ''; return; }
       box.innerHTML = `
         <div class="card">
           <h2>10곡 앨범 업로드 세트</h2>
           <div class="song-box"><span class="album-head">앨범 이름</span>${albumData.albumTitle}</div>
-          <div class="song-box"><span class="album-head">썸네일 문구</span>${albumData.thumbnailPhrases.join('
-')}</div>
-          <div class="song-box"><span class="album-head">클릭형 제목 후보 3개</span>${albumData.youtubeTitles.join('
-')}</div>
+          <div class="song-box"><span class="album-head">썸네일 문구</span>${albumData.thumbnailPhrases.join('\n')}</div>
+          <div class="song-box"><span class="album-head">클릭형 제목 후보 3개</span>${albumData.youtubeTitles.join('\n')}</div>
           <div class="song-box"><span class="album-head">설명란</span>${albumData.description}</div>
           <div class="song-box"><span class="album-head">태그</span>${albumData.tags.join(', ')}</div>
         </div>
@@ -389,17 +349,14 @@ ${songs.map(s => `${s.no}. ${s.title}`).join('
             <span class="tag">${song.mood}</span>
             <span class="tag">${song.gender}</span>
             <span class="tag">${song.voiceStyle}</span>
+            <span class="tag">${song.rapMode}</span>
+            <span class="tag">${song.instrument}</span>
           </div>
-          <div class="song-box"><b>스타일</b>
-${song.style}</div>
-          <div class="song-box"><b>가사</b>
-${song.lyrics}</div>
-          <div class="song-box"><b>Suno용 프롬프트</b>
-${buildPrompt(song)}</div>
-          <div class="song-box"><b>유튜브용 개별 제목</b>
-${song.youtubeTitle}</div>
-          <div class="song-box"><b>개별 썸네일 문구</b>
-${song.thumbnailText}</div>
+          <div class="song-box"><b>스타일</b>\n${song.style}</div>
+          <div class="song-box"><b>가사</b>\n${song.lyrics}</div>
+          <div class="song-box"><b>Suno용 프롬프트</b>\n${buildPrompt(song)}</div>
+          <div class="song-box"><b>유튜브용 개별 제목</b>\n${song.youtubeTitle}</div>
+          <div class="song-box"><b>개별 썸네일 문구</b>\n${song.thumbnailText}</div>
           <button class="btn btn-dark" onclick="copySong(${i})">이 곡 복사</button>
           <button class="btn btn-light" onclick="copyAndOpen(${i})">복사 + Suno 열기</button>
         `;
@@ -416,6 +373,8 @@ ${song.thumbnailText}</div>
       localStorage.setItem('tablet-suno-count', document.getElementById('count').value);
       localStorage.setItem('tablet-suno-gender', document.getElementById('gender').value);
       localStorage.setItem('tablet-suno-voiceStyle', document.getElementById('voiceStyle').value);
+      localStorage.setItem('tablet-suno-rapMode', document.getElementById('rapMode').value);
+      localStorage.setItem('tablet-suno-instrument', document.getElementById('instrument').value);
       localStorage.setItem('tablet-suno-songs', JSON.stringify(songData));
       localStorage.setItem('tablet-suno-queue-index', String(queueIndex));
       localStorage.setItem('tablet-suno-album-pack', JSON.stringify(albumData));
@@ -426,20 +385,14 @@ ${song.thumbnailText}</div>
       if (!songData.length) { box.style.display = 'none'; return; }
       box.style.display = 'block';
       if (queueIndex < 0) {
-        box.innerHTML = `<b>큐 상태</b>
-대기 중
-큐 시작을 누르면 1번 곡부터 순서대로 자동 복사됩니다.`;
+        box.innerHTML = `<b>큐 상태</b>\n대기 중\n큐 시작을 누르면 1번 곡부터 순서대로 자동 복사됩니다.`;
         return;
       }
       if (queueIndex >= songData.length) {
-        box.innerHTML = `<b>큐 상태</b>
-모든 곡 복사 완료
-처음부터 다시 하려면 큐 시작을 다시 누르세요.`;
+        box.innerHTML = `<b>큐 상태</b>\n모든 곡 복사 완료\n처음부터 다시 하려면 큐 시작을 다시 누르세요.`;
         return;
       }
-      box.innerHTML = `<b>큐 상태</b>
-현재 진행: ${queueIndex + 1} / ${songData.length}
-다음에 복사될 곡: ${songData[queueIndex].title}`;
+      box.innerHTML = `<b>큐 상태</b>\n현재 진행: ${queueIndex + 1} / ${songData.length}\n다음에 복사될 곡: ${songData[queueIndex].title}`;
     }
 
     function generateSongs() {
@@ -451,26 +404,22 @@ ${song.thumbnailText}</div>
       const count = Number(document.getElementById('count').value);
       const gender = document.getElementById('gender').value;
       const voiceStyle = document.getElementById('voiceStyle').value;
+      const rapMode = document.getElementById('rapMode').value;
+      const instrument = document.getElementById('instrument').value;
 
       songData = [];
       queueIndex = -1;
 
       for (let i = 0; i < count; i++) {
         const title = buildTitle(topic, mood, language, i);
-        const style = `${styleMap[genre]}, ${mood}, ${language} lyrics, ${genderStyleMap[gender]}, ${voiceStyleMap[voiceStyle]}, around 3 minutes long`;
-        const lyrics = buildLyrics(topic, genre, language, mood, i, keywords);
-        const youtubeTitle = language === '영어'
-          ? `${title} | ${genre} Mood Song | 3 Minute Version`
-          : `${title} | ${genre} 감성 노래 | 3분 버전`;
-        const thumbnailText = language === '영어'
-          ? `${title}
-${genre} MOOD`
-          : `${title}
-${genre} 감성`;
-        songData.push({ no: i + 1, title, genre, language, mood, gender, voiceStyle, style, lyrics, youtubeTitle, thumbnailText });
+        const style = `${styleMap[genre]}, ${mood}, ${language} lyrics, ${genderStyleMap[gender]}, ${voiceStyleMap[voiceStyle]}, ${rapModeMap[rapMode]}, main instrument: ${instrumentMap[instrument]}, around 3 minutes long`;
+        const lyrics = buildLyrics(topic, genre, language, mood, i, keywords, rapMode);
+        const youtubeTitle = language === '영어' ? `${title} | ${genre} Mood Song | 3 Minute Version` : `${title} | ${genre} 감성 노래 | 3분 버전`;
+        const thumbnailText = language === '영어' ? `${title}\n${genre} MOOD` : `${title}\n${genre} 감성`;
+        songData.push({ no: i + 1, title, genre, language, mood, gender, voiceStyle, rapMode, instrument, style, lyrics, youtubeTitle, thumbnailText });
       }
 
-      albumData = buildAlbumPack(topic, genre, mood, language, gender, voiceStyle, keywords, songData);
+      albumData = buildAlbumPack(topic, genre, mood, language, gender, voiceStyle, rapMode, instrument, keywords, songData);
       renderAlbumPack();
       renderSongs();
       saveState();
@@ -513,34 +462,14 @@ ${genre} 감성`;
 
     async function copyAllSongs() {
       if (!songData.length) { alert('먼저 곡을 만들어주세요.'); return; }
-      const text = songData.map(song => `### ${song.no}. ${song.title}
-${buildPrompt(song)}`).join('
-
----------------------
-
-');
+      const text = songData.map(song => `### ${song.no}. ${song.title}\n${buildPrompt(song)}`).join('\n\n---------------------\n\n');
       await navigator.clipboard.writeText(text);
       alert('전체 곡이 복사되었습니다.');
     }
 
     async function copyAlbumPack() {
       if (!albumData) { alert('먼저 곡을 만들어주세요.'); return; }
-      const text = `앨범 이름
-${albumData.albumTitle}
-
-썸네일 문구
-${albumData.thumbnailPhrases.join('
-')}
-
-클릭형 제목 후보
-${albumData.youtubeTitles.join('
-')}
-
-설명란
-${albumData.description}
-
-태그
-${albumData.tags.join(', ')}`;
+      const text = `앨범 이름\n${albumData.albumTitle}\n\n썸네일 문구\n${albumData.thumbnailPhrases.join('\n')}\n\n클릭형 제목 후보\n${albumData.youtubeTitles.join('\n')}\n\n설명란\n${albumData.description}\n\n태그\n${albumData.tags.join(', ')}`;
       await navigator.clipboard.writeText(text);
       alert('앨범 업로드 세트가 복사되었습니다.');
     }
@@ -558,6 +487,8 @@ ${albumData.tags.join(', ')}`;
       const savedQueueIndex = localStorage.getItem('tablet-suno-queue-index');
       const savedGender = localStorage.getItem('tablet-suno-gender') || '남성';
       const savedVoiceStyle = localStorage.getItem('tablet-suno-voiceStyle') || '허스키';
+      const savedRapMode = localStorage.getItem('tablet-suno-rapMode') || '없음';
+      const savedInstrument = localStorage.getItem('tablet-suno-instrument') || '피아노';
       const savedAlbumPack = localStorage.getItem('tablet-suno-album-pack');
 
       document.getElementById('topic').value = topic;
@@ -568,6 +499,8 @@ ${albumData.tags.join(', ')}`;
       document.getElementById('count').value = count;
       document.getElementById('gender').value = savedGender;
       document.getElementById('voiceStyle').value = savedVoiceStyle;
+      document.getElementById('rapMode').value = savedRapMode;
+      document.getElementById('instrument').value = savedInstrument;
 
       if (savedSongs) {
         try {
