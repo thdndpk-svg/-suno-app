@@ -172,11 +172,12 @@
     }
 
     function conceptList(topic) {
-      if (topic.includes('사랑') || topic.includes('연인')) return ['Two Hearts Tonight','Warm Confession','Walking Together','Late Night Promise','Soft Memory'];
-      if (topic.includes('이별')) return ['After Goodbye','Fading Memory','Lonely Night','Late Regret','Missing Heart'];
-      if (topic.includes('봄')) return ['Spring Road','Warm Breeze','New Beginning','Sunlit Day','Blossom Promise'];
-      if (topic.includes('드라이브')) return ['Night Highway','City Lights','Running Heart','Free Ride','Window Scene'];
-      return ['Beautiful Moment','Warm Memory','Shining Night','New Story','Quiet Emotion'];
+      // Korean title concepts (titles should always be Korean)
+      if (topic.includes('사랑') || topic.includes('연인')) return ['둘만의 밤','따뜻한 고백','설레는 마음','함께 걷는 거리','작은 약속'];
+      if (topic.includes('이별')) return ['남겨진 추억','늦은 후회','조용한 밤','흐린 기억','그리운 마음'];
+      if (topic.includes('봄')) return ['벚꽃길','따뜻한 바람','새로운 시작','햇살 가득한 날','봄밤의 약속'];
+      if (topic.includes('드라이브')) return ['야경 도로','도시의 불빛','달리는 마음','자유로운 밤','창밖의 풍경'];
+      return ['아름다운 순간','따뜻한 기억','빛나는 밤','새로운 이야기','잔잔한 마음'];
     }
 
     function autoGender(index, selected) {
