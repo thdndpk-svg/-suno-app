@@ -1,0 +1,326 @@
+<!DOCTYPE html><html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suno Tablet Easy App</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #111;
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    textarea, select, input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid #d8d8d8;
+      font-size: 16px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .btn {
+      width: 100%;
+      border: 0;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .btn-dark { background: #111; color: white; }
+    .btn-light { background: #efefef; color: #111; }
+    .tag {
+      display: inline-block;
+      background: #f1f1f1;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-right: 6px;
+      margin-top: 6px;
+    }
+    .song-box {
+      background: #fafafa;
+      border: 1px solid #e7e7e7;
+      border-radius: 16px;
+      padding: 12px;
+      margin-top: 12px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .small {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Suno 태블릿 쉬운앱</h1>
+      <p class="small">태블릿 브라우저에서 바로 열고, 홈 화면에 추가해서 앱처럼 쓰는 가장 쉬운 버전입니다.</p>
+    </div><div class="card">
+  <h2>곡 만들기</h2>
+  <label>주제</label>
+  <textarea id="topic" placeholder="예: 중년의 사랑, 봄 드라이브, 이별 후 재시작"></textarea>
+
+  <label>핵심 키워드</label>
+  <input id="keywords" placeholder="예: 벚꽃, 야경, 고속도로, 재회" />
+
+  <div class="grid">
+    <div>
+      <label>장르</label>
+      <select id="genre">
+        <option>트로트</option>
+        <option>발라드</option>
+        <option>락</option>
+        <option>힙합</option>
+        <option>카페음악</option>
+        <option>K-POP</option>
+      </select>
+    </div>
+    <div>
+      <label>언어</label>
+      <select id="language">
+        <option>한국어</option>
+        <option>영어</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <label>무드</label>
+      <select id="mood">
+        <option>감성적</option>
+        <option>신나는</option>
+        <option>서정적</option>
+        <option>희망찬</option>
+        <option>세련된</option>
+      </select>
+    </div>
+    <div>
+      <label>곡 수</label>
+      <select id="count">
+        <option value="1">1곡</option>
+        <option value="3">3곡</option>
+        <option value="5">5곡</option>
+        <option value="10" selected>10곡</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="btn btn-dark" onclick="generateSongs()">곡 만들기</button>
+  <button class="btn btn-light" onclick="copyAllSongs()">전체 복사</button>
+  <button class="btn btn-light" onclick="openSuno()">Suno 열기</button>
+</div>
+
+<div class="card">
+  <h2>태블릿에서 앱처럼 쓰는 법</h2>
+  <div class="small">
+    1. 이 페이지를 태블릿 크롬에서 엽니다.<br>
+    2. 오른쪽 위 점 3개를 누릅니다.<br>
+    3. 홈 화면에 추가를 누릅니다.<br>
+    4. 바탕화면 아이콘으로 실행하면 앱처럼 쓸 수 있습니다.
+  </div>
+</div>
+
+<div id="results"></div>
+
+  </div>  <script>
+    const titleWords = {
+      "감성적": ["달빛", "기억", "여운", "그리움"],
+      "신나는": ["질주", "리듬", "스텝", "드라이브"],
+      "서정적": ["편지", "온기", "계절", "약속"],
+      "희망찬": ["햇살", "기적", "내일", "출발"],
+      "세련된": ["네온", "시그널", "벨벳", "미드나잇"]
+    };
+
+    const styleMap = {
+      "트로트": "Korean trot, emotional vocal, sing-along chorus",
+      "발라드": "Korean ballad, piano, emotional chorus",
+      "락": "Korean rock, guitar driven, powerful chorus",
+      "힙합": "Korean hip hop, rhythmic flow, punchy beat",
+      "카페음악": "cafe pop, soft vocal, cozy mood",
+      "K-POP": "modern K-pop, catchy hook, polished production"
+    };
+
+    let songData = [];
+
+    function buildLyrics(topic, genre, language, mood, index, keywords) {
+      const keyText = keywords ? (language === '영어' ? `\nTheme: ${keywords}` : `\n핵심어: ${keywords}`) : '';
+
+      if (language === '영어') {
+        return `[Verse 1]\nI think of ${topic} in the middle of the night\nThe feeling keeps growing under the light\nEvery small memory starts to shine\n\n[Chorus]\n${topic}, stay with me tonight\nMake this melody strong and bright\nLet this moment live inside my heart${keyText}`;
+      }
+
+      if (genre === '트로트') {
+        return `[Verse 1]\n${topic} 하나 가슴에 안고 오늘도 걸어간다\n그래도 웃어보며 내일을 다시 부른다\n흘러간 세월 속에도 마음은 아직 산다\n\n[Chorus]\n아 ${topic}아 내 인생아\n울다가도 웃게 하는 이름이구나\n오늘 밤도 이 노래로 다시 일어난다${keyText}`;
+      }
+
+      if (genre === '발라드') {
+        return `[Verse 1]\n조용한 밤 끝에서 ${topic}을 떠올린다\n하지만 가슴 속 말들은 더 선명해진다\n잊으려 할수록 너는 더 깊게 남아있다\n\n[Chorus]\n${topic}, 다시 내게 와줄래\n멈춘 시간들이 흐를 수 있게\n이 노래 끝에 너를 기다린다${keyText}`;
+      }
+
+      if (genre === '락') {
+        return `[Verse 1]\n거친 바람 끝에서 ${topic}을 붙잡는다\n그래도 멈추지 않고 더 크게 외쳐본다\n흔들리는 순간에도 심장은 다시 뛴다\n\n[Chorus]\n${topic}, 나를 깨워 더 크게\n무너진 벽을 넘어설 수 있게\n이 함성으로 다시 비상한다${keyText}`;
+      }
+
+      if (genre === '힙합') {
+        return `[Verse 1]\n도시의 비트 위에 ${topic}을 새겨 놔\n그래서 내 스텝마다 다른 빛이 번져가\n낮은 곳에서 와도 지금은 내가 보여\n\n[Hook]\n${topic} on my mind, I don't slow down\n오늘의 리듬으로 판을 다시 바꿔놔\n내 이름처럼 강하게 남겨둔다${keyText}`;
+      }
+
+      if (genre === '카페음악') {
+        return `[Verse 1]\n햇살 든 창가에 ${topic}이 조용히 앉아\n그래서 커피 향기도 조금 더 부드럽다\n느린 오후 시간도 오늘은 괜히 좋다\n\n[Chorus]\n${topic}, 조용히 머물러줘\n바쁜 하루 틈에서 쉬어갈 수 있게\n잔잔한 멜로디로 오래 남아줘${keyText}`;
+      }
+
+      return `[Verse 1]\n네온 불빛 아래 ${topic}이 깨어난다\n그래서 떨리던 심장도 더 크게 뛴다\n눈이 마주친 순간 모든 장면이 달라진다\n\n[Chorus]\n${topic}, turning up tonight\n한 번 들으면 계속 맴도는 line\n오늘 밤 내내 기억될 순간을 만든다${keyText}`;
+    }
+
+    function buildPrompt(song) {
+      return `제목: ${song.title}\n장르: ${song.genre}\n언어: ${song.language}\n무드: ${song.mood}\n스타일: ${song.style}\n가사:\n${song.lyrics}\n\n제작 요청:\n위 제목, 스타일, 가사로 완성도 높은 곡을 제작해줘. 후렴은 강하게, 멜로디는 기억에 남게 구성해줘.`;
+    }
+
+    function generateSongs() {
+      const topic = document.getElementById('topic').value.trim() || '사랑';
+      const keywords = document.getElementById('keywords').value.trim();
+      const genre = document.getElementById('genre').value;
+      const language = document.getElementById('language').value;
+      const mood = document.getElementById('mood').value;
+      const count = Number(document.getElementById('count').value);
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+      songData = [];
+
+      for (let i = 0; i < count; i++) {
+        const wordList = titleWords[mood] || ['멜로디'];
+        const title = `${topic} ${wordList[i % wordList.length]} ${i + 1}`;
+        const style = `${styleMap[genre]}, ${mood}, ${language} lyrics`;
+        const lyrics = buildLyrics(topic, genre, language, mood, i, keywords);
+        const song = { no: i + 1, title, genre, language, mood, style, lyrics };
+        songData.push(song);
+
+        const box = document.createElement('div');
+        box.className = 'card';
+        box.innerHTML = `
+          <h3>${song.no}번 곡 - ${song.title}</h3>
+          <div>
+            <span class="tag">${song.genre}</span>
+            <span class="tag">${song.language}</span>
+            <span class="tag">${song.mood}</span>
+          </div>
+          <div class="song-box"><b>스타일</b>\n${song.style}</div>
+          <div class="song-box"><b>가사</b>\n${song.lyrics}</div>
+          <div class="song-box"><b>Suno용 프롬프트</b>\n${buildPrompt(song)}</div>
+          <button class="btn btn-dark" onclick="copySong(${i})">이 곡 복사</button>
+          <button class="btn btn-light" onclick="copyAndOpen(${i})">복사 + Suno 열기</button>
+        `;
+        results.appendChild(box);
+      }
+
+      localStorage.setItem('tablet-suno-topic', topic);
+      localStorage.setItem('tablet-suno-keywords', keywords);
+      localStorage.setItem('tablet-suno-genre', genre);
+      localStorage.setItem('tablet-suno-language', language);
+      localStorage.setItem('tablet-suno-mood', mood);
+      localStorage.setItem('tablet-suno-count', count);
+      localStorage.setItem('tablet-suno-songs', JSON.stringify(songData));
+    }
+
+    async function copySong(index) {
+      const song = songData[index];
+      if (!song) return;
+      await navigator.clipboard.writeText(buildPrompt(song));
+      alert('복사되었습니다.');
+    }
+
+    async function copyAndOpen(index) {
+      const song = songData[index];
+      if (!song) return;
+      await navigator.clipboard.writeText(buildPrompt(song));
+      window.open('https://suno.com/create', '_blank');
+    }
+
+    async function copyAllSongs() {
+      if (!songData.length) {
+        alert('먼저 곡을 만들어주세요.');
+        return;
+      }
+      const text = songData.map(song => `### ${song.no}. ${song.title}\n${buildPrompt(song)}`).join('\n\n---------------------\n\n');
+      await navigator.clipboard.writeText(text);
+      alert('전체 곡이 복사되었습니다.');
+    }
+
+    function openSuno() {
+      window.open('https://suno.com/create', '_blank');
+    }
+
+    window.onload = function () {
+      const topic = localStorage.getItem('tablet-suno-topic') || '';
+      const keywords = localStorage.getItem('tablet-suno-keywords') || '';
+      const genre = localStorage.getItem('tablet-suno-genre') || '트로트';
+      const language = localStorage.getItem('tablet-suno-language') || '한국어';
+      const mood = localStorage.getItem('tablet-suno-mood') || '감성적';
+      const count = localStorage.getItem('tablet-suno-count') || '10';
+      const savedSongs = localStorage.getItem('tablet-suno-songs');
+
+      document.getElementById('topic').value = topic;
+      document.getElementById('keywords').value = keywords;
+      document.getElementById('genre').value = genre;
+      document.getElementById('language').value = language;
+      document.getElementById('mood').value = mood;
+      document.getElementById('count').value = count;
+
+      if (savedSongs) {
+        try {
+          songData = JSON.parse(savedSongs);
+          const results = document.getElementById('results');
+          songData.forEach((song, i) => {
+            const box = document.createElement('div');
+            box.className = 'card';
+            box.innerHTML = `
+              <h3>${song.no}번 곡 - ${song.title}</h3>
+              <div>
+                <span class="tag">${song.genre}</span>
+                <span class="tag">${song.language}</span>
+                <span class="tag">${song.mood}</span>
+              </div>
+              <div class="song-box"><b>스타일</b>\n${song.style}</div>
+              <div class="song-box"><b>가사</b>\n${song.lyrics}</div>
+              <div class="song-box"><b>Suno용 프롬프트</b>\n${buildPrompt(song)}</div>
+              <button class="btn btn-dark" onclick="copySong(${i})">이 곡 복사</button>
+              <button class="btn btn-light" onclick="copyAndOpen(${i})">복사 + Suno 열기</button>
+            `;
+            results.appendChild(box);
+          });
+        } catch (e) {}
+      }
+    };
+  </script></body>
+</html>
