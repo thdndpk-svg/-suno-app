@@ -1,328 +1,553 @@
 <!DOCTYPE html><html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Suno 음악 제작 자동화 프로버전</title>
-<style>
-body{font-family:Arial,Helvetica,sans-serif;background:#f3f4f6;margin:0;color:#111}
-.wrap{max-width:1240px;margin:auto;padding:18px}
-.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-h1,h2,h3,p{margin-top:0}
-textarea,input,select{width:100%;padding:10px;margin-top:6px;margin-bottom:10px;border-radius:10px;border:1px solid #d1d5db;font-size:16px;background:#fff}
-textarea{min-height:90px;resize:vertical}
-button{padding:10px 14px;border-radius:10px;border:none;background:#111;color:#fff;margin:4px;cursor:pointer;font-size:14px}
-button.light{background:#ececec;color:#111}
-button.warn{background:#ffe3e3;color:#8b0000}
-button.ok{background:#e6f8ea;color:#0b5d1e}
-.song{background:#fafafa;border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:12px}
-.help{display:none;background:#eef4ff;border:1px solid #c7d7ff;padding:12px;border-radius:10px;margin-top:8px;font-size:14px;line-height:1.6}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.tag{background:#eee;border-radius:999px;padding:4px 8px;margin-right:5px;font-size:12px;display:inline-block;margin-top:6px}
-.muted{font-size:13px;color:#666}
-.kpi{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:12px}
-pre{white-space:pre-wrap;word-break:break-word;margin:0;font-family:inherit}
-@media(max-width:800px){.grid,.grid3{grid-template-columns:1fr}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suno 음악 제작 자동화 프로버전</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; background: #f3f4f6; margin: 0; color: #111; }
+    .wrap { max-width: 1200px; margin: auto; padding: 18px; }
+    .card { background: #fff; border-radius: 16px; padding: 18px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
+    h1,h2,h3,p { margin-top: 0; }
+    textarea,input,select {
+      width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 10px;
+      border-radius: 10px; border: 1px solid #d1d5db; font-size: 16px; background: #fff;
+      box-sizing: border-box;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    button {
+      padding: 10px 14px; border-radius: 10px; border: none; background: #111; color: #fff;
+      margin: 4px; cursor: pointer; font-size: 14px;
+    }
+    button.light { background: #ececec; color: #111; }
+    button.warn { background: #ffe3e3; color: #8b0000; }
+    button.ok { background: #e6f8ea; color: #0b5d1e; }
+    .song { background: #fafafa; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; margin-top: 12px; }
+    .help { display: none; background: #eef4ff; border: 1px solid #c7d7ff; padding: 12px; border-radius: 10px; margin-top: 8px; font-size: 14px; line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .tag { background: #eee; border-radius: 999px; padding: 4px 8px; margin-right: 5px; font-size: 12px; display: inline-block; margin-top: 6px; }
+    .muted { font-size: 13px; color: #666; }
+    .kpi { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; }
+    pre { white-space: pre-wrap; word-break: break-word; margin: 0; font-family: inherit; }
+    @media (max-width: 800px) { .grid, .grid3 { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
-<div class="wrap"><div class="card">
-<h1>Suno 음악 제작 자동화 프로버전</h1>
-<button class="light" onclick="toggleHelp('mainHelp')">전체 기능 설명</button>
-<div id="mainHelp" class="help">
-이 버전은 완전체보다 한 단계 더 정리된 프로용 버전입니다.
-<br><br>핵심 기능
-<br>• 1곡, 3곡, 5곡, 10곡 생성
-<br>• Suno Simple / Custom 두 방식 지원
-<br>• 제목 / 스타일 / 가사 개별 복사
-<br>• 다음곡 큐 복사
-<br>• 가사 수정 저장
-<br>• 곡 삭제 / 복제 / 완료 체크
-<br>• 프로젝트 저장 / 불러오기
-<br>• TXT 저장
-<br>• 유튜브 제목 / 설명 / 태그 / 썸네일 문구 생성
-<br>• 자동 앨범 커버 문구 / 이미지 프롬프트 생성
+  <div class="wrap"><div class="card">
+  <h1>Suno 음악 제작 자동화 프로버전</h1>
+  <button class="light" onclick="toggleHelp('mainHelp')">전체 기능 설명</button>
+  <div id="mainHelp" class="help">
+    이 버전은 Suno 작업용으로 정리한 프로 버전입니다.<br>
+    • 1곡 / 3곡 / 5곡 / 10곡 생성<br>
+    • 제목 / 스타일 / 가사 / 간단 프롬프트 개별 복사<br>
+    • 다음곡 큐 복사<br>
+    • 가사 수정 저장<br>
+    • 곡 삭제 / 복제 / 완료 체크<br>
+    • 프로젝트 저장 / 불러오기<br>
+    • TXT 저장<br>
+    • 유튜브 제목 / 설명 / 태그 생성<br>
+    • 앨범 커버 문구 / 이미지 프롬프트 생성
+  </div>
 </div>
-</div><div class="card">
-<h2>생성 설정</h2>
-<button class="light" onclick="toggleHelp('settingHelp')">설명</button>
-<div id="settingHelp" class="help">
-주제와 옵션을 넣고 곡을 생성합니다.
-<br>Simple Mode는 짧은 프롬프트를 붙여넣는 방식입니다.
-<br>Custom Mode는 제목, 스타일, 가사를 따로 넣는 방식입니다.
-</div><label>주제</label>
 
-<textarea id="topic" placeholder="예: 중년의 사랑, 봄밤 드라이브, 이별 후 재시작"></textarea><label>키워드</label> <input id="keywords" placeholder="예: 벚꽃, 야경, 재회, 추억">
+<div class="card">
+  <h2>생성 설정</h2>
+  <button class="light" onclick="toggleHelp('settingHelp')">설명</button>
+  <div id="settingHelp" class="help">
+    주제를 넣고 곡을 생성합니다.<br>
+    Simple Mode는 짧은 프롬프트를 넣는 방식이고,<br>
+    Custom Mode는 제목 / 스타일 / 가사를 따로 넣는 방식입니다.
+  </div>
 
-<div class="grid3">
-<div>
-<label>장르</label>
-<select id="genre">
-<option>트로트</option>
-<option>발라드</option>
-<option>락</option>
-<option>힙합</option>
-<option>KPOP</option>
-<option>카페음악</option>
-</select>
+  <label>주제</label>
+  <textarea id="topic" placeholder="예: 중년의 사랑, 봄밤 드라이브, 이별 후 재시작"></textarea>
+
+  <label>키워드</label>
+  <input id="keywords" placeholder="예: 벚꽃, 야경, 재회, 추억" />
+
+  <div class="grid3">
+    <div>
+      <label>장르</label>
+      <select id="genre">
+        <option>트로트</option>
+        <option>발라드</option>
+        <option>락</option>
+        <option>힙합</option>
+        <option>KPOP</option>
+        <option>카페음악</option>
+      </select>
+    </div>
+    <div>
+      <label>언어</label>
+      <select id="language">
+        <option>한국어</option>
+        <option>영어</option>
+      </select>
+    </div>
+    <div>
+      <label>곡 수</label>
+      <select id="count">
+        <option value="1">1곡</option>
+        <option value="3">3곡</option>
+        <option value="5">5곡</option>
+        <option value="10" selected>10곡</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div>
+      <label>싱어</label>
+      <select id="gender">
+        <option>자동</option>
+        <option>남성</option>
+        <option>여성</option>
+        <option>듀엣</option>
+      </select>
+    </div>
+    <div>
+      <label>목소리 스타일</label>
+      <select id="voice">
+        <option>맑은</option>
+        <option>허스키</option>
+        <option>명랑</option>
+        <option>가녀린</option>
+      </select>
+    </div>
+    <div>
+      <label>템포</label>
+      <select id="tempo">
+        <option>느리게</option>
+        <option selected>보통</option>
+        <option>빠르게</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div>
+      <label>랩</label>
+      <select id="rap">
+        <option>없음</option>
+        <option>중간 랩 1회</option>
+        <option>중간 랩 2회</option>
+      </select>
+    </div>
+    <div>
+      <label>악기</label>
+      <select id="instrument">
+        <option>선택안함</option>
+        <option>피아노</option>
+        <option>어쿠스틱 기타</option>
+        <option>일렉기타</option>
+        <option>신스</option>
+        <option>바이올린</option>
+        <option>색소폰</option>
+        <option>드럼</option>
+        <option>베이스</option>
+        <option>플루트</option>
+        <option>트럼펫</option>
+      </select>
+    </div>
+    <div>
+      <label>곡 구조</label>
+      <select id="structure">
+        <option>기본형</option>
+        <option>인트로 포함</option>
+        <option>브릿지 포함</option>
+        <option>후렴 반복형</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div>
+      <label>후렴 강조</label>
+      <select id="hook">
+        <option>보통</option>
+        <option>후렴 강하게</option>
+        <option>후렴 2회 반복</option>
+        <option>쇼츠형 훅 강조</option>
+      </select>
+    </div>
+    <div>
+      <label>썸네일 스타일</label>
+      <select id="thumbStyle">
+        <option>감성형</option>
+        <option>자극형</option>
+        <option>잔잔형</option>
+        <option>4050형</option>
+      </select>
+    </div>
+    <div>
+      <label>길이</label>
+      <select id="length">
+        <option selected>3분</option>
+      </select>
+    </div>
+  </div>
+
+  <button onclick="generateSongs()">곡 생성</button>
+  <button class="light" onclick="generateNextSingle()">다음 곡 1개 추가</button>
+  <button class="light" onclick="startQueue()">큐 시작</button>
+  <button class="light" onclick="copyNextPrompt()">다음곡 간단 프롬프트 복사</button>
+  <button class="light" onclick="openSuno()">Suno 열기</button>
+  <button class="light" onclick="generateAlbumCover()">앨범커버 생성</button>
+  <button class="light" onclick="generateYouTubePack()">유튜브 세트 생성</button>
+  <button class="light" onclick="saveProject()">프로젝트 저장</button>
+  <button class="light" onclick="loadProject()">프로젝트 불러오기</button>
+  <button class="light" onclick="exportTXT()">TXT 저장</button>
+  <button class="warn" onclick="clearSongs()">전체 삭제</button>
 </div>
-<div>
-<label>언어</label>
-<select id="language"><option>한국어</option><option>영어</option></select>
+
+<div class="card">
+  <h2>프로젝트 현황</h2>
+  <div class="grid3">
+    <div class="kpi"><b id="kpiCount">0곡</b><div class="muted">생성된 곡 수</div></div>
+    <div class="kpi"><b id="kpiDone">0곡</b><div class="muted">제작 완료 체크</div></div>
+    <div class="kpi"><b id="kpiQueue">대기</b><div class="muted">큐 상태</div></div>
+  </div>
 </div>
-<div>
-<label>곡 수</label>
-<select id="count"><option value="1">1곡</option><option value="3">3곡</option><option value="5">5곡</option><option value="10" selected>10곡</option></select>
+
+<div class="card">
+  <h2>앨범 커버</h2>
+  <button class="light" onclick="toggleHelp('coverHelp')">설명</button>
+  <div id="coverHelp" class="help">유튜브 썸네일용 문구와 이미지 생성용 프롬프트를 만들어줍니다.</div>
+  <div id="coverBox" class="song muted">아직 생성 전</div>
 </div>
-</div><div class="grid3">
-<div>
-<label>싱어</label>
-<select id="gender"><option>자동</option><option>남성</option><option>여성</option><option>듀엣</option></select>
+
+<div class="card">
+  <h2>유튜브 업로드 세트</h2>
+  <button class="light" onclick="toggleHelp('ytHelp')">설명</button>
+  <div id="ytHelp" class="help">제목, 설명, 태그를 자동으로 만듭니다.</div>
+  <div id="youtubeBox" class="song muted">아직 생성 전</div>
 </div>
-<div>
-<label>목소리 스타일</label>
-<select id="voice"><option>맑은</option><option>허스키</option><option>명랑</option><option>가녀린</option></select>
+
+<div class="card">
+  <h2>생성된 곡</h2>
+  <button class="light" onclick="toggleHelp('songHelp')">설명</button>
+  <div id="songHelp" class="help">
+    각 곡 카드에서 할 수 있는 것<br>
+    • 제목 복사<br>
+    • 스타일 복사<br>
+    • 가사 복사<br>
+    • 간단 프롬프트 복사<br>
+    • 가사 수정 저장<br>
+    • 완료 체크<br>
+    • 삭제 / 복제
+  </div>
+  <div id="songList"></div>
 </div>
-<div>
-<label>템포</label>
-<select id="tempo"><option>느리게</option><option selected>보통</option><option>빠르게</option></select>
-</div>
-</div><div class="grid3">
-<div>
-<label>랩</label>
-<select id="rap"><option>없음</option><option>중간 랩 1회</option><option>중간 랩 2회</option></select>
-</div>
-<div>
-<label>악기</label>
-<select id="instrument"><option>선택안함</option><option>피아노</option><option>어쿠스틱 기타</option><option>일렉기타</option><option>신스</option><option>바이올린</option><option>색소폰</option><option>드럼</option><option>베이스</option><option>플루트</option><option>트럼펫</option></select>
-</div>
-<div>
-<label>곡 구조</label>
-<select id="structure"><option>기본형</option><option>인트로 포함</option><option>브릿지 포함</option><option>후렴 반복형</option></select>
-</div>
-</div><div class="grid3">
-<div>
-<label>후렴 강조</label>
-<select id="hook"><option>보통</option><option>후렴 강하게</option><option>후렴 2회 반복</option><option>쇼츠형 훅 강조</option></select>
-</div>
-<div>
-<label>썸네일 스타일</label>
-<select id="thumbStyle"><option>감성형</option><option>자극형</option><option>잔잔형</option><option>4050형</option></select>
-</div>
-<div>
-<label>길이</label>
-<select id="length"><option selected>3분</option></select>
-</div>
-</div><button onclick="generateSongs()">곡 생성</button> <button class="light" onclick="generateNextSingle()">다음 곡 1개 추가</button> <button class="light" onclick="startQueue()">큐 시작</button> <button class="light" onclick="copyNextPrompt()">다음곡 간단 프롬프트 복사</button> <button class="light" onclick="openSuno()">Suno 열기</button> <button class="light" onclick="generateAlbumCover()">앨범커버 생성</button> <button class="light" onclick="generateYouTubePack()">유튜브 세트 생성</button> <button class="light" onclick="saveProject()">프로젝트 저장</button> <button class="light" onclick="loadProject()">프로젝트 불러오기</button> <button class="light" onclick="exportTXT()">TXT 저장</button> <button class="warn" onclick="clearSongs()">전체 삭제</button>
 
-</div><div class="card">
-<h2>프로젝트 현황</h2>
-<div class="grid3">
-<div class="kpi"><b id="kpiCount">0곡</b><div class="muted">생성된 곡 수</div></div>
-<div class="kpi"><b id="kpiDone">0곡</b><div class="muted">제작 완료 체크</div></div>
-<div class="kpi"><b id="kpiQueue">대기</b><div class="muted">큐 상태</div></div>
-</div>
-</div><div class="card">
-<h2>앨범 커버</h2>
-<button class="light" onclick="toggleHelp('coverHelp')">설명</button>
-<div id="coverHelp" class="help">유튜브 썸네일용 문구와 이미지 생성용 프롬프트를 만들어줍니다.</div>
-<div id="coverBox" class="song muted">아직 생성 전</div>
-</div><div class="card">
-<h2>유튜브 업로드 세트</h2>
-<button class="light" onclick="toggleHelp('ytHelp')">설명</button>
-<div id="ytHelp" class="help">제목, 설명, 태그를 자동으로 만듭니다.</div>
-<div id="youtubeBox" class="song muted">아직 생성 전</div>
-</div><div class="card">
-<h2>생성된 곡</h2>
-<button class="light" onclick="toggleHelp('songHelp')">설명</button>
-<div id="songHelp" class="help">
-각 곡 카드에서 할 수 있는 것
-<br>• 간단 프롬프트 복사
-<br>• 제목 복사
-<br>• 스타일 복사
-<br>• 가사 복사
-<br>• 가사 수정 저장
-<br>• 완료 체크
-<br>• 삭제 / 복제
-</div>
-<div id="songList"></div>
-</div></div><script>
-let songs=[]
-let queueIndex=0
-let seed=0
+  </div>  <script>
+    let songs = [];
+    let queueIndex = 0;
+    let seed = 0;
 
-function toggleHelp(id){
-  const el=document.getElementById(id)
-  el.style.display=el.style.display==='block'?'none':'block'
-}
-
-function saveApp(){
-  localStorage.setItem('sunoProApp',JSON.stringify({songs,queueIndex,seed,form:getFormData(),cover:document.getElementById('coverBox').innerText,youtube:document.getElementById('youtubeBox').innerText}))
-}
-
-function loadApp(){
-  const raw=localStorage.getItem('sunoProApp')
-  if(!raw) return false
-  try{
-    const data=JSON.parse(raw)
-    songs=data.songs||[]
-    queueIndex=data.queueIndex||0
-    seed=data.seed||0
-    setFormData(data.form||{})
-    document.getElementById('coverBox').innerText=data.cover||'아직 생성 전'
-    document.getElementById('youtubeBox').innerText=data.youtube||'아직 생성 전'
-    renderSongs()
-    updateKpi()
-    return true
-  }catch(e){return false}
-}
-
-function getFormData(){
-  return {
-    topic:val('topic'),keywords:val('keywords'),genre:val('genre'),language:val('language'),count:val('count'),gender:val('gender'),voice:val('voice'),tempo:val('tempo'),rap:val('rap'),instrument:val('instrument'),structure:val('structure'),hook:val('hook'),thumbStyle:val('thumbStyle'),length:val('length')
-  }
-}
-
-function setFormData(f){
-  Object.keys(f).forEach(k=>{const el=document.getElementById(k); if(el) el.value=f[k]})
-}
-
-function val(id){return document.getElementById(id).value}
-
-function conceptList(topic){
-  if(topic.includes('사랑')||topic.includes('연인')) return ['둘만의 밤','설레는 마음','따뜻한 고백','함께 걷는 거리','작은 약속']
-  if(topic.includes('이별')) return ['남겨진 추억','늦은 후회','조용한 밤','흐린 기억','그리운 마음']
-  if(topic.includes('봄')) return ['벚꽃길','따뜻한 바람','새로운 시작','햇살 가득한 날','봄밤의 약속']
-  if(topic.includes('드라이브')) return ['야경 도로','도시의 불빛','달리는 마음','자유로운 밤','창밖의 풍경']
-  return ['아름다운 순간','따뜻한 기억','빛나는 밤','새로운 이야기','잔잔한 마음']
-}
-
-function autoGender(index, selected){
-  if(selected!=='자동') return selected
-  const arr=['남성','여성','듀엣']
-  return arr[index%arr.length]
-}
-
-function buildTitle(topic,index){
-  const list=conceptList(topic)
-  return `${list[index%list.length]} ${index+1}`
-}
-
-function buildLyrics(topic,index,genre,language,structure,hook,rap){
-  const list=conceptList(topic)
-  const a=list[index%list.length]
-  const b=list[(index+1)%list.length]
-  const intro=structure==='인트로 포함' ? `[인트로]\n조용히 시작되는 ${a}\n\n` : ''
-  const bridge=structure==='브릿지 포함' ? `\n\n[브릿지]\n마음을 한 번 더 안아본다` : ''
-  const hookRepeat=hook==='후렴 2회 반복' ? `\n\n[후렴 반복]\n이 감정은 더 크게 남는다` : ''
-  const rapText=rap==='없음' ? '' : rap==='중간 랩 2회' ? `\n\n[랩]\n리듬 위로 감정을 더 올려\n\n[랩2]\n분위기를 더 크게 살려` : `\n\n[랩]\n리듬 위로 감정을 더 올려`
-  if(language==='영어') return `${intro}[Verse]\n${a} in the night, ${b} in my heart\n\n[Chorus]\nThis song keeps our feeling alive${bridge}${hookRepeat}${rapText}`
-  return `${intro}[Verse]\n${a} 속에 남은 마음을 떠올린다\n${b} 같은 기억이 오늘도 번진다\n\n[Chorus]\n이 노래는 오래 마음에 남는다${bridge}${hookRepeat}${rapText}`
-}
-
-function buildStyle(song){
-  const instrument=song.instrument==='선택안함'?'no fixed main instrument':song.instrument
-  return `${song.genre} style, ${song.voice} voice, ${song.gender} vocal, ${song.tempo}, ${song.rap}, ${instrument}, ${song.structure}, ${song.hook}, ${song.length}`
-}
-
-function buildSimplePrompt(song){
-  return `${song.genre}, ${song.voice}, ${song.gender}, ${song.tempo}, ${song.rap}, ${song.instrument}, ${song.structure}, ${song.hook}, ${song.length}, ${song.title}`
-}
-
-function generateSongs(){
-  const topic=val('topic')||'사랑'
-  const count=Number(val('count'))
-  songs=[]
-  for(let i=0;i<count;i++){
-    const gender=autoGender(seed+i,val('gender'))
-    const song={
-      title:buildTitle(topic,seed+i),
-      lyrics:buildLyrics(topic,seed+i,val('genre'),val('language'),val('structure'),val('hook'),val('rap')),
-      genre:val('genre'),language:val('language'),gender,voice:val('voice'),tempo:val('tempo'),rap:val('rap'),instrument:val('instrument'),structure:val('structure'),hook:val('hook'),length:val('length'),done:false
+    function toggleHelp(id) {
+      const el = document.getElementById(id);
+      el.style.display = el.style.display === 'block' ? 'none' : 'block';
     }
-    song.style=buildStyle(song)
-    song.simplePrompt=buildSimplePrompt(song)
-    songs.push(song)
-  }
-  seed+=count
-  queueIndex=0
-  renderSongs(); updateKpi(); saveApp()
+
+    function val(id) {
+      return document.getElementById(id).value;
+    }
+
+    function getFormData() {
+      return {
+        topic: val('topic'), keywords: val('keywords'), genre: val('genre'), language: val('language'),
+        count: val('count'), gender: val('gender'), voice: val('voice'), tempo: val('tempo'),
+        rap: val('rap'), instrument: val('instrument'), structure: val('structure'), hook: val('hook'),
+        thumbStyle: val('thumbStyle'), length: val('length')
+      };
+    }
+
+    function setFormData(data) {
+      Object.keys(data || {}).forEach(function(key) {
+        const el = document.getElementById(key);
+        if (el) el.value = data[key];
+      });
+    }
+
+    function saveApp() {
+      localStorage.setItem('sunoProApp', JSON.stringify({
+        songs: songs,
+        queueIndex: queueIndex,
+        seed: seed,
+        form: getFormData(),
+        cover: document.getElementById('coverBox').innerText,
+        youtube: document.getElementById('youtubeBox').innerText
+      }));
+    }
+
+    function loadApp() {
+      const raw = localStorage.getItem('sunoProApp');
+      if (!raw) return false;
+      try {
+        const data = JSON.parse(raw);
+        songs = Array.isArray(data.songs) ? data.songs : [];
+        queueIndex = Number(data.queueIndex || 0);
+        seed = Number(data.seed || 0);
+        setFormData(data.form || {});
+        document.getElementById('coverBox').innerText = data.cover || '아직 생성 전';
+        document.getElementById('youtubeBox').innerText = data.youtube || '아직 생성 전';
+        renderSongs();
+        updateKpi();
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function conceptList(topic) {
+      if (topic.includes('사랑') || topic.includes('연인')) return ['둘만의 밤','설레는 마음','따뜻한 고백','함께 걷는 거리','작은 약속'];
+      if (topic.includes('이별')) return ['남겨진 추억','늦은 후회','조용한 밤','흐린 기억','그리운 마음'];
+      if (topic.includes('봄')) return ['벚꽃길','따뜻한 바람','새로운 시작','햇살 가득한 날','봄밤의 약속'];
+      if (topic.includes('드라이브')) return ['야경 도로','도시의 불빛','달리는 마음','자유로운 밤','창밖의 풍경'];
+      return ['아름다운 순간','따뜻한 기억','빛나는 밤','새로운 이야기','잔잔한 마음'];
+    }
+
+    function autoGender(index, selected) {
+      if (selected !== '자동') return selected;
+      const arr = ['남성', '여성', '듀엣'];
+      return arr[index % arr.length];
+    }
+
+    function buildTitle(topic, index) {
+      const list = conceptList(topic || '감성');
+      return list[index % list.length] + ' ' + (index + 1);
+    }
+
+    function buildLyrics(topic, index, language, structure, hook, rap) {
+      const list = conceptList(topic || '감성');
+      const a = list[index % list.length];
+      const b = list[(index + 1) % list.length];
+      const intro = structure === '인트로 포함' ? '[인트로]\n조용히 시작되는 밤\n\n' : '';
+      const bridge = structure === '브릿지 포함' ? '\n\n[브릿지]\n마음을 한 번 더 안아본다' : '';
+      const hookRepeat = hook === '후렴 2회 반복' ? '\n\n[후렴 반복]\n이 감정은 더 크게 남는다' : '';
+      const rapText = rap === '없음' ? '' : (rap === '중간 랩 2회' ? '\n\n[랩]\n리듬 위로 감정을 더 올려\n\n[랩2]\n분위기를 더 크게 살려' : '\n\n[랩]\n리듬 위로 감정을 더 올려');
+      if (language === '영어') {
+        return intro + '[Verse]\n' + a + ' in the night, ' + b + ' in my heart\n\n[Chorus]\nThis song keeps our feeling alive' + bridge + hookRepeat + rapText;
+      }
+      return intro + '[Verse]\n' + a + ' 속에 남은 마음을 떠올린다\n' + b + ' 같은 기억이 오늘도 번진다\n\n[Chorus]\n이 노래는 오래 마음에 남는다' + bridge + hookRepeat + rapText;
+    }
+
+    function buildStyle(song) {
+      const instrumentText = song.instrument === '선택안함' ? 'no fixed main instrument' : song.instrument;
+      return song.genre + ' style, ' + song.voice + ' voice, ' + song.gender + ' vocal, ' + song.tempo + ', ' + song.rap + ', ' + instrumentText + ', ' + song.structure + ', ' + song.hook + ', ' + song.length;
+    }
+
+    function buildSimplePrompt(song) {
+      return song.genre + ', ' + song.voice + ', ' + song.gender + ', ' + song.tempo + ', ' + song.rap + ', ' + song.instrument + ', ' + song.structure + ', ' + song.hook + ', ' + song.length + ', ' + song.title;
+    }
+
+    function makeSong(index) {
+      const topic = val('topic') || '사랑';
+      const song = {
+        title: buildTitle(topic, seed + index),
+        lyrics: buildLyrics(topic, seed + index, val('language'), val('structure'), val('hook'), val('rap')),
+        genre: val('genre'),
+        language: val('language'),
+        gender: autoGender(seed + index, val('gender')),
+        voice: val('voice'),
+        tempo: val('tempo'),
+        rap: val('rap'),
+        instrument: val('instrument'),
+        structure: val('structure'),
+        hook: val('hook'),
+        length: val('length'),
+        done: false
+      };
+      song.style = buildStyle(song);
+      song.simplePrompt = buildSimplePrompt(song);
+      return song;
+    }
+
+    function generateSongs() {
+      const count = Number(val('count'));
+      songs = [];
+      for (let i = 0; i < count; i++) {
+        songs.push(makeSong(i));
+      }
+      seed += count;
+      queueIndex = 0;
+      renderSongs();
+      updateKpi();
+      saveApp();
+    }
+
+    function generateNextSingle() {
+      songs.push(makeSong(songs.length));
+      seed += 1;
+      renderSongs();
+      updateKpi();
+      saveApp();
+      alert('다음 곡 1개 추가 완료');
+    }
+
+    function renderSongs() {
+      const box = document.getElementById('songList');
+      box.innerHTML = '';
+      songs.forEach(function(s, i) {
+        const div = document.createElement('div');
+        div.className = 'song';
+        div.innerHTML = '' +
+          '<b>' + (i + 1) + '. ' + escapeHtml(s.title) + '</b>' +
+          '<div>' +
+            '<span class="tag">' + escapeHtml(s.genre) + '</span>' +
+            '<span class="tag">' + escapeHtml(s.gender) + '</span>' +
+            '<span class="tag">' + escapeHtml(s.voice) + '</span>' +
+            '<span class="tag">' + escapeHtml(s.tempo) + '</span>' +
+            '<span class="tag">' + escapeHtml(s.rap) + '</span>' +
+            '<span class="tag">' + escapeHtml(s.instrument) + '</span>' +
+          '</div>' +
+          '<div class="song"><b>간단 프롬프트</b><pre>' + escapeHtml(s.simplePrompt) + '</pre></div>' +'<div class="song"><b>Custom 스타일</b><pre>' + escapeHtml(s.style) + '</pre></div>' +
+      '<div class="song"><b>가사</b><textarea id="lyric' + i + '">' + escapeHtml(s.lyrics) + '</textarea></div>' +
+      '<button onclick="copySongField(' + i + ',\'title\')">제목 복사</button>' +
+      '<button onclick="copySongField(' + i + ',\'style\')">스타일 복사</button>' +
+      '<button onclick="copySongField(' + i + ',\'lyrics\')">가사 복사</button>' +
+      '<button class="light" onclick="copySongField(' + i + ',\'simple\')">간단 프롬프트 복사</button>' +
+      '<button class="light" onclick="saveLyrics(' + i + ')">가사 저장</button>' +
+      '<button class="ok" onclick="toggleDone(' + i + ')">' + (s.done ? '완료 해제' : '제작 완료 체크') + '</button>' +
+      '<button class="light" onclick="duplicateSong(' + i + ')">복제</button>' +
+      '<button class="warn" onclick="deleteSong(' + i + ')">삭제</button>';
+    box.appendChild(div);
+  });
 }
 
-function generateNextSingle(){
-  const i=songs.length
-  const topic=val('topic')||'사랑'
-  const gender=autoGender(seed,val('gender'))
-  const song={
-    title:buildTitle(topic,seed),
-    lyrics:buildLyrics(topic,seed,val('genre'),val('language'),val('structure'),val('hook'),val('rap')),
-    genre:val('genre'),language:val('language'),gender,voice:val('voice'),tempo:val('tempo'),rap:val('rap'),instrument:val('instrument'),structure:val('structure'),hook:val('hook'),length:val('length'),done:false
-  }
-  song.style=buildStyle(song)
-  song.simplePrompt=buildSimplePrompt(song)
-  songs.push(song)
-  seed++
-  renderSongs(); updateKpi(); saveApp()
-  alert('다음 곡 1개 추가 완료')
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
-function renderSongs(){
-  const box=document.getElementById('songList')
-  box.innerHTML=''
-  songs.forEach((s,i)=>{
-    const div=document.createElement('div')
-    div.className='song'
-    div.innerHTML=`
-      <b>${i+1}. ${s.title}</b>
-      <div>
-        <span class="tag">${s.genre}</span><span class="tag">${s.gender}</span><span class="tag">${s.voice}</span><span class="tag">${s.tempo}</span><span class="tag">${s.rap}</span><span class="tag">${s.instrument}</span>
-      </div>
-      <div class="song"><b>간단 프롬프트</b><pre>${s.simplePrompt}</pre></div><div class="song"><b>Custom 스타일</b><pre>${s.style}</pre></div>
-  <div class="song"><b>가사</b><textarea id="lyric${i}">${s.lyrics}</textarea></div>
-  <button onclick="copyText(${i},'title')">제목 복사</button>
-  <button onclick="copyText(${i},'style')">스타일 복사</button>
-  <button onclick="copyText(${i},'lyrics')">가사 복사</button>
-  <button class="light" onclick="copyText(${i},'simple')">간단 프롬프트 복사</button>
-  <button class="light" onclick="saveLyrics(${i})">가사 저장</button>
-  <button class="ok" onclick="toggleDone(${i})">${s.done?'완료 해제':'제작 완료 체크'}</button>
-  <button class="light" onclick="duplicateSong(${i})">복제</button>
-  <button class="warn" onclick="deleteSong(${i})">삭제</button>
-`
-box.appendChild(div)
+function copySongField(i, type) {
+  const s = songs[i];
+  if (!s) return;
+  let text = '';
+  if (type === 'title') text = s.title;
+  if (type === 'style') text = s.style;
+  if (type === 'lyrics') text = document.getElementById('lyric' + i).value;
+  if (type === 'simple') text = s.simplePrompt;
+  navigator.clipboard.writeText(text);
+  alert('복사 완료');
+}
 
-}) }
+function saveLyrics(i) {
+  if (!songs[i]) return;
+  songs[i].lyrics = document.getElementById('lyric' + i).value;
+  saveApp();
+  alert('가사 저장 완료');
+}
 
-function copyText(i,type){ const s=songs[i] let t='' if(type==='title') t=s.title if(type==='style') t=s.style if(type==='lyrics') t=document.getElementById('lyric'+i).value if(type==='simple') t=s.simplePrompt navigator.clipboard.writeText(t) alert('복사 완료') }
+function deleteSong(i) {
+  songs.splice(i, 1);
+  if (queueIndex > songs.length) queueIndex = songs.length;
+  renderSongs();
+  updateKpi();
+  saveApp();
+}
 
-function saveLyrics(i){ songs[i].lyrics=document.getElementById('lyric'+i).value saveApp() alert('가사 저장 완료') }
+function duplicateSong(i) {
+  const c = JSON.parse(JSON.stringify(songs[i]));
+  c.title = c.title + ' 복제';
+  c.done = false;
+  songs.splice(i + 1, 0, c);
+  renderSongs();
+  updateKpi();
+  saveApp();
+}
 
-function deleteSong(i){ songs.splice(i,1) if(queueIndex>songs.length) queueIndex=songs.length renderSongs(); updateKpi(); saveApp() }
+function clearSongs() {
+  songs = [];
+  queueIndex = 0;
+  renderSongs();
+  updateKpi();
+  saveApp();
+}
 
-function duplicateSong(i){ const c=JSON.parse(JSON.stringify(songs[i])) c.title=c.title+' 복제' c.done=false songs.splice(i+1,0,c) renderSongs(); updateKpi(); saveApp() }
+function openSuno() {
+  window.open('https://suno.com/create', '_blank');
+}
 
-function clearSongs(){ songs=[] queueIndex=0 renderSongs(); updateKpi(); saveApp() }
+function startQueue() {
+  queueIndex = 0;
+  updateKpi();
+  saveApp();
+  alert('큐 시작');
+}
 
-function openSuno(){window.open('https://suno.com/create','_blank')}
+function copyNextPrompt() {
+  if (queueIndex >= songs.length) {
+    alert('모든 곡 완료');
+    return;
+  }
+  navigator.clipboard.writeText(songs[queueIndex].simplePrompt);
+  alert((queueIndex + 1) + '번 곡 프롬프트 복사 완료');
+  queueIndex += 1;
+  updateKpi();
+  saveApp();
+}
 
-function startQueue(){queueIndex=0; updateKpi(); saveApp(); alert('큐 시작')}
+function toggleDone(i) {
+  songs[i].done = !songs[i].done;
+  renderSongs();
+  updateKpi();
+  saveApp();
+}
 
-function copyNextPrompt(){ if(queueIndex>=songs.length){alert('모든 곡 완료'); return} navigator.clipboard.writeText(songs[queueIndex].simplePrompt) alert(${queueIndex+1}번 곡 프롬프트 복사 완료) queueIndex++ updateKpi(); saveApp() }
+function updateKpi() {
+  document.getElementById('kpiCount').innerText = songs.length + '곡';
+  document.getElementById('kpiDone').innerText = songs.filter(function(s) { return s.done; }).length + '곡';
+  document.getElementById('kpiQueue').innerText = songs.length ? Math.min(queueIndex + 1, songs.length) + ' / ' + songs.length : '대기';
+}
 
-function toggleDone(i){ songs[i].done=!songs[i].done renderSongs(); updateKpi(); saveApp() }
+function generateAlbumCover() {
+  const topic = val('topic') || '감성';
+  const genre = val('genre');
+  const text = '앨범 제목\n' + topic + ' ' + genre + ' 플레이리스트\n\n썸네일 문구\n' + genre + ' 10곡 몰아듣기\n지금 듣기 좋은 음악\n\n이미지 프롬프트\nmusic album cover, ' + genre + ', cinematic lighting, emotional mood, youtube thumbnail style';
+  document.getElementById('coverBox').innerText = text;
+  saveApp();
+}
 
-function updateKpi(){ document.getElementById('kpiCount').innerText=${songs.length}곡 document.getElementById('kpiDone').innerText=${songs.filter(s=>s.done).length}곡 document.getElementById('kpiQueue').innerText=songs.length?${Math.min(queueIndex+1,songs.length)} / ${songs.length}:'대기' }
+function generateYouTubePack() {
+  const topic = val('topic') || '감성';
+  const genre = val('genre');
+  const count = songs.length || 10;
+  const text = '유튜브 제목 후보\n' + topic + ' 감성 ' + genre + ' 모음집 | 지금 듣기 좋은 ' + count + '곡\n한 번 틀면 끝까지 듣게 되는 ' + genre + ' 플레이리스트\n\n설명\n' + genre + ' 감성 음악 ' + count + '곡 모음입니다. 편하게 감상해보세요.\n\n태그\n' + genre + ', 플레이리스트, 감성음악, AI음악, Suno';
+  document.getElementById('youtubeBox').innerText = text;
+  saveApp();
+}
 
-function generateAlbumCover(){ const topic=val('topic')||'감성' const genre=val('genre') const text=앨범 제목\n${topic} ${genre} 플레이리스트\n\n썸네일 문구\n${genre} 10곡 몰아듣기\n지금 듣기 좋은 음악\n\n이미지 프롬프트\nmusic album cover, ${genre}, cinematic lighting, emotional mood, youtube thumbnail style document.getElementById('coverBox').innerText=text saveApp() }
+function saveProject() {
+  saveApp();
+  alert('프로젝트 저장 완료');
+}
 
-function generateYouTubePack(){ const topic=val('topic')||'감성' const genre=val('genre') const count=songs.length||10 const text=유튜브 제목 후보\n${topic} 감성 ${genre} 모음집 | 지금 듣기 좋은 ${count}곡\n한 번 틀면 끝까지 듣게 되는 ${genre} 플레이리스트\n\n설명\n${genre} 감성 음악 ${count}곡 모음입니다. 편하게 감상해보세요.\n\n태그\n${genre}, 플레이리스트, 감성음악, AI음악, Suno document.getElementById('youtubeBox').innerText=text saveApp() }
+function loadProject() {
+  if (loadApp()) alert('프로젝트 불러오기 완료');
+  else alert('저장된 프로젝트 없음');
+}
 
-function saveProject(){saveApp(); alert('프로젝트 저장 완료')}
+function exportTXT() {
+  let text = '';
+  songs.forEach(function(s, i) {
+    text += '\n' + (i + 1) + '. ' + s.title + '\n[STYLE]\n' + s.style + '\n[LYRICS]\n' + s.lyrics + '\n';
+  });
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'album.txt';
+  a.click();
+}
 
-function loadProject(){if(loadApp()) alert('프로젝트 불러오기 완료'); else alert('저장된 프로젝트 없음')}
+loadApp();
+updateKpi();
+renderSongs();
 
-function exportTXT(){ let text='' songs.forEach((s,i)=>{text+=\n${i+1}. ${s.title}\n[STYLE]\n${s.style}\n[LYRICS]\n${s.lyrics}\n}) const blob=new Blob([text],{type:'text/plain;charset=utf-8'}) const a=document.createElement('a') a.href=URL.createObjectURL(blob) a.download='album.txt' a.click() }
-
-loadApp(); updateKpi(); renderSongs() </script>
-
+  </script>
 </body>
 </html>
