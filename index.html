@@ -87,8 +87,8 @@
   <button class="light" onclick="startQueue()">큐 시작</button>
   <button class="light" onclick="copyNextPrompt()">다음곡 간단 프롬프트 복사</button>
   <button class="light" onclick="openSuno()">Suno 열기</button>
-  <button class="light" onclick="generateAlbumCover()">앨범커버 생성</button>
-  <button class="light" onclick="generateYouTubePack()">유튜브 세트 생성</button>
+  <button class="light" onclick="generateAlbumCover()">앨범커버 생성</button><button class="warn" onclick="clearAlbumCover()">앨범커버 지우기</button>
+  <button class="light" onclick="generateYouTubePack()">유튜브 세트 생성</button><button class="warn" onclick="clearYouTubePack()">유튜브 세트 지우기</button>
   <button class="light" onclick="saveProject()">프로젝트 저장</button>
   <button class="light" onclick="loadProject()">프로젝트 불러오기</button>
   <button class="light" onclick="exportTXT()">TXT 저장</button>
@@ -438,7 +438,16 @@ function updateKpi() {
 function generateAlbumCover() {
   const topic = val('topic') || 'Emotion';
   const genre = val('genre');
-  document.getElementById('coverBox').innerText = 'Album Title\n' + topic + ' ' + genre + ' Playlist\n\nThumbnail Copy\nBest ' + genre + ' Songs Tonight\nSongs You Will Replay\n\nImage Prompt\nmusic album cover, ' + genre + ', cinematic lighting, emotional mood, youtube thumbnail style';
+  document.getElementById('coverBox').innerText = 'Album Title
+
+' + topic + ' ' + genre + ' Playlist
+
+Thumbnail Copy Best ' + genre + ' Songs Tonight Songs You Will Replay
+
+Image Prompt music album cover, ' + genre + ', cinematic lighting, emotional mood, youtube thumbnail style'; saveApp(); }
+
+function clearAlbumCover() {
+  document.getElementById('coverBox').innerText = '아직 생성 전';
   saveApp();
 }
 
@@ -464,27 +473,10 @@ function generateYouTubePack() {
 const tags = [
     `#${genre}`,
     `#${genre}플레이리스트`,
-    '#감성노래',
-    '#감성음악',
-    '#노래모음',
-    '#플레이리스트',
-    '#koreanmusic',
-    '#koreanplaylist',
-    '#koreanballad',
-    '#kpopplaylist',
-    '#studymusic',
-    '#relaxingmusic',
-    '#nightmusic',
-    '#emotionalsongs',
-    '#musicplaylist',
-    '#drivemusic',
-    '#latenightsongs',
-    '#healingmusic',
-    '#koreanemotionalmusic'
+    '#감성노래','#감성음악','#노래모음','#플레이리스트','#koreanmusic','#koreanplaylist','#koreanballad','#kpopplaylist','#studymusic','#relaxingmusic','#nightmusic','#emotionalsongs','#musicplaylist','#drivemusic','#latenightsongs','#healingmusic','#koreanemotionalmusic'
   ];
 
   const timeline = buildTimeline();
-
   const text = `유튜브 조회수형 제목 후보
 
 ${titles.join(" ")}
@@ -493,9 +485,10 @@ ${titles.join(" ")}
 
 타임라인 ${timeline}
 
-추천 태그 ${tags.join(" ")}`;
+추천 태그 ${tags.join(" ")}`; document.getElementById('youtubeBox').innerText = text; saveApp(); }
 
-document.getElementById('youtubeBox').innerText = text;
+function clearYouTubePack() {
+  document.getElementById('youtubeBox').innerText = '아직 생성 전';
   saveApp();
 }
 
