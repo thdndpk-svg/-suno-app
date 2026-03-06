@@ -249,9 +249,7 @@
       el.style.display = el.style.display === 'block' ? 'none' : 'block';
     }
 
-    function val(id) {
-      return document.getElementById(id).value;
-    }
+    function val(id) { return document.getElementById(id).value; }
 
     function getFormData() {
       return {
@@ -318,34 +316,240 @@
       return list[index % list.length] + ' ' + (index + 1);
     }
 
-    function buildLyrics(topic, index, language, structure, hook, rap) {
+    function buildLyrics(topic, index, language, structure, hook, rap, targetLength) {
       const list = conceptList(topic || '감성');
       const a = list[index % list.length];
       const b = list[(index + 1) % list.length];
-      const intro = structure === '인트로 포함' ? '[인트로]\n조용히 시작되는 밤\n\n' : '';
-      const bridge = structure === '브릿지 포함' ? '\n\n[브릿지]\n마음을 한 번 더 안아본다' : '';
-      const hookRepeat = hook === '후렴 2회 반복' ? '\n\n[후렴 반복]\n이 감정은 더 크게 남는다' : '';
-      const rapText = rap === '없음' ? '' : (rap === '중간 랩 2회' ? '\n\n[랩]\n리듬 위로 감정을 더 올려\n\n[랩2]\n분위기를 더 크게 살려' : '\n\n[랩]\n리듬 위로 감정을 더 올려');
+      const c = list[(index + 2) % list.length];
+      const d = list[(index + 3) % list.length];
+      const useLong = targetLength === '자동조절' || targetLength === '3분' || targetLength === '3분 30초' || targetLength === '4분';
+      const useVeryLong = targetLength === '3분 30초' || targetLength === '4분';
+      const intro = structure === '인트로 포함'
+        ? '[인트로]
+조용히 시작되는 밤
+마음이 천천히 깨어난다' + (useLong ? '
+희미한 불빛이 번져간다
+
+' : '
+
+')
+        : '';
+      const bridge = structure === '브릿지 포함'
+        ? '
+
+[브릿지]
+잠시 멈춰 선 시간 끝에서
+우리의 마음을 다시 안아본다' + (useVeryLong ? '
+조용한 숨결이 더 깊어진다
+멀어진 계절도 다시 돌아온다' : '')
+        : '';
+      const hookRepeat = hook === '후렴 2회 반복'
+        ? '
+
+[후렴 반복]
+이 감정은 오래 남아
+오늘 밤을 가득 채운다
+다시 한 번 더 불러본다'
+        : '';
+      const strongHook = hook === '후렴 강하게'
+        ? '
+
+[후렴 강조]
+더 크게 더 진하게
+이 멜로디가 가슴에 남는다'
+        : '';
+      const shortsHook = hook === '쇼츠형 훅 강조'
+        ? '
+
+[훅]
+한 번 들으면 잊지 못해
+짧고 강하게 번져간다'
+        : '';
+      const rapText = rap === '없음'
+        ? ''
+        : rap === '중간 랩 2회'
+          ? '
+
+[랩]
+리듬 위로 감정을 더 올려
+숨겨둔 마음을 꺼내 보여
+오늘의 밤을 더 뜨겁게 물들여
+
+[랩2]
+흔들리던 장면도 빛이 돼
+우리의 순간이 더 크게 번져가'
+          : '
+
+[랩]
+리듬 위로 감정을 더 올려
+숨겨둔 마음을 꺼내 보여
+오늘의 밤을 더 뜨겁게 물들여';
+
       if (language === '영어') {
-        return intro + '[Verse]\n' + a + ' in the night, ' + b + ' in my heart\n\n[Chorus]\nThis song keeps our feeling alive' + bridge + hookRepeat + rapText;
+        const verse1 = useLong
+          ? '[Verse 1]
+' + a + ' in the night, I feel it start
+' + b + ' in the air, inside my heart
+Every little memory grows bright
+Holding on to this gentle light
+Steps are moving soft and slow
+Like a dream I used to know
+
+'
+          : '[Verse 1]
+' + a + ' in the night, I feel it start
+' + b + ' in the air, inside my heart
+Every little memory grows bright
+
+';
+        const pre = '[Pre-Chorus]
+Step by step the feeling grows
+In this moment my heart knows
+
+';
+        const chorus = useLong
+          ? '[Chorus]
+This song keeps our feeling alive
+Through the dark we learn to shine
+Every word and every line
+Stays with me tonight
+Even when the hours drift away
+You remain inside this song
+
+'
+          : '[Chorus]
+This song keeps our feeling alive
+Through the dark we learn to shine
+Every word and every line
+Stays with me tonight
+
+';
+        const verse2 = useLong
+          ? '[Verse 2]
+' + c + ' turns slowly into sound
+' + d + ' when you are around
+Even silence starts to sing
+Like a warm and endless spring
+All the shadows fade from view
+Every road returns to you
+
+'
+          : '[Verse 2]
+' + c + ' turns slowly into sound
+' + d + ' when you are around
+Even silence starts to sing
+Like a warm and endless spring
+
+';
+        const finalChorus = useVeryLong
+          ? '[Final Chorus]
+This song keeps our feeling alive
+Long enough to fill the night
+Every breath and every rhyme
+Makes this moment shine
+Hold this light and let it stay
+Till the end of every day
+Let this melody remain
+Like a softly falling rain'
+          : '[Final Chorus]
+This song keeps our feeling alive
+Long enough to fill the night
+Every breath and every rhyme
+Makes this moment shine';
+        return intro + verse1 + pre + chorus + verse2 + pre + bridge + hookRepeat + strongHook + shortsHook + rapText + '
+
+' + finalChorus;
       }
-      return intro + '[Verse]\n' + a + ' 속에 남은 마음을 떠올린다\n' + b + ' 같은 기억이 오늘도 번진다\n\n[Chorus]\n이 노래는 오래 마음에 남는다' + bridge + hookRepeat + rapText;
+
+      const verse1 = useLong
+        ? '[1절]
+' + a + ' 속에 남은 마음을 떠올린다
+' + b + ' 같은 기억이 오늘도 번진다
+작은 숨결마저 선명하게 들린다
+이 밤은 천천히 깊어만 간다
+멀어진 계절도 다시 돌아온다
+가만한 시선 끝에 온기가 남는다
+
+'
+        : '[1절]
+' + a + ' 속에 남은 마음을 떠올린다
+' + b + ' 같은 기억이 오늘도 번진다
+작은 숨결마저 선명하게 들린다
+
+';
+      const pre = '[프리코러스]
+한 걸음 더 가까워진 순간
+가슴속 떨림이 커져만 간다
+
+';
+      const chorus = useLong
+        ? '[후렴]
+이 노래는 오래 마음에 남는다
+조용한 밤을 가득 물들인다
+흐르던 시간도 멈춘 것처럼
+오늘의 감정이 더 선명해진다
+멀리 흩어진 숨결도 모여와
+지금 이 순간을 더 깊게 만든다
+
+'
+        : '[후렴]
+이 노래는 오래 마음에 남는다
+조용한 밤을 가득 물들인다
+흐르던 시간도 멈춘 것처럼
+오늘의 감정이 더 선명해진다
+
+';
+      const verse2 = useLong
+        ? '[2절]
+' + c + ' 같은 장면이 다시 떠오른다
+' + d + ' 같은 온기가 곁에 머문다
+말하지 못했던 진심을 꺼내본다
+이 노래가 그 마음을 대신한다
+희미한 달빛 아래 서성이다가
+조용한 미소로 서로를 바라본다
+
+'
+        : '[2절]
+' + c + ' 같은 장면이 다시 떠오른다
+' + d + ' 같은 온기가 곁에 머문다
+말하지 못했던 진심을 꺼내본다
+이 노래가 그 마음을 대신한다
+
+';
+      const finalChorus = useVeryLong
+        ? '[마지막 후렴]
+이 노래는 오래 마음에 남는다
+오늘의 밤을 끝없이 물들인다
+스쳐간 계절도 다시 피어나듯
+지금의 감정이 더 크게 번져간다
+이 멜로디가 멀리 흘러가도
+우리의 순간은 여기 남아있다
+끝나지 않을 울림처럼
+조용히 다시 피어나고 있다'
+        : '[마지막 후렴]
+이 노래는 오래 마음에 남는다
+오늘의 밤을 끝없이 물들인다
+스쳐간 계절도 다시 피어나듯
+지금의 감정이 더 크게 번져간다';
+      return intro + verse1 + pre + chorus + verse2 + pre + bridge + hookRepeat + strongHook + shortsHook + rapText + '
+
+' + finalChorus;
     }
 
     function buildStyle(song) {
       const instrumentText = song.instrument === '선택안함' ? 'no fixed main instrument' : song.instrument;
-      return song.genre + ' style, ' + song.voice + ' voice, ' + song.gender + ' vocal, ' + song.tempo + ', ' + song.rap + ', ' + instrumentText + ', ' + song.structure + ', ' + song.hook + ', ' + song.length;
+      return song.genre + ' style, ' + song.voice + ' voice, ' + song.gender + ' vocal, ' + song.tempo + ', ' + song.rap + ', ' + instrumentText + ', ' + song.structure + ', ' + song.hook + ', target length ' + song.length;
     }
 
     function buildSimplePrompt(song) {
-      return song.genre + ', ' + song.voice + ', ' + song.gender + ', ' + song.tempo + ', ' + song.rap + ', ' + song.instrument + ', ' + song.structure + ', ' + song.hook + ', ' + song.length + ', ' + song.title;
+      return song.genre + ', ' + song.voice + ', ' + song.gender + ', ' + song.tempo + ', ' + song.rap + ', ' + song.instrument + ', ' + song.structure + ', ' + song.hook + ', target length ' + song.length + ', ' + song.title;
     }
 
     function makeSong(index) {
       const topic = val('topic') || '사랑';
       const song = {
         title: buildTitle(topic, seed + index),
-        lyrics: buildLyrics(topic, seed + index, val('language'), val('structure'), val('hook'), val('rap')),
+        lyrics: buildLyrics(topic, seed + index, val('language'), val('structure'), val('hook'), val('rap'), val('length')),
         genre: val('genre'),
         language: val('language'),
         gender: autoGender(seed + index, val('gender')),
@@ -366,23 +570,21 @@
     function generateSongs() {
       const count = Number(val('count'));
       songs = [];
-      for (let i = 0; i < count; i++) {
-        songs.push(makeSong(i));
-      }
+      for (let i = 0; i < count; i++) songs.push(makeSong(i));
       seed += count;
       queueIndex = 0;
-      renderSongs();
-      updateKpi();
-      saveApp();
+      renderSongs(); updateKpi(); saveApp();
     }
 
     function generateNextSingle() {
       songs.push(makeSong(songs.length));
       seed += 1;
-      renderSongs();
-      updateKpi();
-      saveApp();
+      renderSongs(); updateKpi(); saveApp();
       alert('다음 곡 1개 추가 완료');
+    }
+
+    function escapeHtml(str) {
+      return String(str).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
     }
 
     function renderSongs() {
@@ -391,16 +593,9 @@
       songs.forEach(function(s, i) {
         const div = document.createElement('div');
         div.className = 'song';
-        div.innerHTML = '' +
+        div.innerHTML =
           '<b>' + (i + 1) + '. ' + escapeHtml(s.title) + '</b>' +
-          '<div>' +
-            '<span class="tag">' + escapeHtml(s.genre) + '</span>' +
-            '<span class="tag">' + escapeHtml(s.gender) + '</span>' +
-            '<span class="tag">' + escapeHtml(s.voice) + '</span>' +
-            '<span class="tag">' + escapeHtml(s.tempo) + '</span>' +
-            '<span class="tag">' + escapeHtml(s.rap) + '</span>' +
-            '<span class="tag">' + escapeHtml(s.instrument) + '</span>' +
-          '</div>' +
+          '<div><span class="tag">' + escapeHtml(s.genre) + '</span><span class="tag">' + escapeHtml(s.gender) + '</span><span class="tag">' + escapeHtml(s.voice) + '</span><span class="tag">' + escapeHtml(s.tempo) + '</span><span class="tag">' + escapeHtml(s.rap) + '</span><span class="tag">' + escapeHtml(s.instrument) + '</span><span class="tag">' + escapeHtml(s.length) + '</span></div>' +
           '<div class="song"><b>간단 프롬프트</b><pre>' + escapeHtml(s.simplePrompt) + '</pre></div>' +'<div class="song"><b>Custom 스타일</b><pre>' + escapeHtml(s.style) + '</pre></div>' +
       '<div class="song"><b>가사</b><textarea id="lyric' + i + '">' + escapeHtml(s.lyrics) + '</textarea></div>' +
       '<button onclick="copySongField(' + i + ',\'title\')">제목 복사</button>' +
@@ -415,18 +610,8 @@
   });
 }
 
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
-}
-
 function copySongField(i, type) {
-  const s = songs[i];
-  if (!s) return;
+  const s = songs[i]; if (!s) return;
   let text = '';
   if (type === 'title') text = s.title;
   if (type === 'style') text = s.style;
@@ -446,9 +631,7 @@ function saveLyrics(i) {
 function deleteSong(i) {
   songs.splice(i, 1);
   if (queueIndex > songs.length) queueIndex = songs.length;
-  renderSongs();
-  updateKpi();
-  saveApp();
+  renderSongs(); updateKpi(); saveApp();
 }
 
 function duplicateSong(i) {
@@ -456,47 +639,32 @@ function duplicateSong(i) {
   c.title = c.title + ' 복제';
   c.done = false;
   songs.splice(i + 1, 0, c);
-  renderSongs();
-  updateKpi();
-  saveApp();
+  renderSongs(); updateKpi(); saveApp();
 }
 
 function clearSongs() {
   songs = [];
   queueIndex = 0;
-  renderSongs();
-  updateKpi();
-  saveApp();
+  renderSongs(); updateKpi(); saveApp();
 }
 
-function openSuno() {
-  window.open('https://suno.com/create', '_blank');
-}
+function openSuno() { window.open('https://suno.com/create', '_blank'); }
 
 function startQueue() {
-  queueIndex = 0;
-  updateKpi();
-  saveApp();
-  alert('큐 시작');
+  queueIndex = 0; updateKpi(); saveApp(); alert('큐 시작');
 }
 
 function copyNextPrompt() {
-  if (queueIndex >= songs.length) {
-    alert('모든 곡 완료');
-    return;
-  }
+  if (queueIndex >= songs.length) { alert('모든 곡 완료'); return; }
   navigator.clipboard.writeText(songs[queueIndex].simplePrompt);
   alert((queueIndex + 1) + '번 곡 프롬프트 복사 완료');
   queueIndex += 1;
-  updateKpi();
-  saveApp();
+  updateKpi(); saveApp();
 }
 
 function toggleDone(i) {
   songs[i].done = !songs[i].done;
-  renderSongs();
-  updateKpi();
-  saveApp();
+  renderSongs(); updateKpi(); saveApp();
 }
 
 function updateKpi() {
@@ -508,41 +676,35 @@ function updateKpi() {
 function generateAlbumCover() {
   const topic = val('topic') || '감성';
   const genre = val('genre');
-  const text = '앨범 제목\n' + topic + ' ' + genre + ' 플레이리스트\n\n썸네일 문구\n' + genre + ' 10곡 몰아듣기\n지금 듣기 좋은 음악\n\n이미지 프롬프트\nmusic album cover, ' + genre + ', cinematic lighting, emotional mood, youtube thumbnail style';
-  document.getElementById('coverBox').innerText = text;
-  saveApp();
-}
+  const text = '앨범 제목
+
+' + topic + ' ' + genre + ' 플레이리스트
+
+썸네일 문구 ' + genre + ' 10곡 몰아듣기 지금 듣기 좋은 음악
+
+이미지 프롬프트 music album cover, ' + genre + ', cinematic lighting, emotional mood, youtube thumbnail style'; document.getElementById('coverBox').innerText = text; saveApp(); }
 
 function generateYouTubePack() {
   const topic = val('topic') || '감성';
   const genre = val('genre');
   const count = songs.length || 10;
-  const text = '유튜브 제목 후보\n' + topic + ' 감성 ' + genre + ' 모음집 | 지금 듣기 좋은 ' + count + '곡\n한 번 틀면 끝까지 듣게 되는 ' + genre + ' 플레이리스트\n\n설명\n' + genre + ' 감성 음악 ' + count + '곡 모음입니다. 편하게 감상해보세요.\n\n태그\n' + genre + ', 플레이리스트, 감성음악, AI음악, Suno';
-  document.getElementById('youtubeBox').innerText = text;
-  saveApp();
-}
+  const text = '유튜브 제목 후보
 
-function saveProject() {
-  saveApp();
-  alert('프로젝트 저장 완료');
-}
+' + topic + ' 감성 ' + genre + ' 모음집 | 지금 듣기 좋은 ' + count + '곡 한 번 틀면 끝까지 듣게 되는 ' + genre + ' 플레이리스트
 
-function loadProject() {
-  if (loadApp()) alert('프로젝트 불러오기 완료');
-  else alert('저장된 프로젝트 없음');
-}
+설명 ' + genre + ' 감성 음악 ' + count + '곡 모음입니다. 편하게 감상해보세요.
+
+태그 ' + genre + ', 플레이리스트, 감성음악, AI음악, Suno'; document.getElementById('youtubeBox').innerText = text; saveApp(); }
+
+function saveProject() { saveApp(); alert('프로젝트 저장 완료'); }
+function loadProject() { if (loadApp()) alert('프로젝트 불러오기 완료'); else alert('저장된 프로젝트 없음'); }
 
 function exportTXT() {
   let text = '';
   songs.forEach(function(s, i) {
-    text += '\n' + (i + 1) + '. ' + s.title + '\n[STYLE]\n' + s.style + '\n[LYRICS]\n' + s.lyrics + '\n';
-  });
-  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'album.txt';
-  a.click();
-}
+    text += '
+
+' + (i + 1) + '. ' + s.title + ' [STYLE] ' + s.style + ' [LYRICS] ' + s.lyrics + ' '; }); const blob = new Blob([text], { type: 'text/plain;charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'album.txt'; a.click(); }
 
 loadApp();
 updateKpi();
