@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suno Tablet Easy App</title>
+  <title>Suno Tablet Easy App Queue</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -83,8 +83,8 @@
 <body>
   <div class="wrap">
     <div class="card">
-      <h1>Suno 태블릿 쉬운앱</h1>
-      <p class="small">태블릿 브라우저에서 바로 열고, 홈 화면에 추가해서 앱처럼 쓰는 가장 쉬운 버전입니다.</p>
+      <h1>Suno 태블릿 쉬운앱 큐버전</h1>
+      <p class="small">태블릿 브라우저에서 바로 열고, 홈 화면에 추가해서 앱처럼 쓰는 쉬운 큐 버전입니다. 10곡을 만든 뒤 NEXT 버튼으로 한 곡씩 자동 복사해서 Suno에 붙여넣기 좋게 만들었습니다.</p>
     </div><div class="card">
   <h2>곡 만들기</h2>
   <label>주제</label>
@@ -137,8 +137,11 @@
   </div>
 
   <button class="btn btn-dark" onclick="generateSongs()">곡 만들기</button>
+  <button class="btn btn-light" onclick="startQueue()">큐 시작</button>
+  <button class="btn btn-light" onclick="nextSong()">NEXT 자동복사</button>
   <button class="btn btn-light" onclick="copyAllSongs()">전체 복사</button>
   <button class="btn btn-light" onclick="openSuno()">Suno 열기</button>
+  <div id="queueInfo" class="song-box" style="display:none"></div>
 </div>
 
 <div class="card">
@@ -147,7 +150,10 @@
     1. 이 페이지를 태블릿 크롬에서 엽니다.<br>
     2. 오른쪽 위 점 3개를 누릅니다.<br>
     3. 홈 화면에 추가를 누릅니다.<br>
-    4. 바탕화면 아이콘으로 실행하면 앱처럼 쓸 수 있습니다.
+    4. 바탕화면 아이콘으로 실행하면 앱처럼 쓸 수 있습니다.<br>
+    5. 10곡을 만든 뒤 큐 시작을 누릅니다.<br>
+    6. NEXT 자동복사를 누르면 현재 곡 프롬프트가 자동 복사됩니다.<br>
+    7. Suno는 열어둔 상태에서 붙여넣기만 하고, 다시 앱으로 와서 NEXT를 누르면 다음 곡이 복사됩니다.
   </div>
 </div>
 
@@ -172,6 +178,7 @@
     };
 
     let songData = [];
+    let queueIndex = -1;
 
     function buildLyrics(topic, genre, language, mood, index, keywords) {
       const keyText = keywords ? (language === '영어' ? `\nTheme: ${keywords}` : `\n핵심어: ${keywords}`) : '';
@@ -207,25 +214,10 @@
       return `제목: ${song.title}\n장르: ${song.genre}\n언어: ${song.language}\n무드: ${song.mood}\n스타일: ${song.style}\n가사:\n${song.lyrics}\n\n제작 요청:\n위 제목, 스타일, 가사로 완성도 높은 곡을 제작해줘. 후렴은 강하게, 멜로디는 기억에 남게 구성해줘.`;
     }
 
-    function generateSongs() {
-      const topic = document.getElementById('topic').value.trim() || '사랑';
-      const keywords = document.getElementById('keywords').value.trim();
-      const genre = document.getElementById('genre').value;
-      const language = document.getElementById('language').value;
-      const mood = document.getElementById('mood').value;
-      const count = Number(document.getElementById('count').value);
+    function renderSongs() {
       const results = document.getElementById('results');
       results.innerHTML = '';
-      songData = [];
-
-      for (let i = 0; i < count; i++) {
-        const wordList = titleWords[mood] || ['멜로디'];
-        const title = `${topic} ${wordList[i % wordList.length]} ${i + 1}`;
-        const style = `${styleMap[genre]}, ${mood}, ${language} lyrics`;
-        const lyrics = buildLyrics(topic, genre, language, mood, i, keywords);
-        const song = { no: i + 1, title, genre, language, mood, style, lyrics };
-        songData.push(song);
-
+      songData.forEach((song, i) => {
         const box = document.createElement('div');
         box.className = 'card';
         box.innerHTML = `
@@ -242,15 +234,61 @@
           <button class="btn btn-light" onclick="copyAndOpen(${i})">복사 + Suno 열기</button>
         `;
         results.appendChild(box);
+      });
+    }
+
+    function saveState() {
+      localStorage.setItem('tablet-suno-topic', document.getElementById('topic').value.trim());
+      localStorage.setItem('tablet-suno-keywords', document.getElementById('keywords').value.trim());
+      localStorage.setItem('tablet-suno-genre', document.getElementById('genre').value);
+      localStorage.setItem('tablet-suno-language', document.getElementById('language').value);
+      localStorage.setItem('tablet-suno-mood', document.getElementById('mood').value);
+      localStorage.setItem('tablet-suno-count', document.getElementById('count').value);
+      localStorage.setItem('tablet-suno-songs', JSON.stringify(songData));
+      localStorage.setItem('tablet-suno-queue-index', String(queueIndex));
+    }
+
+    function updateQueueInfo() {
+      const box = document.getElementById('queueInfo');
+      if (!songData.length) {
+        box.style.display = 'none';
+        return;
+      }
+      box.style.display = 'block';
+      if (queueIndex < 0) {
+        box.innerHTML = `<b>큐 상태</b>\n대기 중\n큐 시작을 누르면 1번 곡부터 순서대로 자동 복사됩니다.`;
+        return;
+      }
+      if (queueIndex >= songData.length) {
+        box.innerHTML = `<b>큐 상태</b>\n모든 곡 복사 완료\n처음부터 다시 하려면 큐 시작을 다시 누르세요.`;
+        return;
+      }
+      box.innerHTML = `<b>큐 상태</b>\n현재 진행: ${queueIndex + 1} / ${songData.length}\n다음에 복사될 곡: ${songData[queueIndex].title}`;
+    }
+
+    function generateSongs() {
+      const topic = document.getElementById('topic').value.trim() || '사랑';
+      const keywords = document.getElementById('keywords').value.trim();
+      const genre = document.getElementById('genre').value;
+      const language = document.getElementById('language').value;
+      const mood = document.getElementById('mood').value;
+      const count = Number(document.getElementById('count').value);
+
+      songData = [];
+      queueIndex = -1;
+
+      for (let i = 0; i < count; i++) {
+        const wordList = titleWords[mood] || ['멜로디'];
+        const title = `${topic} ${wordList[i % wordList.length]} ${i + 1}`;
+        const style = `${styleMap[genre]}, ${mood}, ${language} lyrics`;
+        const lyrics = buildLyrics(topic, genre, language, mood, i, keywords);
+        const song = { no: i + 1, title, genre, language, mood, style, lyrics };
+        songData.push(song);
       }
 
-      localStorage.setItem('tablet-suno-topic', topic);
-      localStorage.setItem('tablet-suno-keywords', keywords);
-      localStorage.setItem('tablet-suno-genre', genre);
-      localStorage.setItem('tablet-suno-language', language);
-      localStorage.setItem('tablet-suno-mood', mood);
-      localStorage.setItem('tablet-suno-count', count);
-      localStorage.setItem('tablet-suno-songs', JSON.stringify(songData));
+      renderSongs();
+      saveState();
+      updateQueueInfo();
     }
 
     async function copySong(index) {
@@ -258,6 +296,38 @@
       if (!song) return;
       await navigator.clipboard.writeText(buildPrompt(song));
       alert('복사되었습니다.');
+    }
+
+    function startQueue() {
+      if (!songData.length) {
+        alert('먼저 곡을 만들어주세요.');
+        return;
+      }
+      queueIndex = 0;
+      saveState();
+      updateQueueInfo();
+      alert('큐가 시작되었습니다. NEXT 자동복사를 누르면 1번 곡부터 복사됩니다.');
+    }
+
+    async function nextSong() {
+      if (!songData.length) {
+        alert('먼저 곡을 만들어주세요.');
+        return;
+      }
+      if (queueIndex < 0) {
+        queueIndex = 0;
+      }
+      if (queueIndex >= songData.length) {
+        alert('모든 곡 복사가 끝났습니다.');
+        updateQueueInfo();
+        return;
+      }
+      const song = songData[queueIndex];
+      await navigator.clipboard.writeText(buildPrompt(song));
+      alert(`${song.no}번 곡이 복사되었습니다. Suno에 붙여넣기 하세요.`);
+      queueIndex += 1;
+      saveState();
+      updateQueueInfo();
     }
 
     async function copyAndOpen(index) {
@@ -289,6 +359,7 @@
       const mood = localStorage.getItem('tablet-suno-mood') || '감성적';
       const count = localStorage.getItem('tablet-suno-count') || '10';
       const savedSongs = localStorage.getItem('tablet-suno-songs');
+      const savedQueueIndex = localStorage.getItem('tablet-suno-queue-index');
 
       document.getElementById('topic').value = topic;
       document.getElementById('keywords').value = keywords;
@@ -300,26 +371,13 @@
       if (savedSongs) {
         try {
           songData = JSON.parse(savedSongs);
-          const results = document.getElementById('results');
-          songData.forEach((song, i) => {
-            const box = document.createElement('div');
-            box.className = 'card';
-            box.innerHTML = `
-              <h3>${song.no}번 곡 - ${song.title}</h3>
-              <div>
-                <span class="tag">${song.genre}</span>
-                <span class="tag">${song.language}</span>
-                <span class="tag">${song.mood}</span>
-              </div>
-              <div class="song-box"><b>스타일</b>\n${song.style}</div>
-              <div class="song-box"><b>가사</b>\n${song.lyrics}</div>
-              <div class="song-box"><b>Suno용 프롬프트</b>\n${buildPrompt(song)}</div>
-              <button class="btn btn-dark" onclick="copySong(${i})">이 곡 복사</button>
-              <button class="btn btn-light" onclick="copyAndOpen(${i})">복사 + Suno 열기</button>
-            `;
-            results.appendChild(box);
-          });
-        } catch (e) {}
+          queueIndex = savedQueueIndex !== null ? Number(savedQueueIndex) : -1;
+          renderSongs();
+          updateQueueInfo();
+        } catch (e) {
+          songData = [];
+          queueIndex = -1;
+        }
       }
     };
   </script></body>
