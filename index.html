@@ -4,26 +4,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Suno 음악 제작 자동화 안정화 버전</title>
   <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f3f4f6; color: #111; }
-    .wrap { max-width: 1200px; margin: 0 auto; padding: 18px; }
-    .card { background: #fff; border-radius: 16px; padding: 18px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
-    h1,h2,h3,p { margin-top: 0; }
-    textarea,input,select { width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #d1d5db; font-size: 16px; background: #fff; }
-    textarea { min-height: 90px; resize: vertical; }
-    button { padding: 10px 14px; border-radius: 10px; border: none; background: #111; color: #fff; margin: 4px; cursor: pointer; font-size: 14px; }
-    button.light { background: #ececec; color: #111; }
-    button.warn { background: #ffe3e3; color: #8b0000; }
-    button.ok { background: #e6f8ea; color: #0b5d1e; }
-    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    .song { background: #fafafa; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; margin-top: 12px; }
-    .help { display: none; background: #eef4ff; border: 1px solid #c7d7ff; padding: 12px; border-radius: 10px; margin-top: 8px; font-size: 14px; line-height: 1.6; }
-    .tag { background: #eee; border-radius: 999px; padding: 4px 8px; margin-right: 5px; font-size: 12px; display: inline-block; margin-top: 6px; }
-    .muted { font-size: 13px; color: #666; }
-    .kpi { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; }
-    pre { white-space: pre-wrap; word-break: break-word; margin: 0; font-family: inherit; }
-    .btn-row { display: flex; flex-wrap: wrap; gap: 6px; }
-    @media (max-width: 800px) { .grid3 { grid-template-columns: 1fr; } }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f3f4f6;color:#111}
+    .wrap{max-width:1200px;margin:0 auto;padding:18px}
+    .card{background:#fff;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+    textarea,input,select{width:100%;padding:10px;margin-top:6px;margin-bottom:10px;border-radius:10px;border:1px solid #d1d5db;font-size:16px;background:#fff}
+    textarea{min-height:90px;resize:vertical}
+    button{padding:10px 14px;border-radius:10px;border:none;background:#111;color:#fff;margin:4px;cursor:pointer;font-size:14px}
+    button.light{background:#ececec;color:#111}
+    button.warn{background:#ffe3e3;color:#8b0000}
+    button.ok{background:#e6f8ea;color:#0b5d1e}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    .song{background:#fafafa;border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:12px}
+    .help{display:none;background:#eef4ff;border:1px solid #c7d7ff;padding:12px;border-radius:10px;margin-top:8px;font-size:14px;line-height:1.6}
+    .tag{background:#eee;border-radius:999px;padding:4px 8px;margin-right:5px;font-size:12px;display:inline-block;margin-top:6px}
+    .muted{font-size:13px;color:#666}
+    .kpi{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:12px}
+    pre{white-space:pre-wrap;word-break:break-word;margin:0;font-family:inherit}
+    .btn-row{display:flex;flex-wrap:wrap;gap:6px}
+    @media (max-width:800px){.grid3{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -31,20 +30,16 @@
     <div class="card">
       <h1>Suno 음악 제작 자동화 안정화 버전</h1>
       <button type="button" class="light help-btn" data-target="mainHelp">전체 기능 설명</button>
-      <div id="mainHelp" class="help">
-        곡 생성, 가사 수정, 프로젝트 저장, TXT 저장/불러오기, 앨범커버 생성, 유튜브 세트 생성 기능이 들어 있습니다.
-      </div>
+      <div id="mainHelp" class="help">곡 생성, 가사 저장/불러오기, 프로젝트 저장/불러오기, TXT 저장/불러오기, 앨범커버 생성, 유튜브 세트 생성 기능이 들어 있습니다.</div>
     </div><div class="card">
   <h2>생성 설정</h2>
   <button type="button" class="light help-btn" data-target="settingHelp">설명</button>
-  <div id="settingHelp" class="help">
-    제목은 한국어, Custom Style은 영어 프롬프트, 가사 구조 태그는 영어로 생성됩니다.
-  </div>
+  <div id="settingHelp" class="help">제목은 한국어, 스타일은 영어 프롬프트, 가사 구조 태그는 영어로 생성됩니다.</div>
 
   <label>주제</label>
-  <textarea id="topic" placeholder="예: 중년의 사랑, 봄밤 드라이브, 이별 후 재시작"></textarea>
+  <textarea id="topic" placeholder="예: 중년의 사랑, 봄밤 드라이브"></textarea>
   <label>키워드</label>
-  <input id="keywords" placeholder="예: 벚꽃, 야경, 재회, 추억" />
+  <input id="keywords" placeholder="예: 벚꽃, 야경, 추억" />
 
   <div class="grid3">
     <div><label>장르</label><select id="genre"><option>트로트</option><option>발라드</option><option>락</option><option>힙합</option><option>KPOP</option><option>카페음악</option></select></div>
@@ -61,12 +56,6 @@
   <div class="grid3">
     <div><label>랩</label><select id="rap"><option>없음</option><option>중간 랩 1회</option><option>중간 랩 2회</option></select></div>
     <div><label>악기</label><select id="instrument"><option>선택안함</option><option>피아노</option><option>어쿠스틱 기타</option><option>일렉기타</option><option>신스</option><option>바이올린</option><option>색소폰</option><option>드럼</option><option>베이스</option><option>플루트</option><option>트럼펫</option></select></div>
-    <div><label>곡 구조</label><select id="structure"><option>기본형</option><option>인트로 포함</option><option>브릿지 포함</option><option>후렴 반복형</option></select></div>
-  </div>
-
-  <div class="grid3">
-    <div><label>후렴 강조</label><select id="hook"><option>보통</option><option>후렴 강하게</option><option>후렴 2회 반복</option><option>쇼츠형 훅 강조</option></select></div>
-    <div><label>썸네일 스타일</label><select id="thumbStyle"><option>감성형</option><option>자극형</option><option>잔잔형</option><option>4050형</option></select></div>
     <div><label>길이</label><select id="length"><option>자동조절</option><option selected>3분</option><option>2분 30초</option><option>3분 30초</option><option>4분</option></select></div>
   </div>
 
@@ -103,7 +92,7 @@
   <h2>앨범 커버</h2>
   <button type="button" class="light help-btn" data-target="coverHelp">설명</button>
   <button type="button" id="btnOpenGPTImage" class="light">GPT 이미지 생성 열기</button>
-  <div id="coverHelp" class="help">유튜브 썸네일용 문구와 이미지 생성용 프롬프트를 만들어줍니다.</div>
+  <div id="coverHelp" class="help">앨범커버 문구와 이미지 생성용 프롬프트를 만듭니다.</div>
   <div id="coverBox" class="song muted">아직 생성 전</div>
 </div>
 
@@ -133,22 +122,13 @@
     const setStatus = (msg) => { q('projectStatus').innerText = msg; };
     const esc = (s) => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 
-    function getFormData() {
-      return { topic: val('topic'), keywords: val('keywords'), genre: val('genre'), language: val('language'), count: val('count'), gender: val('gender'), voice: val('voice'), tempo: val('tempo'), rap: val('rap'), instrument: val('instrument'), structure: val('structure'), hook: val('hook'), thumbStyle: val('thumbStyle'), length: val('length') };
+    function saveApp(){
+      localStorage.setItem('sunoStableFixed', JSON.stringify({songs, queueIndex, seed, youtubePackData, form: getFormData(), cover: q('coverBox').innerText, youtube: q('youtubeBox').innerText}));
     }
-
-    function setFormData(data) {
-      Object.keys(data || {}).forEach((k) => { if (q(k)) q(k).value = data[k]; });
-    }
-
-    function saveApp() {
-      localStorage.setItem('sunoStableFinal', JSON.stringify({ songs, queueIndex, seed, youtubePackData, form: getFormData(), cover: q('coverBox').innerText, youtube: q('youtubeBox').innerText }));
-    }
-
-    function loadApp() {
-      const raw = localStorage.getItem('sunoStableFinal');
-      if (!raw) return false;
-      try {
+    function loadApp(){
+      const raw = localStorage.getItem('sunoStableFixed');
+      if(!raw) return false;
+      try{
         const data = JSON.parse(raw);
         songs = Array.isArray(data.songs) ? data.songs : [];
         queueIndex = Number(data.queueIndex || 0);
@@ -158,398 +138,91 @@
         q('coverBox').innerText = data.cover || '아직 생성 전';
         q('youtubeBox').innerText = data.youtube || '아직 생성 전';
         return true;
-      } catch (e) {
-        return false;
-      }
+      }catch(e){return false}
     }
+    function getFormData(){
+      return {topic:val('topic'),keywords:val('keywords'),genre:val('genre'),language:val('language'),count:val('count'),gender:val('gender'),voice:val('voice'),tempo:val('tempo'),rap:val('rap'),instrument:val('instrument'),length:val('length')};
+    }
+    function setFormData(data){ Object.keys(data||{}).forEach((k)=>{ if(q(k)) q(k).value=data[k]; }); }
+    function toggleHelp(id){ const el=q(id); if(el) el.style.display = el.style.display==='block'?'none':'block'; }
 
-    function conceptList(topic) {
-      if (topic.includes('사랑') || topic.includes('연인')) return ['둘만의 밤','따뜻한 고백','설레는 마음','함께 걷는 거리','작은 약속'];
-      if (topic.includes('이별')) return ['남겨진 추억','늦은 후회','조용한 밤','흐린 기억','그리운 마음'];
-      if (topic.includes('봄')) return ['벚꽃길','따뜻한 바람','새로운 시작','햇살 가득한 날','봄밤의 약속'];
-      if (topic.includes('드라이브')) return ['야경 도로','도시의 불빛','달리는 마음','자유로운 밤','창밖의 풍경'];
+    function titlePool(topic){
+      if(topic.includes('사랑')||topic.includes('연인')) return ['둘만의 밤','따뜻한 고백','설레는 마음','함께 걷는 거리','작은 약속'];
+      if(topic.includes('이별')) return ['남겨진 추억','늦은 후회','조용한 밤','흐린 기억','그리운 마음'];
+      if(topic.includes('봄')) return ['벚꽃길','따뜻한 바람','새로운 시작','햇살 가득한 날','봄밤의 약속'];
+      if(topic.includes('드라이브')) return ['야경 도로','도시의 불빛','달리는 마음','자유로운 밤','창밖의 풍경'];
       return ['아름다운 순간','따뜻한 기억','빛나는 밤','새로운 이야기','잔잔한 마음'];
     }
-
-    function autoGender(index, selected) {
-      if (selected !== '자동') return selected;
-      return ['남성','여성','듀엣'][index % 3];
+    function autoGender(index, selected){ return selected==='자동' ? ['남성','여성','듀엣'][index%3] : selected; }
+    function buildTitle(topic,index){ const arr=titlePool(topic||'감성'); return arr[index%arr.length]+' '+(index+1); }
+    function soften(line){
+      const map={'남는다':'남아','물들인다':'물들이고','선명해진다':'선명해져','커져간다':'커져가','떠오른다':'떠올라','머문다':'머물러','대신한다':'대신해','바라본다':'바라봐','내려온다':'내려와','남아돈다':'남아돌아','들려온다':'들려와','피어오른다':'피어나','가까워진다':'가까워져','머물러준다':'머물러','만든다':'만들어','번져간다':'번져가','안아본다':'안아봐','깨어난다':'깨어나','꺼내본다':'꺼내봐','불러본다':'불러봐'};
+      for(const k in map){ if(line.endsWith(k)) return line.slice(0,-k.length)+map[k]; }
+      return line;
     }
-
-    function buildTitle(topic, index) {
-      const list = conceptList(topic || '감성');
-      return list[index % list.length] + ' ' + (index + 1);
-    }
-
-    function softenLine(line) {
-      const pairs = [
-        ['남는다','남아'],
-        ['물들인다','물들이고'],
-        ['선명해진다','선명해져'],
-        ['커져간다','커져가'],
-        ['떠오른다','떠올라'],
-        ['머문다','머물러'],
-        ['대신한다','대신해'],
-        ['바라본다','바라봐'],
-        ['내려온다','내려와'],
-        ['남아돈다','남아돌아'],
-        ['들려온다','들려와'],
-        ['피어오른다','피어나'],
-        ['가까워진다','가까워져'],
-        ['머물러준다','머물러'],
-        ['만든다','만들어'],
-        ['번져간다','번져가'],
-        ['안아본다','안아봐'],
-        ['깨어난다','깨어나'],
-        ['꺼내본다','꺼내봐'],
-        ['불러본다','불러봐']
-      ];
-      let out = line;
-      pairs.forEach(function(p){ out = out.replace(new RegExp(p[0] + '$'), p[1]); });
-      return out;
-    }
-
-    function softenLyricsText(text) {
-      return text.split('
-').map(function(line){
-        if (!line || /^.*$/.test(line)) return line;
-        return softenLine(line);
-      }).join('
-');
-    }
-
-    function buildLyrics(topic, index, language, structure, hook, rap, targetLength) {
-      const list = conceptList(topic || '감성');
-      const a = list[index % list.length];
-      const b = list[(index + 1) % list.length];
-      const c = list[(index + 2) % list.length];
-      const d = list[(index + 3) % list.length];
-      const useLong = ['자동조절','3분','3분 30초','4분'].includes(targetLength);
-      const useVeryLong = ['3분 30초','4분'].includes(targetLength);
-      let text = '';
-      if (language === '영어') {
-        const intro = structure === '인트로 포함' ? '[Intro]
-A soft light starts to glow
-The feeling slowly starts to show
-
-' : '';
-        const verse1 = useLong ? `[Verse 1]
-${a} in the night, I feel it start
-${b} in the air, inside my heart
-Every little memory grows bright
-Holding on to this gentle light
-Steps are moving soft and slow
-Like a dream I used to know
-
-` : `[Verse 1]
-${a} in the night, I feel it start
-${b} in the air, inside my heart
-Every little memory grows bright
-
-`;
-        const pre = '[Pre-Chorus]
-Step by step the feeling grows
-In this moment my heart knows
-
-';
-        const chorus = useLong ? '[Chorus]
-This song keeps our feeling alive
-Through the dark we learn to shine
-Every word and every line
-Stays with me tonight
-Even when the hours drift away
-You remain inside this song
-
-' : '[Chorus]
-This song keeps our feeling alive
-Through the dark we learn to shine
-Every word and every line
-Stays with me tonight
-
-';
-        const verse2 = useLong ? `[Verse 2]
-${c} turns slowly into sound
-${d} when you are around
-Even silence starts to sing
-Like a warm and endless spring
-All the shadows fade from view
-Every road returns to you
-
-` : `[Verse 2]
-${c} turns slowly into sound
-${d} when you are around
-Even silence starts to sing
-Like a warm and endless spring
-
-`;
-        const bridge = structure === '브릿지 포함' ? '[Bridge]
-Hold this moment one more time
-Let the silence turn to rhyme
-
-' : '';
-        const hookText = hook === '후렴 강하게' ? '[Hook Lift]
-Make the chorus bigger and brighter
-
-' : hook === '후렴 2회 반복' ? '[Chorus Repeat]
-Sing the chorus one more time
-
-' : hook === '쇼츠형 훅 강조' ? '[Short Hook]
-Instant hook, immediate impact
-
-' : '';
-        const rapText = rap === '중간 랩 1회' ? '[Rap]
-Fast words cut through the light
-
-' : rap === '중간 랩 2회' ? '[Rap]
-Fast words cut through the light
-
-[Rap 2]
-Raise the pulse and lift the night
-
-' : '';
-        const finalChorus = useVeryLong ? '[Final Chorus]
-This song keeps our feeling alive
-Long enough to fill the night
-Every breath and every rhyme
-Makes this moment shine
-Hold this light and let it stay
-Till the end of every day
-Let this melody remain
-Like a softly falling rain' : '[Final Chorus]
-This song keeps our feeling alive
-Long enough to fill the night
-Every breath and every rhyme
-Makes this moment shine';
-        text = intro + verse1 + pre + chorus + verse2 + pre + bridge + hookText + rapText + finalChorus;
-      } else {
-        const intro = structure === '인트로 포함' ? '[Intro]
-조용한 불빛이 번져간다
-오늘의 마음이 깨어난다
-
-' : '';
-        const verse1 = useLong ? `[Verse 1]
-${a} 같은 밤이 천천히 내려온다
-${b} 같은 마음이 가슴에 남아돈다
-작은 숨결마저 또렷하게 들려온다
-흘러간 계절도 다시 피어오른다
-멀어진 시간도 다시 가까워진다
-이 순간만은 오래 머물러준다
-
-` : `[Verse 1]
-${a} 같은 밤이 천천히 내려온다
-${b} 같은 마음이 가슴에 남아돈다
-작은 숨결마저 또렷하게 들려온다
-
-`;
-        const pre = '[Pre-Chorus]
-한 걸음 더 가까워지는 순간
-가슴속 떨림이 더 커져간다
-
-';
-        const chorus = useLong ? '[Chorus]
-이 노래는 오래 마음에 남는다
-조용한 밤을 가득 물들인다
-흐르던 시간도 멈춘 것처럼
-오늘의 감정이 더 선명해진다
-멀리 흩어진 숨결도 모여와
-지금 이 순간을 깊게 만든다
-
-' : '[Chorus]
-이 노래는 오래 마음에 남는다
-조용한 밤을 가득 물들인다
-흐르던 시간도 멈춘 것처럼
-오늘의 감정이 더 선명해진다
-
-';
-        const verse2 = useLong ? `[Verse 2]
-${c} 같은 장면이 다시 떠오른다
-${d} 같은 온기가 곁에 머문다
-말하지 못했던 진심을 꺼내본다
-이 노래가 그 마음을 대신한다
-희미한 달빛 아래 서성이다가
-조용한 미소로 서로를 바라본다
-
-` : `[Verse 2]
-${c} 같은 장면이 다시 떠오른다
-${d} 같은 온기가 곁에 머문다
-말하지 못했던 진심을 꺼내본다
-이 노래가 그 마음을 대신한다
-
-`;
-        const bridge = structure === '브릿지 포함' ? '[Bridge]
-잠시 멈춰 선 시간 끝에서
-우리의 마음을 다시 안아본다
-
-' : '';
-        const hookText = hook === '후렴 강하게' ? '[Hook Lift]
-더 크게 더 진하게 마음에 남는다
-
-' : hook === '후렴 2회 반복' ? '[Chorus Repeat]
-한 번 더 깊게 불러본다
-
-' : hook === '쇼츠형 훅 강조' ? '[Short Hook]
-짧고 강하게 바로 꽂힌다
-
-' : '';
-        const rapText = rap === '중간 랩 1회' ? '[Rap]
-리듬 위로 감정을 더 올려
-
-' : rap === '중간 랩 2회' ? '[Rap]
-리듬 위로 감정을 더 올려
-
-[Rap 2]
-분위기를 더 크게 살려
-
-' : '';
-        const finalChorus = useVeryLong ? '[Final Chorus]
-이 노래는 오래 마음에 남는다
-오늘의 밤을 끝없이 물들인다
-스쳐간 계절도 다시 피어나듯
-지금의 감정이 더 크게 번져간다
-이 멜로디가 멀리 흘러가도
-우리의 순간은 여기 남아있다
-끝나지 않을 울림처럼
-조용히 다시 피어나고 있다' : '[Final Chorus]
-이 노래는 오래 마음에 남는다
-오늘의 밤을 끝없이 물들인다
-스쳐간 계절도 다시 피어나듯
-지금의 감정이 더 크게 번져간다';
-        text = intro + verse1 + pre + chorus + verse2 + pre + bridge + hookText + rapText + finalChorus;
-        text = softenLyricsText(text);
+    function softenText(text){ return text.split('\n').map(line => !line || /^.*$/.test(line) ? line : soften(line)).join('\n'); }
+    function buildLyrics(topic,index,language,length){
+      const arr=titlePool(topic||'감성');
+      const a=arr[index%arr.length], b=arr[(index+1)%arr.length], c=arr[(index+2)%arr.length], d=arr[(index+3)%arr.length];
+      const long=['자동조절','3분','3분 30초','4분'].includes(length);
+      if(language==='영어'){
+        return `[Verse 1]\n${a} in the night, I feel it start\n${b} in the air, inside my heart\n${long?'Every little memory grows bright\nHolding on to this gentle light\n':''}\n[Pre-Chorus]\nStep by step the feeling grows\nIn this moment my heart knows\n\n[Chorus]\nThis song keeps our feeling alive\nThrough the dark we learn to shine\nEvery word and every line\nStays with me tonight\n${long?'Even when the hours drift away\nYou remain inside this song\n':''}\n[Verse 2]\n${c} turns slowly into sound\n${d} when you are around\nEven silence starts to sing\nLike a warm and endless spring\n\n[Final Chorus]\nThis song keeps our feeling alive\nLong enough to fill the night\nEvery breath and every rhyme\nMakes this moment shine`;
       }
-      return text;
+      return softenText(`[Verse 1]\n${a} 같은 밤이 천천히 내려온다\n${b} 같은 마음이 가슴에 남아돈다\n${long?'작은 숨결마저 또렷하게 들려온다\n흘러간 계절도 다시 피어오른다\n멀어진 시간도 다시 가까워진다\n이 순간만은 오래 머물러준다\n':''}\n[Pre-Chorus]\n한 걸음 더 가까워지는 순간\n가슴속 떨림이 더 커져간다\n\n[Chorus]\n이 노래는 오래 마음에 남는다\n조용한 밤을 가득 물들인다\n흐르던 시간도 멈춘 것처럼\n오늘의 감정이 더 선명해진다\n${long?'멀리 흩어진 숨결도 모여와\n지금 이 순간을 깊게 만든다\n':''}\n[Verse 2]\n${c} 같은 장면이 다시 떠오른다\n${d} 같은 온기가 곁에 머문다\n말하지 못했던 진심을 꺼내본다\n이 노래가 그 마음을 대신한다\n\n[Final Chorus]\n이 노래는 오래 마음에 남는다\n오늘의 밤을 끝없이 물들인다\n스쳐간 계절도 다시 피어나듯\n지금의 감정이 더 크게 번져간다`);
+    }
+    function buildStyle(song){
+      const genreMap={트로트:'Korean trot ballad with emotional phrasing and a singalong chorus',발라드:'Korean emotional ballad with a dramatic melodic arc',락:'Korean rock anthem with dynamic build and strong band energy',힙합:'Korean melodic hip-hop with rhythmic flow and modern groove',KPOP:'modern polished K-pop with a catchy hook and commercial arrangement',카페음악:'soft cafe pop with a warm acoustic mood and relaxed atmosphere'};
+      const genderMap={남성:'solo male lead vocal only',여성:'solo female lead vocal only',듀엣:'male and female duet with alternating lines and blended chorus'};
+      const voiceMap={맑은:'clear clean vocal tone',허스키:'slightly husky emotional vocal tone',명랑:'bright lively vocal tone',가녀린:'soft delicate airy vocal tone'};
+      const tempoMap={느리게:'slow tempo around 72 to 88 BPM',보통:'moderate tempo around 90 to 108 BPM',빠르게:'upbeat tempo around 110 to 128 BPM'};
+      const rapMap={없음:'no rap section','중간 랩 1회':'include one short melodic rap section in the middle','중간 랩 2회':'include two rap sections with smooth transitions into the chorus'};
+      const instMap={선택안함:'',피아노:'piano-driven arrangement with emotional chord progression','어쿠스틱 기타':'acoustic guitar-led arrangement with warm strumming',일렉기타:'electric guitar-driven arrangement with strong texture',신스:'modern synth-based arrangement with wide ambient layers',바이올린:'cinematic violin layers supporting the melody',색소폰:'saxophone accents for a romantic late-night mood',드럼:'clear live drum groove with punchy rhythm',베이스:'deep bass groove anchoring the arrangement',플루트:'soft flute lines adding airy emotion',트럼펫:'trumpet highlights for dramatic lift'};
+      return [genreMap[song.genre],genderMap[song.gender],voiceMap[song.voice],tempoMap[song.tempo],rapMap[song.rap],instMap[song.instrument],song.length==='4분'?'use a fuller arrangement with extended development around 4 minutes':'target a balanced structure around 3 minutes','focus on a polished commercial arrangement, a clear topline melody, and a memorable chorus'].filter(Boolean).join(', ');
+    }
+    function buildSimplePrompt(song){
+      return [song.genre==='발라드'?'Korean emotional ballad':song.genre+' song',song.gender==='남성'?'solo male vocal only':song.gender==='여성'?'solo female vocal only':'male female duet',song.voice==='맑은'?'clear clean vocal':song.voice, song.tempo==='느리게'?'slow tempo':song.tempo==='빠르게'?'upbeat tempo':'moderate tempo',song.rap==='중간 랩 1회'?'one rap section':song.rap==='중간 랩 2회'?'two rap sections':'',song.instrument!=='선택안함'?song.instrument:'','target '+song.length,song.title].filter(Boolean).join(', ');
+    }
+    function makeSong(index){
+      const song={title:buildTitle(val('topic')||'사랑', seed+index), lyrics:buildLyrics(val('topic')||'사랑', seed+index, val('language'), val('length')), genre:val('genre'), language:val('language'), gender:autoGender(seed+index,val('gender')), voice:val('voice'), tempo:val('tempo'), rap:val('rap'), instrument:val('instrument'), length:val('length'), done:false};
+      song.style=buildStyle(song); song.simplePrompt=buildSimplePrompt(song); return song;
     }
 
-    function buildStyle(song) {
-      const genreMap = { '트로트': 'Korean trot ballad with emotional phrasing and a singalong chorus', '발라드': 'Korean emotional ballad with a dramatic melodic arc', '락': 'Korean rock anthem with dynamic build and strong band energy', '힙합': 'Korean melodic hip-hop with rhythmic flow and modern groove', 'KPOP': 'modern polished K-pop with a catchy hook and commercial arrangement', '카페음악': 'soft cafe pop with a warm acoustic mood and relaxed atmosphere' };
-      const voiceMap = { '맑은': 'clear clean vocal tone', '허스키': 'slightly husky emotional vocal tone', '명랑': 'bright lively vocal tone', '가녀린': 'soft delicate airy vocal tone' };
-      const genderMap = { '남성': 'solo male lead vocal only', '여성': 'solo female lead vocal only', '듀엣': 'male and female duet with alternating lines and blended chorus' };
-      const tempoMap = { '느리게': 'slow tempo around 72 to 88 BPM', '보통': 'moderate tempo around 90 to 108 BPM', '빠르게': 'upbeat tempo around 110 to 128 BPM' };
-      const rapMap = { '없음': 'no rap section', '중간 랩 1회': 'include one short melodic rap section in the middle', '중간 랩 2회': 'include two rap sections with smooth transitions into the chorus' };
-      const instrumentMap = { '선택안함': '', '피아노': 'piano-driven arrangement with emotional chord progression', '어쿠스틱 기타': 'acoustic guitar-led arrangement with warm strumming', '일렉기타': 'electric guitar-driven arrangement with strong texture', '신스': 'modern synth-based arrangement with wide ambient layers', '바이올린': 'cinematic violin layers supporting the melody', '색소폰': 'saxophone accents for a romantic late-night mood', '드럼': 'clear live drum groove with punchy rhythm', '베이스': 'deep bass groove anchoring the arrangement', '플루트': 'soft flute lines adding airy emotion', '트럼펫': 'trumpet highlights for dramatic lift' };
-      const structureMap = { '기본형': 'standard verse, pre-chorus, chorus, second verse, and final chorus structure', '인트로 포함': 'start with a soft intro before verse one', '브릿지 포함': 'include a clear bridge before the final chorus', '후렴 반복형': 'repeat the chorus for a stronger replayable payoff' };
-      const hookMap = { '보통': 'balanced memorable chorus', '후렴 강하게': 'make the chorus bigger, more emotional, and highly memorable', '후렴 2회 반복': 'repeat the main chorus twice near the end for stronger impact', '쇼츠형 훅 강조': 'front-load a short catchy hook that lands immediately' };
-      const lengthMap = { '자동조절': 'target a natural full-song structure around 3 minutes', '2분 30초': 'keep the structure concise around 2 minutes 30 seconds', '3분': 'target a balanced structure around 3 minutes', '3분 30초': 'expand the arrangement to around 3 minutes 30 seconds', '4분': 'use a fuller arrangement with extended development around 4 minutes' };
-      const parts = [genreMap[song.genre], genderMap[song.gender], voiceMap[song.voice], tempoMap[song.tempo], rapMap[song.rap]];
-      if (instrumentMap[song.instrument]) parts.push(instrumentMap[song.instrument]);
-      parts.push(structureMap[song.structure], hookMap[song.hook], lengthMap[song.length], 'focus on a polished commercial arrangement, a clear topline melody, and a memorable chorus');
-      return parts.filter(Boolean).join(', ');
-    }
-
-    function buildSimplePrompt(song) {
-      const genreMap = { '트로트': 'Korean trot ballad', '발라드': 'Korean emotional ballad', '락': 'Korean rock song', '힙합': 'Korean melodic hip-hop song', 'KPOP': 'modern K-pop song', '카페음악': 'soft cafe pop song' };
-      const genderMap = { '남성': 'solo male vocal only', '여성': 'solo female vocal only', '듀엣': 'male female duet' };
-      const voiceMap = { '맑은': 'clear clean vocal', '허스키': 'husky emotional vocal', '명랑': 'bright lively vocal', '가녀린': 'soft delicate airy vocal' };
-      const parts = [genreMap[song.genre], genderMap[song.gender], voiceMap[song.voice], song.tempo === '느리게' ? 'slow tempo' : song.tempo === '빠르게' ? 'upbeat tempo' : 'moderate tempo'];
-      if (song.rap === '중간 랩 1회') parts.push('one rap section');
-      if (song.rap === '중간 랩 2회') parts.push('two rap sections');
-      if (song.instrument !== '선택안함') parts.push(song.instrument);
-      if (song.structure === '인트로 포함') parts.push('soft intro');
-      if (song.structure === '브릿지 포함') parts.push('bridge before final chorus');
-      if (song.structure === '후렴 반복형') parts.push('repeated chorus structure');
-      if (song.hook === '후렴 강하게') parts.push('big emotional chorus');
-      if (song.hook === '후렴 2회 반복') parts.push('double chorus ending');
-      if (song.hook === '쇼츠형 훅 강조') parts.push('immediate catchy hook');
-      parts.push('target ' + song.length, song.title);
-      return parts.filter(Boolean).join(', ');
-    }
-
-    function makeSong(index) {
-      const topic = val('topic') || '사랑';
-      const song = { title: buildTitle(topic, seed + index), lyrics: buildLyrics(topic, seed + index, val('language'), val('structure'), val('hook'), val('rap'), val('length')), genre: val('genre'), language: val('language'), gender: autoGender(seed + index, val('gender')), voice: val('voice'), tempo: val('tempo'), rap: val('rap'), instrument: val('instrument'), structure: val('structure'), hook: val('hook'), length: val('length'), done: false };
-      song.style = buildStyle(song);
-      song.simplePrompt = buildSimplePrompt(song);
-      return song;
-    }
-
-    function renderSongs() {
-      const box = q('songList');
-      box.innerHTML = '';
-      songs.forEach((s, i) => {
-        const tags = [s.genre, s.gender, s.voice, s.tempo, s.rap, s.instrument, s.length].map((t) => `<span class="tag">${esc(t)}</span>`).join('');
-        const div = document.createElement('div');
-        div.className = 'song';
-        div.innerHTML = `
-          <b>${i + 1}. ${esc(s.title)}</b>
-          <div>${tags}</div>
-          <div class="song"><b>Simple Prompt</b><pre>${esc(s.simplePrompt)}</pre></div><div class="song"><b>Custom Style</b><pre>${esc(s.style)}</pre></div>
-      <div class="song"><b>Lyrics</b><textarea id="lyric${i}"></textarea></div>
-      <div class="btn-row">
-        <button type="button" data-action="copyTitle" data-index="${i}">제목 복사</button>
-        <button type="button" data-action="copyStyle" data-index="${i}">스타일 복사</button>
-        <button type="button" data-action="copyLyrics" data-index="${i}">가사 복사</button>
-        <button type="button" data-action="copySimple" data-index="${i}" class="light">간단 프롬프트 복사</button>
-        <button type="button" data-action="saveLyrics" data-index="${i}" class="light">가사 저장</button>
-        <button type="button" data-action="loadLyrics" data-index="${i}" class="light">가사 다시 불러오기</button>
-        <button type="button" data-action="toggleDone" data-index="${i}" class="ok">${s.done ? '완료 해제' : '제작 완료 체크'}</button>
-        <button type="button" data-action="duplicateSong" data-index="${i}" class="light">복제</button>
-        <button type="button" data-action="deleteSong" data-index="${i}" class="warn">삭제</button>
-      </div>`;
-    box.appendChild(div);
-    q('lyric' + i).value = s.lyrics;
+    function renderSongs(){
+      const box=q('songList'); box.innerHTML='';
+      songs.forEach((s,i)=>{
+        const div=document.createElement('div'); div.className='song';
+        const tags=[s.genre,s.gender,s.voice,s.tempo,s.rap,s.instrument,s.length].map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+        div.innerHTML=`<b>${i+1}. ${esc(s.title)}</b><div>${tags}</div><div class="song"><b>Simple Prompt</b><pre>${esc(s.simplePrompt)}</pre></div><div class="song"><b>Custom Style</b><pre>${esc(s.style)}</pre></div><div class="song"><b>Lyrics</b><textarea id="lyric${i}"></textarea></div><div class="btn-row"><button type="button" data-a="ct" data-i="${i}">제목 복사</button><button type="button" data-a="cs" data-i="${i}">스타일 복사</button><button type="button" data-a="cl" data-i="${i}">가사 복사</button><button type="button" class="light" data-a="cp" data-i="${i}">간단 프롬프트 복사</button><button type="button" class="light" data-a="sl" data-i="${i}">가사 저장</button><button type="button" class="light" data-a="ll" data-i="${i}">가사 다시 불러오기</button><button type="button" class="ok" data-a="td" data-i="${i}">${s.done?'완료 해제':'제작 완료 체크'}</button><button type="button" class="light" data-a="du" data-i="${i}">복제</button><button type="button" class="warn" data-a="de" data-i="${i}">삭제</button></div>`;box.appendChild(div); q('lyric'+i).value=s.lyrics;
   });
-  document.querySelectorAll('#songList [data-action]').forEach((btn) => {
-    btn.onclick = () => {
-      const i = Number(btn.dataset.index);
-      const a = btn.dataset.action;
-      if (a === 'copyTitle') copyText(songs[i]?.title || '');
-      if (a === 'copyStyle') copyText(songs[i]?.style || '');
-      if (a === 'copyLyrics') copyText(q('lyric' + i)?.value || '');
-      if (a === 'copySimple') copyText(songs[i]?.simplePrompt || '');
-      if (a === 'saveLyrics') saveLyrics(i);
-      if (a === 'loadLyrics') loadLyrics(i);
-      if (a === 'toggleDone') toggleDone(i);
-      if (a === 'duplicateSong') duplicateSong(i);
-      if (a === 'deleteSong') deleteSong(i);
-    };
-  });
+  box.querySelectorAll('[data-a]').forEach(btn=>{ btn.onclick=()=>songAction(btn.dataset.a, Number(btn.dataset.i)); });
 }
-
-function copyText(text) { navigator.clipboard.writeText(text || '').then(() => alert('복사 완료')).catch(() => alert('복사 실패')); }
-function saveLyrics(i) { if (!songs[i] || !q('lyric' + i)) return; songs[i].lyrics = q('lyric' + i).value; saveApp(); setStatus('가사 저장 완료'); alert('가사 저장 완료'); }
-function loadLyrics(i) { if (!songs[i] || !q('lyric' + i)) return; q('lyric' + i).value = songs[i].lyrics; setStatus('가사 다시 불러오기 완료'); }
-function generateSongs() { const count = Number(val('count')) || 10; const start = songs.length; for (let i = 0; i < count; i++) songs.push(makeSong(start + i)); seed += count; renderSongs(); updateKpi(); saveApp(); setStatus('곡 생성 완료'); }
-function generateNextSingle() { songs.push(makeSong(songs.length)); seed += 1; renderSongs(); updateKpi(); saveApp(); setStatus('다음 곡 1개 추가 완료'); alert('다음 곡 1개 추가 완료'); }
-function deleteSong(i) { songs.splice(i, 1); if (queueIndex > songs.length) queueIndex = songs.length; renderSongs(); updateKpi(); saveApp(); setStatus('곡 삭제 완료'); }
-function duplicateSong(i) { const c = JSON.parse(JSON.stringify(songs[i])); c.title += ' 복제'; c.done = false; songs.splice(i + 1, 0, c); renderSongs(); updateKpi(); saveApp(); setStatus('곡 복제 완료'); }
-function clearSongs() { songs = []; queueIndex = 0; renderSongs(); updateKpi(); saveApp(); setStatus('전체 삭제 완료'); }
-function startQueue() { queueIndex = 0; updateKpi(); saveApp(); setStatus('큐 시작'); alert('큐 시작'); }
-function copyNextPrompt() { if (queueIndex >= songs.length) return alert('모든 곡 완료'); copyText(songs[queueIndex].simplePrompt); queueIndex += 1; updateKpi(); saveApp(); setStatus('다음곡 프롬프트 복사 완료'); }
-function toggleDone(i) { if (!songs[i]) return; songs[i].done = !songs[i].done; renderSongs(); updateKpi(); saveApp(); setStatus('완료 체크 변경'); }
-function updateKpi() { q('kpiCount').innerText = songs.length + '곡'; q('kpiDone').innerText = songs.filter((s) => s.done).length + '곡'; q('kpiQueue').innerText = songs.length ? Math.min(queueIndex + 1, songs.length) + ' / ' + songs.length : '대기'; }
-function generateAlbumCover() { const topic = val('topic') || '감성'; const genre = val('genre') || '발라드'; q('coverBox').innerText = `Album Title\n${topic} ${genre} Playlist\n\nThumbnail Copy\nBest ${genre} Songs Tonight\nSongs You Will Replay\n\nImage Prompt\nmusic album cover, ${genre}, cinematic lighting, emotional mood, youtube thumbnail style`; saveApp(); setStatus('앨범커버 생성 완료'); }
-function clearAlbumCover() { q('coverBox').innerText = '아직 생성 전'; saveApp(); setStatus('앨범커버 지우기 완료'); }
-function buildTimeline() { if (!songs.length) return '00:00 첫 곡'; let seconds = 0; const lines = []; songs.forEach((song) => { const mm = String(Math.floor(seconds / 60)).padStart(2, '0'); const ss = String(seconds % 60).padStart(2, '0'); lines.push(`${mm}:${ss} ${song.title}`); let add = 180; if (song.length === '2분 30초') add = 150; else if (song.length === '3분 30초') add = 210; else if (song.length === '4분') add = 240; seconds += add; }); return lines.join('\n'); }
-function renderYouTubeActions() { const box = q('youtubeActionBox'); if (!youtubePackData) { box.innerHTML = ''; return; } box.innerHTML = youtubePackData.titles.map((_, i) => `<button type="button" class="light yt-copy" data-idx="${i}">${i + 1}번 제목 복사</button>`).join('') + '<button type="button" id="btnCopyDescTags" class="light">설명+태그 복사</button>'; box.querySelectorAll('.yt-copy').forEach((b) => { b.onclick = () => copyText(youtubePackData.titles[Number(b.dataset.idx)] || ''); }); q('btnCopyDescTags').onclick = () => copyText('설명\n' + youtubePackData.description + '\n\n태그\n' + youtubePackData.tags.join(' ')); }
-function generateYouTubePack() { const genre = val('genre') || '발라드'; const count = songs.length || 10; const titles = [`지금 가장 많이 듣는 ${genre} 감성 플레이리스트 🌙 한번 틀면 끝까지 듣게 되는 노래 ${count}곡`,`밤에 들으면 더 좋은 ${genre} 모음 🎧 감성 터지는 노래 ${count}곡`,`요즘 유튜브에서 뜨는 ${genre} 감성 노래 모음 | 계속 듣게 되는 플레이리스트`,`잠들기 전에 듣는 ${genre} 감성 음악 🌌 마음이 편해지는 노래 ${count}곡`,`한번 들으면 반복하게 되는 ${genre} 감성 노래 모음 🎶 최고의 플레이리스트`]; const description = `${genre} 감성 음악 ${count}곡을 모은 플레이리스트입니다.\n\n잔잔한 밤, 드라이브, 공부, 휴식할 때 듣기 좋은 음악으로 구성했습니다.\n\n좋아요와 구독은 채널 운영에 큰 힘이 됩니다.`; const tags = [`#${genre}`,`#${genre}플레이리스트`,'#감성노래','#감성음악','#노래모음','#플레이리스트','#koreanmusic','#koreanplaylist','#koreanballad','#kpopplaylist','#studymusic','#relaxingmusic','#nightmusic','#emotionalsongs','#musicplaylist','#drivemusic','#latenightsongs','#healingmusic','#koreanemotionalmusic']; youtubePackData = { titles, description, tags, timeline: buildTimeline() }; q('youtubeBox').innerText = '유튜브 조회수형 제목 후보\n\n' + titles.map((t, i) => `${i + 1}. ${t}`).join('\n') + '\n\n설명\n' + description + '\n\n타임라인\n' + youtubePackData.timeline + '\n\n추천 태그\n' + tags.join(' '); renderYouTubeActions(); saveApp(); setStatus('유튜브 세트 생성 완료'); }
-function clearYouTubePack() { youtubePackData = null; q('youtubeBox').innerText = '아직 생성 전'; renderYouTubeActions(); saveApp(); setStatus('유튜브 세트 지우기 완료'); }
-function saveProject() { saveApp(); setStatus('프로젝트 저장 완료'); alert('프로젝트 저장 완료'); }
-function loadProject() { if (loadApp()) { renderSongs(); renderYouTubeActions(); updateKpi(); setStatus('프로젝트 불러오기 완료'); alert('프로젝트 불러오기 완료'); } else { setStatus('저장된 프로젝트 없음'); alert('저장된 프로젝트 없음'); } }
-function exportTXT() { let text = ''; songs.forEach((s, i) => { text += `\n${i + 1}. ${s.title}\n[STYLE]\n${s.style}\n[LYRICS]\n${s.lyrics}\n`; }); const blob = new Blob([text], { type: 'text/plain;charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'album.txt'; a.click(); setStatus('TXT 저장 완료'); }
-function importTXT() { q('txtFileInput').click(); }
-function handleTXTImport(file) { if (!file) return; const reader = new FileReader(); reader.onload = (e) => { const text = String(e.target.result || ''); const chunks = text.split(/\n(?=\d+\.\s)/).map((v) => v.trim()).filter(Boolean); const imported = []; chunks.forEach((chunk) => { const titleMatch = chunk.match(/^\d+\.\s(.+)$/m); const styleMatch = chunk.match(/STYLE\n([\s\S]*?)\nLYRICS/m); const lyricsMatch = chunk.match(/LYRICS\n([\s\S]*)$/m); if (titleMatch) { const song = { title: titleMatch[1].trim(), style: styleMatch ? styleMatch[1].trim() : '', lyrics: lyricsMatch ? lyricsMatch[1].trim() : '', genre: val('genre'), language: val('language'), gender: val('gender') === '자동' ? '여성' : val('gender'), voice: val('voice'), tempo: val('tempo'), rap: val('rap'), instrument: val('instrument'), structure: val('structure'), hook: val('hook'), length: val('length'), done: false }; if (!song.style) song.style = buildStyle(song); song.simplePrompt = buildSimplePrompt(song); imported.push(song); } }); if (!imported.length) { setStatus('TXT 불러오기 실패'); alert('TXT 형식을 읽지 못했습니다.'); return; } imported.forEach((song) => songs.push(song)); renderSongs(); updateKpi(); saveApp(); setStatus('TXT 불러오기 완료'); alert('TXT 불러오기 완료'); }; reader.readAsText(file, 'utf-8'); }
-function openSuno() { window.open('https://suno.com/create', '_blank'); }
-function openGPTImage() { window.open('https://chatgpt.com/?model=gpt-image-1', '_blank'); }
-
-function bindAll() {
-  document.querySelectorAll('.help-btn').forEach((btn) => { btn.onclick = () => toggleHelp(btn.dataset.target); });
-  q('btnGenerateSongs').onclick = generateSongs;
-  q('btnGenerateNextSingle').onclick = generateNextSingle;
-  q('btnStartQueue').onclick = startQueue;
-  q('btnCopyNextPrompt').onclick = copyNextPrompt;
-  q('btnOpenSuno').onclick = openSuno;
-  q('btnGenerateAlbumCover').onclick = generateAlbumCover;
-  q('btnClearAlbumCover').onclick = clearAlbumCover;
-  q('btnGenerateYouTubePack').onclick = generateYouTubePack;
-  q('btnClearYouTubePack').onclick = clearYouTubePack;
-  q('btnSaveProject').onclick = saveProject;
-  q('btnLoadProject').onclick = loadProject;
-  q('btnExportTXT').onclick = exportTXT;
-  q('btnImportTXT').onclick = importTXT;
-  q('btnClearSongs').onclick = clearSongs;
-  q('btnOpenGPTImage').onclick = openGPTImage;
-  q('txtFileInput').onchange = (e) => { handleTXTImport(e.target.files[0]); e.target.value = ''; };
-}
+function songAction(a,i){ if(a==='ct') return copyText(songs[i]?.title||''); if(a==='cs') return copyText(songs[i]?.style||''); if(a==='cl') return copyText(q('lyric'+i)?.value||''); if(a==='cp') return copyText(songs[i]?.simplePrompt||''); if(a==='sl') return saveLyrics(i); if(a==='ll') return loadLyrics(i); if(a==='td') return toggleDone(i); if(a==='du') return duplicateSong(i); if(a==='de') return deleteSong(i); }
+function copyText(text){ navigator.clipboard.writeText(text||'').then(()=>alert('복사 완료')).catch(()=>alert('복사 실패')); }
+function saveLyrics(i){ if(!songs[i]||!q('lyric'+i)) return; songs[i].lyrics=q('lyric'+i).value; saveApp(); setStatus('가사 저장 완료'); alert('가사 저장 완료'); }
+function loadLyrics(i){ if(!songs[i]||!q('lyric'+i)) return; q('lyric'+i).value=songs[i].lyrics; setStatus('가사 다시 불러오기 완료'); }
+function generateSongs(){ const count=Number(val('count'))||10; const start=songs.length; for(let i=0;i<count;i++) songs.push(makeSong(start+i)); seed+=count; renderSongs(); updateKpi(); saveApp(); setStatus('곡 생성 완료'); }
+function generateNextSingle(){ songs.push(makeSong(songs.length)); seed+=1; renderSongs(); updateKpi(); saveApp(); setStatus('다음 곡 1개 추가 완료'); alert('다음 곡 1개 추가 완료'); }
+function deleteSong(i){ songs.splice(i,1); if(queueIndex>songs.length) queueIndex=songs.length; renderSongs(); updateKpi(); saveApp(); setStatus('곡 삭제 완료'); }
+function duplicateSong(i){ const c=JSON.parse(JSON.stringify(songs[i])); c.title+=' 복제'; c.done=false; songs.splice(i+1,0,c); renderSongs(); updateKpi(); saveApp(); setStatus('곡 복제 완료'); }
+function clearSongs(){ songs=[]; queueIndex=0; renderSongs(); updateKpi(); saveApp(); setStatus('전체 삭제 완료'); }
+function startQueue(){ queueIndex=0; updateKpi(); saveApp(); setStatus('큐 시작'); alert('큐 시작'); }
+function copyNextPrompt(){ if(queueIndex>=songs.length) return alert('모든 곡 완료'); copyText(songs[queueIndex].simplePrompt); queueIndex+=1; updateKpi(); saveApp(); setStatus('다음곡 프롬프트 복사 완료'); }
+function toggleDone(i){ if(!songs[i]) return; songs[i].done=!songs[i].done; renderSongs(); updateKpi(); saveApp(); setStatus('완료 체크 변경'); }
+function updateKpi(){ q('kpiCount').innerText=songs.length+'곡'; q('kpiDone').innerText=songs.filter(s=>s.done).length+'곡'; q('kpiQueue').innerText=songs.length?Math.min(queueIndex+1,songs.length)+' / '+songs.length:'대기'; }
+function generateAlbumCover(){ const topic=val('topic')||'감성'; const genre=val('genre')||'발라드'; q('coverBox').innerText=`Album Title\n${topic} ${genre} Playlist\n\nThumbnail Copy\nBest ${genre} Songs Tonight\nSongs You Will Replay\n\nImage Prompt\nmusic album cover, ${genre}, cinematic lighting, emotional mood, youtube thumbnail style`; saveApp(); setStatus('앨범커버 생성 완료'); }
+function clearAlbumCover(){ q('coverBox').innerText='아직 생성 전'; saveApp(); setStatus('앨범커버 지우기 완료'); }
+function buildTimeline(){ if(!songs.length) return '00:00 첫 곡'; let seconds=0; const lines=[]; songs.forEach(song=>{ const mm=String(Math.floor(seconds/60)).padStart(2,'0'); const ss=String(seconds%60).padStart(2,'0'); lines.push(`${mm}:${ss} ${song.title}`); let add=180; if(song.length==='2분 30초') add=150; else if(song.length==='3분 30초') add=210; else if(song.length==='4분') add=240; seconds+=add; }); return lines.join('\n'); }
+function renderYouTubeActions(){ const box=q('youtubeActionBox'); if(!youtubePackData){ box.innerHTML=''; return; } box.innerHTML=youtubePackData.titles.map((_,i)=>`<button type="button" class="light yt-copy" data-i="${i}">${i+1}번 제목 복사</button>`).join('')+'<button type="button" id="btnCopyDescTags" class="light">설명+태그 복사</button>'; box.querySelectorAll('.yt-copy').forEach(b=>{ b.onclick=()=>copyText(youtubePackData.titles[Number(b.dataset.i)]||''); }); q('btnCopyDescTags').onclick=()=>copyText('설명\n'+youtubePackData.description+'\n\n태그\n'+youtubePackData.tags.join(' ')); }
+function generateYouTubePack(){ const genre=val('genre')||'발라드'; const count=songs.length||10; const titles=[`지금 가장 많이 듣는 ${genre} 감성 플레이리스트 🌙 한번 틀면 끝까지 듣게 되는 노래 ${count}곡`,`밤에 들으면 더 좋은 ${genre} 모음 🎧 감성 터지는 노래 ${count}곡`,`요즘 유튜브에서 뜨는 ${genre} 감성 노래 모음 | 계속 듣게 되는 플레이리스트`,`잠들기 전에 듣는 ${genre} 감성 음악 🌌 마음이 편해지는 노래 ${count}곡`,`한번 들으면 반복하게 되는 ${genre} 감성 노래 모음 🎶 최고의 플레이리스트`]; const description=`${genre} 감성 음악 ${count}곡을 모은 플레이리스트입니다.\n\n잔잔한 밤, 드라이브, 공부, 휴식할 때 듣기 좋은 음악으로 구성했습니다.\n\n좋아요와 구독은 채널 운영에 큰 힘이 됩니다.`; const tags=[`#${genre}`,`#${genre}플레이리스트`,'#감성노래','#감성음악','#노래모음','#플레이리스트','#koreanmusic','#koreanplaylist','#koreanballad','#kpopplaylist','#studymusic','#relaxingmusic','#nightmusic','#emotionalsongs','#musicplaylist','#drivemusic','#latenightsongs','#healingmusic','#koreanemotionalmusic']; youtubePackData={titles,description,tags,timeline:buildTimeline()}; q('youtubeBox').innerText='유튜브 조회수형 제목 후보\n\n'+titles.map((t,i)=>`${i+1}. ${t}`).join('\n')+'\n\n설명\n'+description+'\n\n타임라인\n'+youtubePackData.timeline+'\n\n추천 태그\n'+tags.join(' '); renderYouTubeActions(); saveApp(); setStatus('유튜브 세트 생성 완료'); }
+function clearYouTubePack(){ youtubePackData=null; q('youtubeBox').innerText='아직 생성 전'; renderYouTubeActions(); saveApp(); setStatus('유튜브 세트 지우기 완료'); }
+function saveProject(){ saveApp(); setStatus('프로젝트 저장 완료'); alert('프로젝트 저장 완료'); }
+function loadProject(){ if(loadApp()){ renderSongs(); renderYouTubeActions(); updateKpi(); setStatus('프로젝트 불러오기 완료'); alert('프로젝트 불러오기 완료'); } else { setStatus('저장된 프로젝트 없음'); alert('저장된 프로젝트 없음'); } }
+function exportTXT(){ let text=''; songs.forEach((s,i)=>{ text+=`\n${i+1}. ${s.title}\n[STYLE]\n${s.style}\n[LYRICS]\n${s.lyrics}\n`; }); const blob=new Blob([text],{type:'text/plain;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='album.txt'; a.click(); setStatus('TXT 저장 완료'); }
+function importTXT(){ q('txtFileInput').click(); }
+function handleTXTImport(file){ if(!file) return; const reader=new FileReader(); reader.onload=(e)=>{ const text=String(e.target.result||''); const chunks=text.split(/\n(?=\d+\.\s)/).map(v=>v.trim()).filter(Boolean); const imported=[]; chunks.forEach(chunk=>{ const titleMatch=chunk.match(/^\d+\.\s(.+)$/m); const styleMatch=chunk.match(/STYLE\n([\s\S]*?)\nLYRICS/m); const lyricsMatch=chunk.match(/LYRICS\n([\s\S]*)$/m); if(titleMatch){ const song={ title:titleMatch[1].trim(), style:styleMatch?styleMatch[1].trim():'', lyrics:lyricsMatch?lyricsMatch[1].trim():'', genre:val('genre'), language:val('language'), gender:val('gender')==='자동'?'여성':val('gender'), voice:val('voice'), tempo:val('tempo'), rap:val('rap'), instrument:val('instrument'), length:val('length'), done:false}; if(!song.style) song.style=buildStyle(song); song.simplePrompt=buildSimplePrompt(song); imported.push(song); } }); if(!imported.length){ setStatus('TXT 불러오기 실패'); alert('TXT 형식을 읽지 못했습니다.'); return; } imported.forEach(song=>songs.push(song)); renderSongs(); updateKpi(); saveApp(); setStatus('TXT 불러오기 완료'); alert('TXT 불러오기 완료'); }; reader.readAsText(file,'utf-8'); }
+function openSuno(){ window.open('https://suno.com/create','_blank'); }
+function openGPTImage(){ window.open('https://chatgpt.com/?model=gpt-image-1','_blank'); }
+function bindAll(){ document.querySelectorAll('.help-btn').forEach(btn=>btn.onclick=()=>toggleHelp(btn.dataset.target)); q('btnGenerateSongs').onclick=generateSongs; q('btnGenerateNextSingle').onclick=generateNextSingle; q('btnStartQueue').onclick=startQueue; q('btnCopyNextPrompt').onclick=copyNextPrompt; q('btnOpenSuno').onclick=openSuno; q('btnGenerateAlbumCover').onclick=generateAlbumCover; q('btnClearAlbumCover').onclick=clearAlbumCover; q('btnGenerateYouTubePack').onclick=generateYouTubePack; q('btnClearYouTubePack').onclick=clearYouTubePack; q('btnSaveProject').onclick=saveProject; q('btnLoadProject').onclick=loadProject; q('btnExportTXT').onclick=exportTXT; q('btnImportTXT').onclick=importTXT; q('btnClearSongs').onclick=clearSongs; q('btnOpenGPTImage').onclick=openGPTImage; q('txtFileInput').onchange=(e)=>{ handleTXTImport(e.target.files[0]); e.target.value=''; }; }
 
 bindAll();
 loadApp();
