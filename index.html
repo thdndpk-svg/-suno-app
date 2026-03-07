@@ -13,7 +13,6 @@
     button{padding:10px 14px;border-radius:10px;border:none;background:#111;color:#fff;margin:4px;cursor:pointer;font-size:14px}
     button.light{background:#ececec;color:#111}
     button.warn{background:#ffe3e3;color:#8b0000}
-    button.ok{background:#e6f8ea;color:#0b5d1e}
     .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
     .song{background:#fafafa;border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:12px}
     .help{display:none;background:#eef4ff;border:1px solid #c7d7ff;padding:12px;border-radius:10px;margin-top:8px;font-size:14px;line-height:1.6}
@@ -22,6 +21,12 @@
     .kpi{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:12px}
     pre{white-space:pre-wrap;word-break:break-word;margin:0;font-family:inherit}
     .btn-row{display:flex;flex-wrap:wrap;gap:6px}
+    .song-title{font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px}
+    .status-dot{font-size:18px;line-height:1}
+    .current-badge{font-size:12px;background:#111;color:#fff;border-radius:999px;padding:3px 8px}
+    .copy-queue-box{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:12px}
+    .copy-target{font-weight:700}
+    .hidden-done-note{font-size:12px;color:#666;margin-top:6px}
     @media (max-width:800px){.grid3{grid-template-columns:1fr}}
   </style>
 </head>
@@ -30,7 +35,7 @@
     <div class="card">
       <h1>Suno 음악 제작 자동화 안정화 버전</h1>
       <button type="button" class="light help-btn" data-target="mainHelp">전체 기능 설명</button>
-      <div id="mainHelp" class="help">곡 생성, 가사 저장/불러오기, 프로젝트 저장/불러오기, TXT 저장/불러오기, 앨범커버 생성, 유튜브 세트 생성 기능이 들어 있습니다.</div>
+      <div id="mainHelp" class="help">곡 생성, 순차 복사 큐, 제목 클릭 완료표시, 완료곡 숨김/다시보기, 프로젝트 저장/불러오기, TXT 저장/불러오기, 앨범커버 생성, 유튜브 세트 생성 기능이 들어 있습니다.</div>
     </div><div class="card">
   <h2>생성 설정</h2>
   <button type="button" class="light help-btn" data-target="settingHelp">설명</button>
@@ -62,8 +67,9 @@
   <div class="btn-row">
     <button type="button" id="btnGenerateSongs">곡 생성</button>
     <button type="button" id="btnGenerateNextSingle" class="light">다음 곡 1개 추가</button>
-    <button type="button" id="btnStartQueue" class="light">큐 시작</button>
-    <button type="button" id="btnCopyNextPrompt" class="light">다음곡 간단 프롬프트 복사</button>
+    <button type="button" id="btnStartCopyQueue" class="light">복사 큐 시작</button>
+    <button type="button" id="btnPrevCopy" class="light">이전 복사</button>
+    <button type="button" id="btnNextCopy" class="light">다음 복사</button>
     <button type="button" id="btnOpenSuno" class="light">Suno 열기</button>
     <button type="button" id="btnGenerateAlbumCover" class="light">앨범커버 생성</button>
     <button type="button" id="btnClearAlbumCover" class="warn">앨범커버 지우기</button>
@@ -73,8 +79,15 @@
     <button type="button" id="btnLoadProject" class="light">프로젝트 불러오기</button>
     <button type="button" id="btnExportTXT" class="light">TXT 저장</button>
     <button type="button" id="btnImportTXT" class="light">TXT 불러오기</button>
+    <button type="button" id="btnToggleHideDone" class="light">완료곡 숨기기</button>
     <input id="txtFileInput" type="file" accept=".txt" style="display:none;" />
     <button type="button" id="btnClearSongs" class="warn">전체 삭제</button>
+  </div>
+
+  <div class="copy-queue-box">
+    <div class="muted">순차 복사 표시창</div>
+    <div id="copyQueueInfo" class="copy-target">복사 큐를 시작하세요</div>
+    <div id="copyQueueSub" class="hidden-done-note">복사 순서: 제목 → 스타일 → 가사 → 다음 곡 제목</div>
   </div>
 </div>
 
@@ -83,8 +96,8 @@
   <div id="projectStatus" class="muted">대기 중</div>
   <div class="grid3">
     <div class="kpi"><b id="kpiCount">0곡</b><div class="muted">생성된 곡 수</div></div>
-    <div class="kpi"><b id="kpiDone">0곡</b><div class="muted">제작 완료 체크</div></div>
-    <div class="kpi"><b id="kpiQueue">대기</b><div class="muted">큐 상태</div></div>
+    <div class="kpi"><b id="kpiDone">0곡</b><div class="muted">완료된 곡 수</div></div>
+    <div class="kpi"><b id="kpiQueue">대기</b><div class="muted">복사 큐 위치</div></div>
   </div>
 </div>
 
@@ -107,7 +120,7 @@
 <div class="card">
   <h2>생성된 곡</h2>
   <button type="button" class="light help-btn" data-target="songHelp">설명</button>
-  <div id="songHelp" class="help">각 곡 카드에서 제목 복사, 스타일 복사, 가사 복사, 간단 프롬프트 복사, 가사 저장, 가사 다시 불러오기, 완료 체크, 복제, 삭제를 할 수 있습니다.</div>
+  <div id="songHelp" class="help">제목을 클릭하면 완료 표시가 바뀝니다. 완료곡 숨기기 버튼으로 완료된 곡을 가리거나 다시 볼 수 있습니다.</div>
   <div id="songList"></div>
 </div>
 
@@ -116,6 +129,8 @@
     let queueIndex = 0;
     let seed = 0;
     let youtubePackData = null;
+    let hideDoneSongs = false;
+    let copyCursor = { songIndex: 0, stage: 0 };
 
     const q = (id) => document.getElementById(id);
     const val = (id) => q(id) ? q(id).value : '';
@@ -123,10 +138,10 @@
     const esc = (s) => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 
     function saveApp(){
-      localStorage.setItem('sunoStableFixed', JSON.stringify({songs, queueIndex, seed, youtubePackData, form: getFormData(), cover: q('coverBox').innerText, youtube: q('youtubeBox').innerText}));
+      localStorage.setItem('sunoStableFixed2', JSON.stringify({songs, queueIndex, seed, youtubePackData, hideDoneSongs, copyCursor, form: getFormData(), cover: q('coverBox').innerText, youtube: q('youtubeBox').innerText}));
     }
     function loadApp(){
-      const raw = localStorage.getItem('sunoStableFixed');
+      const raw = localStorage.getItem('sunoStableFixed2');
       if(!raw) return false;
       try{
         const data = JSON.parse(raw);
@@ -134,6 +149,8 @@
         queueIndex = Number(data.queueIndex || 0);
         seed = Number(data.seed || 0);
         youtubePackData = data.youtubePackData || null;
+        hideDoneSongs = !!data.hideDoneSongs;
+        copyCursor = data.copyCursor || { songIndex: 0, stage: 0 };
         setFormData(data.form || {});
         q('coverBox').innerText = data.cover || '아직 생성 전';
         q('youtubeBox').innerText = data.youtube || '아직 생성 전';
@@ -187,28 +204,107 @@
       song.style=buildStyle(song); song.simplePrompt=buildSimplePrompt(song); return song;
     }
 
+    function getVisibleSongsWithIndex(){
+      return songs.map((song, idx)=>({song, idx})).filter(item => !(hideDoneSongs && item.song.done));
+    }
+
     function renderSongs(){
       const box=q('songList'); box.innerHTML='';
-      songs.forEach((s,i)=>{
+      const visible=getVisibleSongsWithIndex();
+      visible.forEach((item)=>{
+        const s=item.song, i=item.idx;
         const div=document.createElement('div'); div.className='song';
         const tags=[s.genre,s.gender,s.voice,s.tempo,s.rap,s.instrument,s.length].map(t=>`<span class="tag">${esc(t)}</span>`).join('');
-        div.innerHTML=`<b>${i+1}. ${esc(s.title)}</b><div>${tags}</div><div class="song"><b>Simple Prompt</b><pre>${esc(s.simplePrompt)}</pre></div><div class="song"><b>Custom Style</b><pre>${esc(s.style)}</pre></div><div class="song"><b>Lyrics</b><textarea id="lyric${i}"></textarea></div><div class="btn-row"><button type="button" data-a="ct" data-i="${i}">제목 복사</button><button type="button" data-a="cs" data-i="${i}">스타일 복사</button><button type="button" data-a="cl" data-i="${i}">가사 복사</button><button type="button" class="light" data-a="cp" data-i="${i}">간단 프롬프트 복사</button><button type="button" class="light" data-a="sl" data-i="${i}">가사 저장</button><button type="button" class="light" data-a="ll" data-i="${i}">가사 다시 불러오기</button><button type="button" class="ok" data-a="td" data-i="${i}">${s.done?'완료 해제':'제작 완료 체크'}</button><button type="button" class="light" data-a="du" data-i="${i}">복제</button><button type="button" class="warn" data-a="de" data-i="${i}">삭제</button></div>`;box.appendChild(div); q('lyric'+i).value=s.lyrics;
+        const currentMark = (copyCursor.songIndex===i)?'<span class="current-badge">현재 복사곡</span>':'';
+        const statusIcon = s.done ? '🟢' : '⚪';
+        div.innerHTML=`<div class="song-title" data-a="toggleDoneTitle" data-i="${i}"><span class="status-dot">${statusIcon}</span><span>${i+1}. ${esc(s.title)}</span>${currentMark}</div><div>${tags}</div><div class="song"><b>Simple Prompt</b><pre>${esc(s.simplePrompt)}</pre></div><div class="song"><b>Custom Style</b><pre>${esc(s.style)}</pre></div><div class="song"><b>Lyrics</b><textarea id="lyric${i}"></textarea></div><div class="btn-row"><button type="button" data-a="ct" data-i="${i}">제목 복사</button><button type="button" data-a="cs" data-i="${i}">스타일 복사</button><button type="button" data-a="cl" data-i="${i}">가사 복사</button><button type="button" class="light" data-a="cp" data-i="${i}">간단 프롬프트 복사</button><button type="button" class="light" data-a="sl" data-i="${i}">가사 저장</button><button type="button" class="light" data-a="ll" data-i="${i}">가사 다시 불러오기</button><button type="button" class="light" data-a="du" data-i="${i}">복제</button><button type="button" class="warn" data-a="de" data-i="${i}">삭제</button></div>`;box.appendChild(div); q('lyric'+i).value=s.lyrics;
   });
   box.querySelectorAll('[data-a]').forEach(btn=>{ btn.onclick=()=>songAction(btn.dataset.a, Number(btn.dataset.i)); });
 }
-function songAction(a,i){ if(a==='ct') return copyText(songs[i]?.title||''); if(a==='cs') return copyText(songs[i]?.style||''); if(a==='cl') return copyText(q('lyric'+i)?.value||''); if(a==='cp') return copyText(songs[i]?.simplePrompt||''); if(a==='sl') return saveLyrics(i); if(a==='ll') return loadLyrics(i); if(a==='td') return toggleDone(i); if(a==='du') return duplicateSong(i); if(a==='de') return deleteSong(i); }
+
+function syncCopyCursorToVisible(){
+  if (!songs.length) { copyCursor = { songIndex: 0, stage: 0 }; return; }
+  if (copyCursor.songIndex >= songs.length) copyCursor.songIndex = songs.length - 1;
+  if (hideDoneSongs && songs[copyCursor.songIndex] && songs[copyCursor.songIndex].done) {
+    const next = songs.findIndex((s, idx)=> idx >= copyCursor.songIndex && !s.done);
+    if (next !== -1) copyCursor.songIndex = next;
+    else {
+      const first = songs.findIndex(s=>!s.done);
+      copyCursor.songIndex = first === -1 ? 0 : first;
+    }
+  }
+}
+
+function updateCopyQueueInfo(){
+  syncCopyCursorToVisible();
+  const info = q('copyQueueInfo');
+  if (!songs.length) { info.innerText = '곡을 먼저 생성하세요'; return; }
+  const song = songs[copyCursor.songIndex];
+  const stageNames = ['제목', '스타일', '가사'];
+  info.innerText = `현재 곡: ${copyCursor.songIndex + 1} / ${songs.length} · 현재 단계: ${stageNames[copyCursor.stage]} · 복사될 내용: ${copyCursor.songIndex + 1}번곡 ${stageNames[copyCursor.stage]}`;
+}
+
+function moveCopyCursor(delta){
+  if (!songs.length) return;
+  let flat = copyCursor.songIndex * 3 + copyCursor.stage + delta;
+  if (flat < 0) flat = 0;
+  let maxFlat = songs.length * 3 - 1;
+  if (flat > maxFlat) flat = maxFlat;
+  copyCursor.songIndex = Math.floor(flat / 3);
+  copyCursor.stage = flat % 3;
+  syncCopyCursorToVisible();
+  updateCopyQueueInfo();
+  renderSongs();
+  updateKpi();
+  saveApp();
+}
+
+function startCopyQueue(){
+  const firstVisible = hideDoneSongs ? songs.findIndex(s=>!s.done) : 0;
+  copyCursor = { songIndex: firstVisible === -1 ? 0 : firstVisible, stage: 0 };
+  updateCopyQueueInfo();
+  renderSongs();
+  updateKpi();
+  saveApp();
+  setStatus('복사 큐 시작');
+}
+
+function nextCopy(){
+  if (!songs.length) return alert('곡이 없습니다.');
+  syncCopyCursorToVisible();
+  const song = songs[copyCursor.songIndex];
+  let text = '';
+  if (copyCursor.stage === 0) text = song.title;
+  if (copyCursor.stage === 1) text = song.style;
+  if (copyCursor.stage === 2) text = song.lyrics;
+  copyText(text);
+  let nextFlat = copyCursor.songIndex * 3 + copyCursor.stage + 1;
+  if (nextFlat >= songs.length * 3) nextFlat = songs.length * 3 - 1;
+  copyCursor.songIndex = Math.floor(nextFlat / 3);
+  copyCursor.stage = nextFlat % 3;
+  syncCopyCursorToVisible();
+  updateCopyQueueInfo();
+  renderSongs();
+  updateKpi();
+  saveApp();
+  setStatus('다음 복사 완료');
+}
+
+function prevCopy(){ moveCopyCursor(-1); setStatus('이전 복사 위치로 이동'); }
+
+function songAction(a,i){ if(a==='toggleDoneTitle') return toggleDoneByTitle(i); if(a==='ct') return copyText(songs[i]?.title||''); if(a==='cs') return copyText(songs[i]?.style||''); if(a==='cl') return copyText(q('lyric'+i)?.value||''); if(a==='cp') return copyText(songs[i]?.simplePrompt||''); if(a==='sl') return saveLyrics(i); if(a==='ll') return loadLyrics(i); if(a==='du') return duplicateSong(i); if(a==='de') return deleteSong(i); }
 function copyText(text){ navigator.clipboard.writeText(text||'').then(()=>alert('복사 완료')).catch(()=>alert('복사 실패')); }
 function saveLyrics(i){ if(!songs[i]||!q('lyric'+i)) return; songs[i].lyrics=q('lyric'+i).value; saveApp(); setStatus('가사 저장 완료'); alert('가사 저장 완료'); }
 function loadLyrics(i){ if(!songs[i]||!q('lyric'+i)) return; q('lyric'+i).value=songs[i].lyrics; setStatus('가사 다시 불러오기 완료'); }
-function generateSongs(){ const count=Number(val('count'))||10; const start=songs.length; for(let i=0;i<count;i++) songs.push(makeSong(start+i)); seed+=count; renderSongs(); updateKpi(); saveApp(); setStatus('곡 생성 완료'); }
-function generateNextSingle(){ songs.push(makeSong(songs.length)); seed+=1; renderSongs(); updateKpi(); saveApp(); setStatus('다음 곡 1개 추가 완료'); alert('다음 곡 1개 추가 완료'); }
-function deleteSong(i){ songs.splice(i,1); if(queueIndex>songs.length) queueIndex=songs.length; renderSongs(); updateKpi(); saveApp(); setStatus('곡 삭제 완료'); }
-function duplicateSong(i){ const c=JSON.parse(JSON.stringify(songs[i])); c.title+=' 복제'; c.done=false; songs.splice(i+1,0,c); renderSongs(); updateKpi(); saveApp(); setStatus('곡 복제 완료'); }
-function clearSongs(){ songs=[]; queueIndex=0; renderSongs(); updateKpi(); saveApp(); setStatus('전체 삭제 완료'); }
-function startQueue(){ queueIndex=0; updateKpi(); saveApp(); setStatus('큐 시작'); alert('큐 시작'); }
+function generateSongs(){ const count=Number(val('count'))||10; const start=songs.length; for(let i=0;i<count;i++) songs.push(makeSong(start+i)); seed+=count; renderSongs(); updateKpi(); updateCopyQueueInfo(); saveApp(); setStatus('곡 생성 완료'); }
+function generateNextSingle(){ songs.push(makeSong(songs.length)); seed+=1; renderSongs(); updateKpi(); updateCopyQueueInfo(); saveApp(); setStatus('다음 곡 1개 추가 완료'); alert('다음 곡 1개 추가 완료'); }
+function deleteSong(i){ songs.splice(i,1); if(queueIndex>songs.length) queueIndex=songs.length; syncCopyCursorToVisible(); renderSongs(); updateKpi(); updateCopyQueueInfo(); saveApp(); setStatus('곡 삭제 완료'); }
+function duplicateSong(i){ const c=JSON.parse(JSON.stringify(songs[i])); c.title+=' 복제'; c.done=false; songs.splice(i+1,0,c); renderSongs(); updateKpi(); updateCopyQueueInfo(); saveApp(); setStatus('곡 복제 완료'); }
+function clearSongs(){ songs=[]; queueIndex=0; copyCursor={songIndex:0,stage:0}; renderSongs(); updateKpi(); updateCopyQueueInfo(); saveApp(); setStatus('전체 삭제 완료'); }
 function copyNextPrompt(){ if(queueIndex>=songs.length) return alert('모든 곡 완료'); copyText(songs[queueIndex].simplePrompt); queueIndex+=1; updateKpi(); saveApp(); setStatus('다음곡 프롬프트 복사 완료'); }
-function toggleDone(i){ if(!songs[i]) return; songs[i].done=!songs[i].done; renderSongs(); updateKpi(); saveApp(); setStatus('완료 체크 변경'); }
-function updateKpi(){ q('kpiCount').innerText=songs.length+'곡'; q('kpiDone').innerText=songs.filter(s=>s.done).length+'곡'; q('kpiQueue').innerText=songs.length?Math.min(queueIndex+1,songs.length)+' / '+songs.length:'대기'; }
+function toggleDoneByTitle(i){ if(!songs[i]) return; songs[i].done=!songs[i].done; syncCopyCursorToVisible(); renderSongs(); updateKpi(); updateCopyQueueInfo(); saveApp(); setStatus('완료 상태 변경'); }
+function updateKpi(){ q('kpiCount').innerText=songs.length+'곡'; q('kpiDone').innerText=songs.filter(s=>s.done).length+'곡'; q('kpiQueue').innerText=songs.length?`${copyCursor.songIndex+1} / ${songs.length}`:'대기'; q('btnToggleHideDone').innerText = hideDoneSongs ? '완료곡 다시보기' : '완료곡 숨기기'; }
+function toggleHideDone(){ hideDoneSongs=!hideDoneSongs; syncCopyCursorToVisible(); renderSongs(); updateKpi(); updateCopyQueueInfo(); saveApp(); setStatus(hideDoneSongs?'완료곡 숨김 적용':'완료곡 다시보기'); }
 function generateAlbumCover(){ const topic=val('topic')||'감성'; const genre=val('genre')||'발라드'; q('coverBox').innerText=`Album Title\n${topic} ${genre} Playlist\n\nThumbnail Copy\nBest ${genre} Songs Tonight\nSongs You Will Replay\n\nImage Prompt\nmusic album cover, ${genre}, cinematic lighting, emotional mood, youtube thumbnail style`; saveApp(); setStatus('앨범커버 생성 완료'); }
 function clearAlbumCover(){ q('coverBox').innerText='아직 생성 전'; saveApp(); setStatus('앨범커버 지우기 완료'); }
 function buildTimeline(){ if(!songs.length) return '00:00 첫 곡'; let seconds=0; const lines=[]; songs.forEach(song=>{ const mm=String(Math.floor(seconds/60)).padStart(2,'0'); const ss=String(seconds%60).padStart(2,'0'); lines.push(`${mm}:${ss} ${song.title}`); let add=180; if(song.length==='2분 30초') add=150; else if(song.length==='3분 30초') add=210; else if(song.length==='4분') add=240; seconds+=add; }); return lines.join('\n'); }
@@ -216,19 +312,20 @@ function renderYouTubeActions(){ const box=q('youtubeActionBox'); if(!youtubePac
 function generateYouTubePack(){ const genre=val('genre')||'발라드'; const count=songs.length||10; const titles=[`지금 가장 많이 듣는 ${genre} 감성 플레이리스트 🌙 한번 틀면 끝까지 듣게 되는 노래 ${count}곡`,`밤에 들으면 더 좋은 ${genre} 모음 🎧 감성 터지는 노래 ${count}곡`,`요즘 유튜브에서 뜨는 ${genre} 감성 노래 모음 | 계속 듣게 되는 플레이리스트`,`잠들기 전에 듣는 ${genre} 감성 음악 🌌 마음이 편해지는 노래 ${count}곡`,`한번 들으면 반복하게 되는 ${genre} 감성 노래 모음 🎶 최고의 플레이리스트`]; const description=`${genre} 감성 음악 ${count}곡을 모은 플레이리스트입니다.\n\n잔잔한 밤, 드라이브, 공부, 휴식할 때 듣기 좋은 음악으로 구성했습니다.\n\n좋아요와 구독은 채널 운영에 큰 힘이 됩니다.`; const tags=[`#${genre}`,`#${genre}플레이리스트`,'#감성노래','#감성음악','#노래모음','#플레이리스트','#koreanmusic','#koreanplaylist','#koreanballad','#kpopplaylist','#studymusic','#relaxingmusic','#nightmusic','#emotionalsongs','#musicplaylist','#drivemusic','#latenightsongs','#healingmusic','#koreanemotionalmusic']; youtubePackData={titles,description,tags,timeline:buildTimeline()}; q('youtubeBox').innerText='유튜브 조회수형 제목 후보\n\n'+titles.map((t,i)=>`${i+1}. ${t}`).join('\n')+'\n\n설명\n'+description+'\n\n타임라인\n'+youtubePackData.timeline+'\n\n추천 태그\n'+tags.join(' '); renderYouTubeActions(); saveApp(); setStatus('유튜브 세트 생성 완료'); }
 function clearYouTubePack(){ youtubePackData=null; q('youtubeBox').innerText='아직 생성 전'; renderYouTubeActions(); saveApp(); setStatus('유튜브 세트 지우기 완료'); }
 function saveProject(){ saveApp(); setStatus('프로젝트 저장 완료'); alert('프로젝트 저장 완료'); }
-function loadProject(){ if(loadApp()){ renderSongs(); renderYouTubeActions(); updateKpi(); setStatus('프로젝트 불러오기 완료'); alert('프로젝트 불러오기 완료'); } else { setStatus('저장된 프로젝트 없음'); alert('저장된 프로젝트 없음'); } }
+function loadProject(){ if(loadApp()){ renderSongs(); renderYouTubeActions(); updateKpi(); updateCopyQueueInfo(); setStatus('프로젝트 불러오기 완료'); alert('프로젝트 불러오기 완료'); } else { setStatus('저장된 프로젝트 없음'); alert('저장된 프로젝트 없음'); } }
 function exportTXT(){ let text=''; songs.forEach((s,i)=>{ text+=`\n${i+1}. ${s.title}\n[STYLE]\n${s.style}\n[LYRICS]\n${s.lyrics}\n`; }); const blob=new Blob([text],{type:'text/plain;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='album.txt'; a.click(); setStatus('TXT 저장 완료'); }
 function importTXT(){ q('txtFileInput').click(); }
-function handleTXTImport(file){ if(!file) return; const reader=new FileReader(); reader.onload=(e)=>{ const text=String(e.target.result||''); const chunks=text.split(/\n(?=\d+\.\s)/).map(v=>v.trim()).filter(Boolean); const imported=[]; chunks.forEach(chunk=>{ const titleMatch=chunk.match(/^\d+\.\s(.+)$/m); const styleMatch=chunk.match(/STYLE\n([\s\S]*?)\nLYRICS/m); const lyricsMatch=chunk.match(/LYRICS\n([\s\S]*)$/m); if(titleMatch){ const song={ title:titleMatch[1].trim(), style:styleMatch?styleMatch[1].trim():'', lyrics:lyricsMatch?lyricsMatch[1].trim():'', genre:val('genre'), language:val('language'), gender:val('gender')==='자동'?'여성':val('gender'), voice:val('voice'), tempo:val('tempo'), rap:val('rap'), instrument:val('instrument'), length:val('length'), done:false}; if(!song.style) song.style=buildStyle(song); song.simplePrompt=buildSimplePrompt(song); imported.push(song); } }); if(!imported.length){ setStatus('TXT 불러오기 실패'); alert('TXT 형식을 읽지 못했습니다.'); return; } imported.forEach(song=>songs.push(song)); renderSongs(); updateKpi(); saveApp(); setStatus('TXT 불러오기 완료'); alert('TXT 불러오기 완료'); }; reader.readAsText(file,'utf-8'); }
+function handleTXTImport(file){ if(!file) return; const reader=new FileReader(); reader.onload=(e)=>{ const text=String(e.target.result||''); const chunks=text.split(/\n(?=\d+\.\s)/).map(v=>v.trim()).filter(Boolean); const imported=[]; chunks.forEach(chunk=>{ const titleMatch=chunk.match(/^\d+\.\s(.+)$/m); const styleMatch=chunk.match(/STYLE\n([\s\S]*?)\nLYRICS/m); const lyricsMatch=chunk.match(/LYRICS\n([\s\S]*)$/m); if(titleMatch){ const song={ title:titleMatch[1].trim(), style:styleMatch?styleMatch[1].trim():'', lyrics:lyricsMatch?lyricsMatch[1].trim():'', genre:val('genre'), language:val('language'), gender:val('gender')==='자동'?'여성':val('gender'), voice:val('voice'), tempo:val('tempo'), rap:val('rap'), instrument:val('instrument'), length:val('length'), done:false}; if(!song.style) song.style=buildStyle(song); song.simplePrompt=buildSimplePrompt(song); imported.push(song); } }); if(!imported.length){ setStatus('TXT 불러오기 실패'); alert('TXT 형식을 읽지 못했습니다.'); return; } imported.forEach(song=>songs.push(song)); renderSongs(); updateKpi(); updateCopyQueueInfo(); saveApp(); setStatus('TXT 불러오기 완료'); alert('TXT 불러오기 완료'); }; reader.readAsText(file,'utf-8'); }
 function openSuno(){ window.open('https://suno.com/create','_blank'); }
 function openGPTImage(){ window.open('https://chatgpt.com/?model=gpt-image-1','_blank'); }
-function bindAll(){ document.querySelectorAll('.help-btn').forEach(btn=>btn.onclick=()=>toggleHelp(btn.dataset.target)); q('btnGenerateSongs').onclick=generateSongs; q('btnGenerateNextSingle').onclick=generateNextSingle; q('btnStartQueue').onclick=startQueue; q('btnCopyNextPrompt').onclick=copyNextPrompt; q('btnOpenSuno').onclick=openSuno; q('btnGenerateAlbumCover').onclick=generateAlbumCover; q('btnClearAlbumCover').onclick=clearAlbumCover; q('btnGenerateYouTubePack').onclick=generateYouTubePack; q('btnClearYouTubePack').onclick=clearYouTubePack; q('btnSaveProject').onclick=saveProject; q('btnLoadProject').onclick=loadProject; q('btnExportTXT').onclick=exportTXT; q('btnImportTXT').onclick=importTXT; q('btnClearSongs').onclick=clearSongs; q('btnOpenGPTImage').onclick=openGPTImage; q('txtFileInput').onchange=(e)=>{ handleTXTImport(e.target.files[0]); e.target.value=''; }; }
+function bindAll(){ document.querySelectorAll('.help-btn').forEach(btn=>btn.onclick=()=>toggleHelp(btn.dataset.target)); q('btnGenerateSongs').onclick=generateSongs; q('btnGenerateNextSingle').onclick=generateNextSingle; q('btnStartCopyQueue').onclick=startCopyQueue; q('btnPrevCopy').onclick=prevCopy; q('btnNextCopy').onclick=nextCopy; q('btnOpenSuno').onclick=openSuno; q('btnGenerateAlbumCover').onclick=generateAlbumCover; q('btnClearAlbumCover').onclick=clearAlbumCover; q('btnGenerateYouTubePack').onclick=generateYouTubePack; q('btnClearYouTubePack').onclick=clearYouTubePack; q('btnSaveProject').onclick=saveProject; q('btnLoadProject').onclick=loadProject; q('btnExportTXT').onclick=exportTXT; q('btnImportTXT').onclick=importTXT; q('btnClearSongs').onclick=clearSongs; q('btnOpenGPTImage').onclick=openGPTImage; q('btnToggleHideDone').onclick=toggleHideDone; q('txtFileInput').onchange=(e)=>{ handleTXTImport(e.target.files[0]); e.target.value=''; }; }
 
 bindAll();
 loadApp();
 renderSongs();
 renderYouTubeActions();
 updateKpi();
+updateCopyQueueInfo();
 
   </script>
 </body>
