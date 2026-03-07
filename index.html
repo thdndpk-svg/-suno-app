@@ -181,6 +181,43 @@
       return list[index % list.length] + ' ' + (index + 1);
     }
 
+    function softenLine(line) {
+      const pairs = [
+        ['남는다','남아'],
+        ['물들인다','물들이고'],
+        ['선명해진다','선명해져'],
+        ['커져간다','커져가'],
+        ['떠오른다','떠올라'],
+        ['머문다','머물러'],
+        ['대신한다','대신해'],
+        ['바라본다','바라봐'],
+        ['내려온다','내려와'],
+        ['남아돈다','남아돌아'],
+        ['들려온다','들려와'],
+        ['피어오른다','피어나'],
+        ['가까워진다','가까워져'],
+        ['머물러준다','머물러'],
+        ['만든다','만들어'],
+        ['번져간다','번져가'],
+        ['안아본다','안아봐'],
+        ['깨어난다','깨어나'],
+        ['꺼내본다','꺼내봐'],
+        ['불러본다','불러봐']
+      ];
+      let out = line;
+      pairs.forEach(function(p){ out = out.replace(new RegExp(p[0] + '$'), p[1]); });
+      return out;
+    }
+
+    function softenLyricsText(text) {
+      return text.split('
+').map(function(line){
+        if (!line || /^.*$/.test(line)) return line;
+        return softenLine(line);
+      }).join('
+');
+    }
+
     function buildLyrics(topic, index, language, structure, hook, rap, targetLength) {
       const list = conceptList(topic || '감성');
       const a = list[index % list.length];
@@ -189,28 +226,198 @@
       const d = list[(index + 3) % list.length];
       const useLong = ['자동조절','3분','3분 30초','4분'].includes(targetLength);
       const useVeryLong = ['3분 30초','4분'].includes(targetLength);
+      let text = '';
       if (language === '영어') {
-        const intro = structure === '인트로 포함' ? '[Intro]\nA soft light starts to glow\nThe feeling slowly starts to show\n\n' : '';
-        const verse1 = useLong ? `[Verse 1]\n${a} in the night, I feel it start\n${b} in the air, inside my heart\nEvery little memory grows bright\nHolding on to this gentle light\nSteps are moving soft and slow\nLike a dream I used to know\n\n` : `[Verse 1]\n${a} in the night, I feel it start\n${b} in the air, inside my heart\nEvery little memory grows bright\n\n`;
-        const pre = '[Pre-Chorus]\nStep by step the feeling grows\nIn this moment my heart knows\n\n';
-        const chorus = useLong ? '[Chorus]\nThis song keeps our feeling alive\nThrough the dark we learn to shine\nEvery word and every line\nStays with me tonight\nEven when the hours drift away\nYou remain inside this song\n\n' : '[Chorus]\nThis song keeps our feeling alive\nThrough the dark we learn to shine\nEvery word and every line\nStays with me tonight\n\n';
-        const verse2 = useLong ? `[Verse 2]\n${c} turns slowly into sound\n${d} when you are around\nEven silence starts to sing\nLike a warm and endless spring\nAll the shadows fade from view\nEvery road returns to you\n\n` : `[Verse 2]\n${c} turns slowly into sound\n${d} when you are around\nEven silence starts to sing\nLike a warm and endless spring\n\n`;
-        const bridge = structure === '브릿지 포함' ? '[Bridge]\nHold this moment one more time\nLet the silence turn to rhyme\n\n' : '';
-        const hookText = hook === '후렴 강하게' ? '[Hook Lift]\nMake the chorus bigger and brighter\n\n' : hook === '후렴 2회 반복' ? '[Chorus Repeat]\nSing the chorus one more time\n\n' : hook === '쇼츠형 훅 강조' ? '[Short Hook]\nInstant hook, immediate impact\n\n' : '';
-        const rapText = rap === '중간 랩 1회' ? '[Rap]\nFast words cut through the light\n\n' : rap === '중간 랩 2회' ? '[Rap]\nFast words cut through the light\n\n[Rap 2]\nRaise the pulse and lift the night\n\n' : '';
-        const finalChorus = useVeryLong ? '[Final Chorus]\nThis song keeps our feeling alive\nLong enough to fill the night\nEvery breath and every rhyme\nMakes this moment shine\nHold this light and let it stay\nTill the end of every day\nLet this melody remain\nLike a softly falling rain' : '[Final Chorus]\nThis song keeps our feeling alive\nLong enough to fill the night\nEvery breath and every rhyme\nMakes this moment shine';
-        return intro + verse1 + pre + chorus + verse2 + pre + bridge + hookText + rapText + finalChorus;
+        const intro = structure === '인트로 포함' ? '[Intro]
+A soft light starts to glow
+The feeling slowly starts to show
+
+' : '';
+        const verse1 = useLong ? `[Verse 1]
+${a} in the night, I feel it start
+${b} in the air, inside my heart
+Every little memory grows bright
+Holding on to this gentle light
+Steps are moving soft and slow
+Like a dream I used to know
+
+` : `[Verse 1]
+${a} in the night, I feel it start
+${b} in the air, inside my heart
+Every little memory grows bright
+
+`;
+        const pre = '[Pre-Chorus]
+Step by step the feeling grows
+In this moment my heart knows
+
+';
+        const chorus = useLong ? '[Chorus]
+This song keeps our feeling alive
+Through the dark we learn to shine
+Every word and every line
+Stays with me tonight
+Even when the hours drift away
+You remain inside this song
+
+' : '[Chorus]
+This song keeps our feeling alive
+Through the dark we learn to shine
+Every word and every line
+Stays with me tonight
+
+';
+        const verse2 = useLong ? `[Verse 2]
+${c} turns slowly into sound
+${d} when you are around
+Even silence starts to sing
+Like a warm and endless spring
+All the shadows fade from view
+Every road returns to you
+
+` : `[Verse 2]
+${c} turns slowly into sound
+${d} when you are around
+Even silence starts to sing
+Like a warm and endless spring
+
+`;
+        const bridge = structure === '브릿지 포함' ? '[Bridge]
+Hold this moment one more time
+Let the silence turn to rhyme
+
+' : '';
+        const hookText = hook === '후렴 강하게' ? '[Hook Lift]
+Make the chorus bigger and brighter
+
+' : hook === '후렴 2회 반복' ? '[Chorus Repeat]
+Sing the chorus one more time
+
+' : hook === '쇼츠형 훅 강조' ? '[Short Hook]
+Instant hook, immediate impact
+
+' : '';
+        const rapText = rap === '중간 랩 1회' ? '[Rap]
+Fast words cut through the light
+
+' : rap === '중간 랩 2회' ? '[Rap]
+Fast words cut through the light
+
+[Rap 2]
+Raise the pulse and lift the night
+
+' : '';
+        const finalChorus = useVeryLong ? '[Final Chorus]
+This song keeps our feeling alive
+Long enough to fill the night
+Every breath and every rhyme
+Makes this moment shine
+Hold this light and let it stay
+Till the end of every day
+Let this melody remain
+Like a softly falling rain' : '[Final Chorus]
+This song keeps our feeling alive
+Long enough to fill the night
+Every breath and every rhyme
+Makes this moment shine';
+        text = intro + verse1 + pre + chorus + verse2 + pre + bridge + hookText + rapText + finalChorus;
+      } else {
+        const intro = structure === '인트로 포함' ? '[Intro]
+조용한 불빛이 번져간다
+오늘의 마음이 깨어난다
+
+' : '';
+        const verse1 = useLong ? `[Verse 1]
+${a} 같은 밤이 천천히 내려온다
+${b} 같은 마음이 가슴에 남아돈다
+작은 숨결마저 또렷하게 들려온다
+흘러간 계절도 다시 피어오른다
+멀어진 시간도 다시 가까워진다
+이 순간만은 오래 머물러준다
+
+` : `[Verse 1]
+${a} 같은 밤이 천천히 내려온다
+${b} 같은 마음이 가슴에 남아돈다
+작은 숨결마저 또렷하게 들려온다
+
+`;
+        const pre = '[Pre-Chorus]
+한 걸음 더 가까워지는 순간
+가슴속 떨림이 더 커져간다
+
+';
+        const chorus = useLong ? '[Chorus]
+이 노래는 오래 마음에 남는다
+조용한 밤을 가득 물들인다
+흐르던 시간도 멈춘 것처럼
+오늘의 감정이 더 선명해진다
+멀리 흩어진 숨결도 모여와
+지금 이 순간을 깊게 만든다
+
+' : '[Chorus]
+이 노래는 오래 마음에 남는다
+조용한 밤을 가득 물들인다
+흐르던 시간도 멈춘 것처럼
+오늘의 감정이 더 선명해진다
+
+';
+        const verse2 = useLong ? `[Verse 2]
+${c} 같은 장면이 다시 떠오른다
+${d} 같은 온기가 곁에 머문다
+말하지 못했던 진심을 꺼내본다
+이 노래가 그 마음을 대신한다
+희미한 달빛 아래 서성이다가
+조용한 미소로 서로를 바라본다
+
+` : `[Verse 2]
+${c} 같은 장면이 다시 떠오른다
+${d} 같은 온기가 곁에 머문다
+말하지 못했던 진심을 꺼내본다
+이 노래가 그 마음을 대신한다
+
+`;
+        const bridge = structure === '브릿지 포함' ? '[Bridge]
+잠시 멈춰 선 시간 끝에서
+우리의 마음을 다시 안아본다
+
+' : '';
+        const hookText = hook === '후렴 강하게' ? '[Hook Lift]
+더 크게 더 진하게 마음에 남는다
+
+' : hook === '후렴 2회 반복' ? '[Chorus Repeat]
+한 번 더 깊게 불러본다
+
+' : hook === '쇼츠형 훅 강조' ? '[Short Hook]
+짧고 강하게 바로 꽂힌다
+
+' : '';
+        const rapText = rap === '중간 랩 1회' ? '[Rap]
+리듬 위로 감정을 더 올려
+
+' : rap === '중간 랩 2회' ? '[Rap]
+리듬 위로 감정을 더 올려
+
+[Rap 2]
+분위기를 더 크게 살려
+
+' : '';
+        const finalChorus = useVeryLong ? '[Final Chorus]
+이 노래는 오래 마음에 남는다
+오늘의 밤을 끝없이 물들인다
+스쳐간 계절도 다시 피어나듯
+지금의 감정이 더 크게 번져간다
+이 멜로디가 멀리 흘러가도
+우리의 순간은 여기 남아있다
+끝나지 않을 울림처럼
+조용히 다시 피어나고 있다' : '[Final Chorus]
+이 노래는 오래 마음에 남는다
+오늘의 밤을 끝없이 물들인다
+스쳐간 계절도 다시 피어나듯
+지금의 감정이 더 크게 번져간다';
+        text = intro + verse1 + pre + chorus + verse2 + pre + bridge + hookText + rapText + finalChorus;
+        text = softenLyricsText(text);
       }
-      const intro = structure === '인트로 포함' ? '[Intro]\n조용한 불빛이 번져간다\n오늘의 마음이 깨어난다\n\n' : '';
-      const verse1 = useLong ? `[Verse 1]\n${a} 같은 밤이 천천히 내려온다\n${b} 같은 마음이 가슴에 남아돈다\n작은 숨결마저 또렷하게 들려온다\n흘러간 계절도 다시 피어오른다\n멀어진 시간도 다시 가까워진다\n이 순간만은 오래 머물러준다\n\n` : `[Verse 1]\n${a} 같은 밤이 천천히 내려온다\n${b} 같은 마음이 가슴에 남아돈다\n작은 숨결마저 또렷하게 들려온다\n\n`;
-      const pre = '[Pre-Chorus]\n한 걸음 더 가까워지는 순간\n가슴속 떨림이 더 커져간다\n\n';
-      const chorus = useLong ? '[Chorus]\n이 노래는 오래 마음에 남는다\n조용한 밤을 가득 물들인다\n흐르던 시간도 멈춘 것처럼\n오늘의 감정이 더 선명해진다\n멀리 흩어진 숨결도 모여와\n지금 이 순간을 깊게 만든다\n\n' : '[Chorus]\n이 노래는 오래 마음에 남는다\n조용한 밤을 가득 물들인다\n흐르던 시간도 멈춘 것처럼\n오늘의 감정이 더 선명해진다\n\n';
-      const verse2 = useLong ? `[Verse 2]\n${c} 같은 장면이 다시 떠오른다\n${d} 같은 온기가 곁에 머문다\n말하지 못했던 진심을 꺼내본다\n이 노래가 그 마음을 대신한다\n희미한 달빛 아래 서성이다가\n조용한 미소로 서로를 바라본다\n\n` : `[Verse 2]\n${c} 같은 장면이 다시 떠오른다\n${d} 같은 온기가 곁에 머문다\n말하지 못했던 진심을 꺼내본다\n이 노래가 그 마음을 대신한다\n\n`;
-      const bridge = structure === '브릿지 포함' ? '[Bridge]\n잠시 멈춰 선 시간 끝에서\n우리의 마음을 다시 안아본다\n\n' : '';
-      const hookText = hook === '후렴 강하게' ? '[Hook Lift]\n더 크게 더 진하게 마음에 남는다\n\n' : hook === '후렴 2회 반복' ? '[Chorus Repeat]\n한 번 더 깊게 불러본다\n\n' : hook === '쇼츠형 훅 강조' ? '[Short Hook]\n짧고 강하게 바로 꽂힌다\n\n' : '';
-      const rapText = rap === '중간 랩 1회' ? '[Rap]\n리듬 위로 감정을 더 올려\n\n' : rap === '중간 랩 2회' ? '[Rap]\n리듬 위로 감정을 더 올려\n\n[Rap 2]\n분위기를 더 크게 살려\n\n' : '';
-      const finalChorus = useVeryLong ? '[Final Chorus]\n이 노래는 오래 마음에 남는다\n오늘의 밤을 끝없이 물들인다\n스쳐간 계절도 다시 피어나듯\n지금의 감정이 더 크게 번져간다\n이 멜로디가 멀리 흘러가도\n우리의 순간은 여기 남아있다\n끝나지 않을 울림처럼\n조용히 다시 피어나고 있다' : '[Final Chorus]\n이 노래는 오래 마음에 남는다\n오늘의 밤을 끝없이 물들인다\n스쳐간 계절도 다시 피어나듯\n지금의 감정이 더 크게 번져간다';
-      return intro + verse1 + pre + chorus + verse2 + pre + bridge + hookText + rapText + finalChorus;
+      return text;
     }
 
     function buildStyle(song) {
