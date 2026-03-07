@@ -162,14 +162,14 @@
     const esc = (s) => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 
     function saveApp(){
-      localStorage.setItem('sunoOptimalV2', JSON.stringify({
+      localStorage.setItem('sunoOptimalV3', JSON.stringify({
         songs, seed, youtubePackData, hideDoneSongs, copyCursor,
         form: getFormData(), cover: q('coverBox').innerText, youtube: q('youtubeBox').innerText
       }));
     }
 
     function loadApp(){
-      const raw = localStorage.getItem('sunoOptimalV2') || localStorage.getItem('sunoOptimalV1');
+      const raw = localStorage.getItem('sunoOptimalV3') || localStorage.getItem('sunoOptimalV2') || localStorage.getItem('sunoOptimalV1');
       if(!raw) return false;
       try{
         const data = JSON.parse(raw);
@@ -381,51 +381,81 @@ ${d} 같은 온기가 곁에 머문다
       ].filter(Boolean).join(', ');
     }
 
-    async function fetchAiLyrics(topic, style, fallbackIndex){
-      try{
-        const res = await fetch(AI_LYRICS_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            topic: topic,
-            style: style
-          })
-        });
+    function cleanAiLyrics(text, title){
+      if(!text) return "";
 
-        const data = await res.json();
+      let cleaned = String(text).trim();
+      cleaned = cleaned.replace(/^제목\s*:\s*.*$/gm, "").trim();
 
-        if(data && data.lyrics && !data.error){
-          return data.lyrics;
-        }
-      } catch(e){
-        console.log("AI lyrics fetch failed:", e);
+      if(title){
+        const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const titleOnlyLine = new RegExp(`^\\s*${escaped}\\s*$`, "gm");
+        cleaned = cleaned.replace(titleOnlyLine, "").trim();
       }
 
-      return buildLyrics(topic || '사랑', fallbackIndex, val('language'), val('length'));
+      cleaned = cleaned.replace(/\n{3,}/g, "\n\n").trim();
+      return cleaned;
     }
 
-    async function makeSong(index){
-      const topic = val('topic') || '사랑';
+    async function fetchAiLyrics(song, fallbackIndex, totalSongs){
+      const res = await fetch(AI_LYRICS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          topic: val("topic") || "사랑",
+          style: val("genre"),
+          title: song.title,
+          keywords: val("keywords") || "",
+          songIndex: fallbackIndex + 1,
+          totalSongs: totalSongs,
+          language: val("language"),
+          voice: val("voice"),
+          gender: song.gender,
+          tempo: val("tempo"),
+          rap: val("rap"),
+          instrument: val("instrument"),
+          length: val("length")
+        })
+      });
+
+      const data = await res.json();
+
+      if(!res.ok || !data || !data.lyrics || data.error){
+        throw new Error(data?.detail || data?.error || "AI lyrics fetch failed");
+      }
+
+      return cleanAiLyrics(data.lyrics, song.title);
+    }
+
+    async function makeSong(index, totalSongs){
+      const topic = val("topic") || "사랑";
 
       const song = {
         title: buildTitle(topic, seed + index),
-        lyrics: '',
-        genre: val('genre'),
-        language: val('language'),
-        gender: autoGender(seed + index, val('gender')),
-        voice: val('voice'),
-        tempo: val('tempo'),
-        rap: val('rap'),
-        instrument: val('instrument'),
-        length: val('length'),
+        lyrics: "",
+        genre: val("genre"),
+        language: val("language"),
+        gender: autoGender(seed + index, val("gender")),
+        voice: val("voice"),
+        tempo: val("tempo"),
+        rap: val("rap"),
+        instrument: val("instrument"),
+        length: val("length"),
         done: false
       };
 
       song.style = buildStyle(song);
       song.simplePrompt = buildSimplePrompt(song);
-      song.lyrics = await fetchAiLyrics(topic, val('genre'), seed + index);
+
+      try{
+        song.lyrics = await fetchAiLyrics(song, seed + index, totalSongs);
+      } catch(e){
+        console.log("AI lyrics fetch failed:", e);
+        song.lyrics = buildLyrics(topic, seed + index, val("language"), val("length"));
+        setStatus("AI 가사 호출 실패 → 기본 가사로 대체됨");
+      }
 
       return song;
     }
@@ -616,7 +646,7 @@ ${d} 같은 온기가 곁에 머문다
 
       try{
         for(let i = 0; i < count; i++){
-          const song = await makeSong(start + i);
+          const song = await makeSong(start + i, count);
           songs.push(song);
           renderSongs();
           updateKpi();
@@ -637,7 +667,7 @@ ${d} 같은 온기가 곁에 머문다
       q('btnGenerateNextSingle').disabled = true;
 
       try{
-        const song = await makeSong(songs.length);
+        const song = await makeSong(songs.length, 1);
         songs.push(song);
         seed += 1;
         renderSongs();
@@ -757,6 +787,7 @@ music album cover, ${genre}, cinematic lighting, emotional mood, youtube thumbna
         box.innerHTML = '';
         return;
       }
+
       box.innerHTML =
         youtubePackData.titles.map((_,i)=>`<button type="button" class="light yt-copy" data-i="${i}">${i+1}번 제목 복사</button>`).join('')
         + '<button type="button" id="btnCopyDescTags" class="light">설명+태그 복사</button>';
