@@ -37,6 +37,16 @@
     .section-title{font-size:14px;font-weight:800;margin-bottom:8px;color:#3c4e72;letter-spacing:.2px}
     .small-note{font-size:12px;color:#63718b;margin-top:6px;line-height:1.6}
     label{font-size:14px;font-weight:700;color:#32425f}
+    .ai-status{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid #dce4f2;
+      background:linear-gradient(180deg,#f8faff 0%,#eef4ff 100%);
+      font-size:14px;
+      font-weight:700;
+      color:#2444a8;
+    }
     @media (max-width:800px){.grid3{grid-template-columns:1fr}.wrap{padding:14px}.card{padding:16px}}
   </style>
 </head>
@@ -55,6 +65,7 @@
 
       <label>주제</label>
       <textarea id="topic" placeholder="예: 중년의 사랑, 봄밤 드라이브"></textarea>
+
       <label>키워드</label>
       <input id="keywords" placeholder="예: 벚꽃, 야경, 추억" />
 
@@ -78,11 +89,14 @@
 
       <div class="section-title">곡 작업 버튼</div>
       <div class="btn-row">
+        <button type="button" id="btnApplyBestPreset" class="light">추천 조합</button>
         <button type="button" id="btnGenerateSongs">곡 생성</button>
         <button type="button" id="btnGenerateNextSingle" class="light">다음 곡 1개 추가</button>
         <button type="button" id="btnOpenSuno" class="light">Suno 열기</button>
         <button type="button" id="btnClearSongs" class="warn">전체 삭제</button>
       </div>
+
+      <div id="aiStatus" class="ai-status">AI 연결 상태 대기중</div>
 
       <div class="section-title">앨범 · 유튜브 버튼</div>
       <div class="btn-row">
@@ -161,16 +175,27 @@
     const setStatus = (msg) => { q('projectStatus').innerText = msg; };
     const esc = (s) => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 
+    function setAIStatus(msg, color){
+      const el = q('aiStatus');
+      el.innerText = msg;
+      el.style.color = color || '#2444a8';
+    }
+
     function saveApp(){
-      localStorage.setItem('sunoOptimalV3', JSON.stringify({
+      localStorage.setItem('sunoOptimalV4', JSON.stringify({
         songs, seed, youtubePackData, hideDoneSongs, copyCursor,
         form: getFormData(), cover: q('coverBox').innerText, youtube: q('youtubeBox').innerText
       }));
     }
 
     function loadApp(){
-      const raw = localStorage.getItem('sunoOptimalV3') || localStorage.getItem('sunoOptimalV2') || localStorage.getItem('sunoOptimalV1');
+      const raw = localStorage.getItem('sunoOptimalV4')
+        || localStorage.getItem('sunoOptimalV3')
+        || localStorage.getItem('sunoOptimalV2')
+        || localStorage.getItem('sunoOptimalV1');
+
       if(!raw) return false;
+
       try{
         const data = JSON.parse(raw);
         songs = Array.isArray(data.songs) ? data.songs : [];
@@ -182,7 +207,7 @@
         q('coverBox').innerText = data.cover || '아직 생성 전';
         q('youtubeBox').innerText = data.youtube || '아직 생성 전';
         return true;
-      }catch(e){
+      } catch(e){
         return false;
       }
     }
@@ -212,6 +237,20 @@
     function toggleHelp(id){
       const el = q(id);
       if(el) el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function applyBestPreset(){
+      q('topic').value = '늦은 밤 드라이브';
+      q('keywords').value = '가로등, 차창, 라디오, 새벽공기, 오래된 문자';
+      q('genre').value = '발라드';
+      q('gender').value = '남성';
+      q('voice').value = '허스키';
+      q('tempo').value = '보통';
+      q('instrument').value = '피아노';
+      q('rap').value = '없음';
+      q('length').value = '3분';
+      q('count').value = '3';
+      setStatus('추천 조합 적용 완료');
     }
 
     function titlePool(topic){
@@ -398,6 +437,8 @@ ${d} 같은 온기가 곁에 머문다
     }
 
     async function fetchAiLyrics(song, fallbackIndex, totalSongs){
+      setAIStatus('AI 가사 생성중...', '#b7791f');
+
       const res = await fetch(AI_LYRICS_URL, {
         method: "POST",
         headers: {
@@ -405,8 +446,8 @@ ${d} 같은 온기가 곁에 머문다
         },
         body: JSON.stringify({
           topic: val("topic") || "사랑",
-          style: val("genre"),
           title: song.title,
+          style: val("genre"),
           keywords: val("keywords") || "",
           songIndex: fallbackIndex + 1,
           totalSongs: totalSongs,
@@ -423,9 +464,11 @@ ${d} 같은 온기가 곁에 머문다
       const data = await res.json();
 
       if(!res.ok || !data || !data.lyrics || data.error){
+        setAIStatus('AI 연결 실패 (기본 가사 사용)', '#c53030');
         throw new Error(data?.detail || data?.error || "AI lyrics fetch failed");
       }
 
+      setAIStatus('AI 가사 생성 완료', '#15803d');
       return cleanAiLyrics(data.lyrics, song.title);
     }
 
@@ -642,6 +685,7 @@ ${d} 같은 온기가 곁에 머문다
       const start = songs.length;
 
       setStatus('AI 가사 생성 중...');
+      setAIStatus('AI 가사 생성중...', '#b7791f');
       q('btnGenerateSongs').disabled = true;
 
       try{
@@ -664,6 +708,7 @@ ${d} 같은 온기가 곁에 머문다
 
     async function generateNextSingle(){
       setStatus('다음 곡 AI 가사 생성 중...');
+      setAIStatus('AI 가사 생성중...', '#b7791f');
       q('btnGenerateNextSingle').disabled = true;
 
       try{
@@ -712,6 +757,7 @@ ${d} 같은 온기가 곁에 머문다
       updateCopyQueueInfo();
       saveApp();
       setStatus('전체 삭제 완료');
+      setAIStatus('AI 연결 상태 대기중', '#2444a8');
     }
 
     function toggleDoneByTitle(i){
@@ -955,6 +1001,7 @@ ${tags.join(' ')}`;
 
     function bindAll(){
       document.querySelectorAll('.help-btn').forEach(btn=>btn.onclick=()=>toggleHelp(btn.dataset.target));
+      q('btnApplyBestPreset').onclick = applyBestPreset;
       q('btnGenerateSongs').onclick = generateSongs;
       q('btnGenerateNextSingle').onclick = generateNextSingle;
       q('btnPrevCopy').onclick = prevCopy;
@@ -983,6 +1030,7 @@ ${tags.join(' ')}`;
     renderYouTubeActions();
     updateKpi();
     updateCopyQueueInfo();
+    setAIStatus('AI 연결 상태 대기중', '#2444a8');
   </script>
 </body>
 </html>
