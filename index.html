@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Suno 음악 제작 자동화 프로버전</title>
+  <title>Suno 음악 제작 자동화 안정화 버전</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f3f4f6; color: #111; }
@@ -29,27 +29,16 @@
 <body>
   <div class="wrap">
     <div class="card">
-      <h1>Suno 음악 제작 자동화 프로버전</h1>
-      <button type="button" class="light" data-help-target="mainHelp">전체 기능 설명</button>
+      <h1>Suno 음악 제작 자동화 안정화 버전</h1>
+      <button type="button" class="light help-btn" data-target="mainHelp">전체 기능 설명</button>
       <div id="mainHelp" class="help">
-        이 버전은 Suno 작업용 안정화 버전입니다.<br>
-        • 곡 생성 / 추가 생성<br>
-        • 제목 / 스타일 / 가사 / 간단 프롬프트 복사<br>
-        • 가사 저장 / 다시 불러오기<br>
-        • 프로젝트 저장 / 불러오기<br>
-        • TXT 저장 / 불러오기<br>
-        • 앨범커버 생성 / 지우기<br>
-        • 유튜브 세트 생성 / 지우기<br>
-        • 제목 번호별 복사 / 설명+태그 복사
+        곡 생성, 가사 수정, 프로젝트 저장, TXT 저장/불러오기, 앨범커버 생성, 유튜브 세트 생성 기능이 들어 있습니다.
       </div>
     </div><div class="card">
   <h2>생성 설정</h2>
-  <button type="button" class="light" data-help-target="settingHelp">설명</button>
+  <button type="button" class="light help-btn" data-target="settingHelp">설명</button>
   <div id="settingHelp" class="help">
-    제목은 한국어로 생성됩니다.<br>
-    Custom Style은 영어 프롬프트로 생성됩니다.<br>
-    가사 구조 태그는 Suno가 잘 읽도록 영어로 넣습니다.<br>
-    길이를 바꾸면 가사 분량도 자동으로 달라집니다.
+    제목은 한국어, Custom Style은 영어 프롬프트, 가사 구조 태그는 영어로 생성됩니다.
   </div>
 
   <label>주제</label>
@@ -112,7 +101,7 @@
 
 <div class="card">
   <h2>앨범 커버</h2>
-  <button type="button" class="light" data-help-target="coverHelp">설명</button>
+  <button type="button" class="light help-btn" data-target="coverHelp">설명</button>
   <button type="button" id="btnOpenGPTImage" class="light">GPT 이미지 생성 열기</button>
   <div id="coverHelp" class="help">유튜브 썸네일용 문구와 이미지 생성용 프롬프트를 만들어줍니다.</div>
   <div id="coverBox" class="song muted">아직 생성 전</div>
@@ -120,7 +109,7 @@
 
 <div class="card">
   <h2>유튜브 업로드 세트</h2>
-  <button type="button" class="light" data-help-target="ytHelp">설명</button>
+  <button type="button" class="light help-btn" data-target="ytHelp">설명</button>
   <div id="ytHelp" class="help">제목, 설명, 태그, 타임라인을 자동으로 만듭니다.</div>
   <div id="youtubeActionBox" class="btn-row"></div>
   <div id="youtubeBox" class="song muted">아직 생성 전</div>
@@ -128,7 +117,7 @@
 
 <div class="card">
   <h2>생성된 곡</h2>
-  <button type="button" class="light" data-help-target="songHelp">설명</button>
+  <button type="button" class="light help-btn" data-target="songHelp">설명</button>
   <div id="songHelp" class="help">각 곡 카드에서 제목 복사, 스타일 복사, 가사 복사, 간단 프롬프트 복사, 가사 저장, 가사 다시 불러오기, 완료 체크, 복제, 삭제를 할 수 있습니다.</div>
   <div id="songList"></div>
 </div>
@@ -142,36 +131,22 @@
     const q = (id) => document.getElementById(id);
     const val = (id) => q(id) ? q(id).value : '';
     const setStatus = (msg) => { q('projectStatus').innerText = msg; };
-
-    function toggleHelp(id) {
-      const el = q(id);
-      if (!el) return;
-      el.style.display = el.style.display === 'block' ? 'none' : 'block';
-    }
+    const esc = (s) => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
 
     function getFormData() {
-      return {
-        topic: val('topic'), keywords: val('keywords'), genre: val('genre'), language: val('language'), count: val('count'),
-        gender: val('gender'), voice: val('voice'), tempo: val('tempo'), rap: val('rap'), instrument: val('instrument'),
-        structure: val('structure'), hook: val('hook'), thumbStyle: val('thumbStyle'), length: val('length')
-      };
+      return { topic: val('topic'), keywords: val('keywords'), genre: val('genre'), language: val('language'), count: val('count'), gender: val('gender'), voice: val('voice'), tempo: val('tempo'), rap: val('rap'), instrument: val('instrument'), structure: val('structure'), hook: val('hook'), thumbStyle: val('thumbStyle'), length: val('length') };
     }
 
     function setFormData(data) {
-      Object.keys(data || {}).forEach((key) => { if (q(key)) q(key).value = data[key]; });
+      Object.keys(data || {}).forEach((k) => { if (q(k)) q(k).value = data[k]; });
     }
 
     function saveApp() {
-      localStorage.setItem('sunoProAppStable3', JSON.stringify({
-        songs, queueIndex, seed, form: getFormData(),
-        cover: q('coverBox').innerText,
-        youtube: q('youtubeBox').innerText,
-        youtubePackData
-      }));
+      localStorage.setItem('sunoStableFinal', JSON.stringify({ songs, queueIndex, seed, youtubePackData, form: getFormData(), cover: q('coverBox').innerText, youtube: q('youtubeBox').innerText }));
     }
 
     function loadApp() {
-      const raw = localStorage.getItem('sunoProAppStable3');
+      const raw = localStorage.getItem('sunoStableFinal');
       if (!raw) return false;
       try {
         const data = JSON.parse(raw);
@@ -198,7 +173,7 @@
 
     function autoGender(index, selected) {
       if (selected !== '자동') return selected;
-      return ['남성', '여성', '듀엣'][index % 3];
+      return ['남성','여성','듀엣'][index % 3];
     }
 
     function buildTitle(topic, index) {
@@ -248,29 +223,17 @@
       const structureMap = { '기본형': 'standard verse, pre-chorus, chorus, second verse, and final chorus structure', '인트로 포함': 'start with a soft intro before verse one', '브릿지 포함': 'include a clear bridge before the final chorus', '후렴 반복형': 'repeat the chorus for a stronger replayable payoff' };
       const hookMap = { '보통': 'balanced memorable chorus', '후렴 강하게': 'make the chorus bigger, more emotional, and highly memorable', '후렴 2회 반복': 'repeat the main chorus twice near the end for stronger impact', '쇼츠형 훅 강조': 'front-load a short catchy hook that lands immediately' };
       const lengthMap = { '자동조절': 'target a natural full-song structure around 3 minutes', '2분 30초': 'keep the structure concise around 2 minutes 30 seconds', '3분': 'target a balanced structure around 3 minutes', '3분 30초': 'expand the arrangement to around 3 minutes 30 seconds', '4분': 'use a fuller arrangement with extended development around 4 minutes' };
-      const parts = [];
-      parts.push(genreMap[song.genre] || 'commercial Korean pop arrangement');
-      parts.push(genderMap[song.gender] || 'single lead vocal');
-      parts.push(voiceMap[song.voice] || 'clear vocal tone');
-      parts.push(tempoMap[song.tempo] || 'moderate tempo around 90 to 108 BPM');
-      parts.push(rapMap[song.rap] || 'no rap section');
+      const parts = [genreMap[song.genre], genderMap[song.gender], voiceMap[song.voice], tempoMap[song.tempo], rapMap[song.rap]];
       if (instrumentMap[song.instrument]) parts.push(instrumentMap[song.instrument]);
-      parts.push(structureMap[song.structure] || 'standard verse and chorus structure');
-      parts.push(hookMap[song.hook] || 'balanced memorable chorus');
-      parts.push(lengthMap[song.length] || 'target a balanced structure around 3 minutes');
-      parts.push('focus on a polished commercial arrangement, a clear topline melody, and a memorable chorus');
-      return parts.join(', ');
+      parts.push(structureMap[song.structure], hookMap[song.hook], lengthMap[song.length], 'focus on a polished commercial arrangement, a clear topline melody, and a memorable chorus');
+      return parts.filter(Boolean).join(', ');
     }
 
     function buildSimplePrompt(song) {
       const genreMap = { '트로트': 'Korean trot ballad', '발라드': 'Korean emotional ballad', '락': 'Korean rock song', '힙합': 'Korean melodic hip-hop song', 'KPOP': 'modern K-pop song', '카페음악': 'soft cafe pop song' };
       const genderMap = { '남성': 'solo male vocal only', '여성': 'solo female vocal only', '듀엣': 'male female duet' };
       const voiceMap = { '맑은': 'clear clean vocal', '허스키': 'husky emotional vocal', '명랑': 'bright lively vocal', '가녀린': 'soft delicate airy vocal' };
-      const parts = [];
-      parts.push(genreMap[song.genre] || 'Korean pop song');
-      parts.push(genderMap[song.gender] || 'single lead vocal');
-      parts.push(voiceMap[song.voice] || 'clear vocal');
-      parts.push(song.tempo === '느리게' ? 'slow tempo' : song.tempo === '빠르게' ? 'upbeat tempo' : 'moderate tempo');
+      const parts = [genreMap[song.genre], genderMap[song.gender], voiceMap[song.voice], song.tempo === '느리게' ? 'slow tempo' : song.tempo === '빠르게' ? 'upbeat tempo' : 'moderate tempo'];
       if (song.rap === '중간 랩 1회') parts.push('one rap section');
       if (song.rap === '중간 랩 2회') parts.push('two rap sections');
       if (song.instrument !== '선택안함') parts.push(song.instrument);
@@ -280,18 +243,13 @@
       if (song.hook === '후렴 강하게') parts.push('big emotional chorus');
       if (song.hook === '후렴 2회 반복') parts.push('double chorus ending');
       if (song.hook === '쇼츠형 훅 강조') parts.push('immediate catchy hook');
-      parts.push('target ' + song.length);
-      parts.push(song.title);
-      return parts.join(', ');
+      parts.push('target ' + song.length, song.title);
+      return parts.filter(Boolean).join(', ');
     }
 
     function makeSong(index) {
       const topic = val('topic') || '사랑';
-      const song = {
-        title: buildTitle(topic, seed + index),
-        lyrics: buildLyrics(topic, seed + index, val('language'), val('structure'), val('hook'), val('rap'), val('length')),
-        genre: val('genre'), language: val('language'), gender: autoGender(seed + index, val('gender')), voice: val('voice'), tempo: val('tempo'), rap: val('rap'), instrument: val('instrument'), structure: val('structure'), hook: val('hook'), length: val('length'), done: false
-      };
+      const song = { title: buildTitle(topic, seed + index), lyrics: buildLyrics(topic, seed + index, val('language'), val('structure'), val('hook'), val('rap'), val('length')), genre: val('genre'), language: val('language'), gender: autoGender(seed + index, val('gender')), voice: val('voice'), tempo: val('tempo'), rap: val('rap'), instrument: val('instrument'), structure: val('structure'), hook: val('hook'), length: val('length'), done: false };
       song.style = buildStyle(song);
       song.simplePrompt = buildSimplePrompt(song);
       return song;
@@ -301,13 +259,13 @@
       const box = q('songList');
       box.innerHTML = '';
       songs.forEach((s, i) => {
+        const tags = [s.genre, s.gender, s.voice, s.tempo, s.rap, s.instrument, s.length].map((t) => `<span class="tag">${esc(t)}</span>`).join('');
         const div = document.createElement('div');
         div.className = 'song';
-        const tags = [s.genre, s.gender, s.voice, s.tempo, s.rap, s.instrument, s.length].map((t) => '<span class="tag">' + escapeHtml(t) + '</span>').join('');
         div.innerHTML = `
-          <b>${i + 1}. ${escapeHtml(s.title)}</b>
+          <b>${i + 1}. ${esc(s.title)}</b>
           <div>${tags}</div>
-          <div class="song"><b>Simple Prompt</b><pre>${escapeHtml(s.simplePrompt)}</pre></div><div class="song"><b>Custom Style</b><pre>${escapeHtml(s.style)}</pre></div>
+          <div class="song"><b>Simple Prompt</b><pre>${esc(s.simplePrompt)}</pre></div><div class="song"><b>Custom Style</b><pre>${esc(s.style)}</pre></div>
       <div class="song"><b>Lyrics</b><textarea id="lyric${i}"></textarea></div>
       <div class="btn-row">
         <button type="button" data-action="copyTitle" data-index="${i}">제목 복사</button>
@@ -319,307 +277,74 @@
         <button type="button" data-action="toggleDone" data-index="${i}" class="ok">${s.done ? '완료 해제' : '제작 완료 체크'}</button>
         <button type="button" data-action="duplicateSong" data-index="${i}" class="light">복제</button>
         <button type="button" data-action="deleteSong" data-index="${i}" class="warn">삭제</button>
-      </div>
-    `;
+      </div>`;
     box.appendChild(div);
     q('lyric' + i).value = s.lyrics;
   });
-  bindSongButtons();
-}
-
-function bindSongButtons() {
   document.querySelectorAll('#songList [data-action]').forEach((btn) => {
-    btn.addEventListener('click', () => {
+    btn.onclick = () => {
       const i = Number(btn.dataset.index);
-      const action = btn.dataset.action;
-      if (action === 'copyTitle') copyText(songs[i]?.title || '');
-      if (action === 'copyStyle') copyText(songs[i]?.style || '');
-      if (action === 'copyLyrics') copyText(q('lyric' + i)?.value || '');
-      if (action === 'copySimple') copyText(songs[i]?.simplePrompt || '');
-      if (action === 'saveLyrics') saveLyrics(i);
-      if (action === 'loadLyrics') loadLyrics(i);
-      if (action === 'toggleDone') toggleDone(i);
-      if (action === 'duplicateSong') duplicateSong(i);
-      if (action === 'deleteSong') deleteSong(i);
-    });
+      const a = btn.dataset.action;
+      if (a === 'copyTitle') copyText(songs[i]?.title || '');
+      if (a === 'copyStyle') copyText(songs[i]?.style || '');
+      if (a === 'copyLyrics') copyText(q('lyric' + i)?.value || '');
+      if (a === 'copySimple') copyText(songs[i]?.simplePrompt || '');
+      if (a === 'saveLyrics') saveLyrics(i);
+      if (a === 'loadLyrics') loadLyrics(i);
+      if (a === 'toggleDone') toggleDone(i);
+      if (a === 'duplicateSong') duplicateSong(i);
+      if (a === 'deleteSong') deleteSong(i);
+    };
   });
 }
 
-function copyText(text) {
-  navigator.clipboard.writeText(text || '').then(() => alert('복사 완료')).catch(() => alert('복사 실패'));
-}
-
-function saveLyrics(i) {
-  if (!songs[i] || !q('lyric' + i)) return;
-  songs[i].lyrics = q('lyric' + i).value;
-  saveApp();
-  setStatus('가사 저장 완료');
-  alert('가사 저장 완료');
-}
-
-function loadLyrics(i) {
-  if (!songs[i] || !q('lyric' + i)) return;
-  q('lyric' + i).value = songs[i].lyrics;
-  setStatus('가사 다시 불러오기 완료');
-}
-
-function generateSongs() {
-  const count = Number(val('count')) || 10;
-  const start = songs.length;
-  for (let i = 0; i < count; i++) songs.push(makeSong(start + i));
-  seed += count;
-  renderSongs();
-  updateKpi();
-  saveApp();
-  setStatus('곡 생성 완료');
-}
-
-function generateNextSingle() {
-  songs.push(makeSong(songs.length));
-  seed += 1;
-  renderSongs();
-  updateKpi();
-  saveApp();
-  setStatus('다음 곡 1개 추가 완료');
-  alert('다음 곡 1개 추가 완료');
-}
-
-function deleteSong(i) {
-  songs.splice(i, 1);
-  if (queueIndex > songs.length) queueIndex = songs.length;
-  renderSongs();
-  updateKpi();
-  saveApp();
-  setStatus('곡 삭제 완료');
-}
-
-function duplicateSong(i) {
-  const c = JSON.parse(JSON.stringify(songs[i]));
-  c.title = c.title + ' 복제';
-  c.done = false;
-  songs.splice(i + 1, 0, c);
-  renderSongs();
-  updateKpi();
-  saveApp();
-  setStatus('곡 복제 완료');
-}
-
-function clearSongs() {
-  songs = [];
-  queueIndex = 0;
-  renderSongs();
-  updateKpi();
-  saveApp();
-  setStatus('전체 삭제 완료');
-}
-
-function startQueue() {
-  queueIndex = 0;
-  updateKpi();
-  saveApp();
-  setStatus('큐 시작');
-  alert('큐 시작');
-}
-
-function copyNextPrompt() {
-  if (queueIndex >= songs.length) return alert('모든 곡 완료');
-  copyText(songs[queueIndex].simplePrompt);
-  queueIndex += 1;
-  updateKpi();
-  saveApp();
-  setStatus('다음곡 프롬프트 복사 완료');
-}
-
-function toggleDone(i) {
-  if (!songs[i]) return;
-  songs[i].done = !songs[i].done;
-  renderSongs();
-  updateKpi();
-  saveApp();
-  setStatus('완료 체크 변경');
-}
-
-function updateKpi() {
-  q('kpiCount').innerText = songs.length + '곡';
-  q('kpiDone').innerText = songs.filter((s) => s.done).length + '곡';
-  q('kpiQueue').innerText = songs.length ? Math.min(queueIndex + 1, songs.length) + ' / ' + songs.length : '대기';
-}
-
-function generateAlbumCover() {
-  const topic = val('topic') || '감성';
-  const genre = val('genre') || '발라드';
-  q('coverBox').innerText = `Album Title\n${topic} ${genre} Playlist\n\nThumbnail Copy\nBest ${genre} Songs Tonight\nSongs You Will Replay\n\nImage Prompt\nmusic album cover, ${genre}, cinematic lighting, emotional mood, youtube thumbnail style`;
-  saveApp();
-  setStatus('앨범커버 생성 완료');
-}
-
-function clearAlbumCover() {
-  q('coverBox').innerText = '아직 생성 전';
-  saveApp();
-  setStatus('앨범커버 지우기 완료');
-}
-
-function buildTimeline() {
-  if (!songs.length) return '00:00 첫 곡';
-  let seconds = 0;
-  const lines = [];
-  songs.forEach((song) => {
-    const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
-    const ss = String(seconds % 60).padStart(2, '0');
-    lines.push(`${mm}:${ss} ${song.title}`);
-    let add = 180;
-    if (song.length === '2분 30초') add = 150;
-    else if (song.length === '3분 30초') add = 210;
-    else if (song.length === '4분') add = 240;
-    seconds += add;
-  });
-  return lines.join('\n');
-}
-
-function renderYouTubeActions() {
-  const box = q('youtubeActionBox');
-  if (!box) return;
-  if (!youtubePackData) { box.innerHTML = ''; return; }
-  let html = '';
-  youtubePackData.titles.forEach((title, idx) => {
-    html += `<button type="button" class="light" data-yt-index="${idx}">${idx + 1}번 제목 복사</button>`;
-  });
-  html += '<button type="button" id="btnCopyDescTags" class="light">설명+태그 복사</button>';
-  box.innerHTML = html;
-  box.querySelectorAll('[data-yt-index]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const idx = Number(btn.dataset.ytIndex);
-      copyText(youtubePackData.titles[idx] || '');
-    });
-  });
-  q('btnCopyDescTags').onclick = () => copyText('설명\n' + youtubePackData.description + '\n\n태그\n' + youtubePackData.tags.join(' '));
-}
-
-function generateYouTubePack() {
-  const genre = val('genre') || '발라드';
-  const count = songs.length || 10;
-  const titles = [
-    `지금 가장 많이 듣는 ${genre} 감성 플레이리스트 🌙 한번 틀면 끝까지 듣게 되는 노래 ${count}곡`,
-    `밤에 들으면 더 좋은 ${genre} 모음 🎧 감성 터지는 노래 ${count}곡`,
-    `요즘 유튜브에서 뜨는 ${genre} 감성 노래 모음 | 계속 듣게 되는 플레이리스트`,
-    `잠들기 전에 듣는 ${genre} 감성 음악 🌌 마음이 편해지는 노래 ${count}곡`,
-    `한번 들으면 반복하게 되는 ${genre} 감성 노래 모음 🎶 최고의 플레이리스트`
-  ];
-  const description = `${genre} 감성 음악 ${count}곡을 모은 플레이리스트입니다.\n\n잔잔한 밤, 드라이브, 공부, 휴식할 때 듣기 좋은 음악으로 구성했습니다.\n\n좋아요와 구독은 채널 운영에 큰 힘이 됩니다.`;
-  const tags = [`#${genre}`, `#${genre}플레이리스트`, '#감성노래', '#감성음악', '#노래모음', '#플레이리스트', '#koreanmusic', '#koreanplaylist', '#koreanballad', '#kpopplaylist', '#studymusic', '#relaxingmusic', '#nightmusic', '#emotionalsongs', '#musicplaylist', '#drivemusic', '#latenightsongs', '#healingmusic', '#koreanemotionalmusic'];
-  youtubePackData = { titles, description, tags, timeline: buildTimeline() };
-  q('youtubeBox').innerText = '유튜브 조회수형 제목 후보\n\n' + titles.map((t, i) => `${i + 1}. ${t}`).join('\n') + '\n\n설명\n' + description + '\n\n타임라인\n' + youtubePackData.timeline + '\n\n추천 태그\n' + tags.join(' ');
-  renderYouTubeActions();
-  saveApp();
-  setStatus('유튜브 세트 생성 완료');
-}
-
-function clearYouTubePack() {
-  youtubePackData = null;
-  q('youtubeBox').innerText = '아직 생성 전';
-  renderYouTubeActions();
-  saveApp();
-  setStatus('유튜브 세트 지우기 완료');
-}
-
-function saveProject() {
-  saveApp();
-  setStatus('프로젝트 저장 완료');
-  alert('프로젝트 저장 완료');
-}
-
-function loadProject() {
-  if (loadApp()) {
-    renderSongs();
-    renderYouTubeActions();
-    updateKpi();
-    setStatus('프로젝트 불러오기 완료');
-    alert('프로젝트 불러오기 완료');
-  } else {
-    setStatus('저장된 프로젝트 없음');
-    alert('저장된 프로젝트 없음');
-  }
-}
-
-function exportTXT() {
-  let text = '';
-  songs.forEach((s, i) => {
-    text += `\n${i + 1}. ${s.title}\n[STYLE]\n${s.style}\n[LYRICS]\n${s.lyrics}\n`;
-  });
-  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'album.txt';
-  a.click();
-  setStatus('TXT 저장 완료');
-}
-
+function copyText(text) { navigator.clipboard.writeText(text || '').then(() => alert('복사 완료')).catch(() => alert('복사 실패')); }
+function saveLyrics(i) { if (!songs[i] || !q('lyric' + i)) return; songs[i].lyrics = q('lyric' + i).value; saveApp(); setStatus('가사 저장 완료'); alert('가사 저장 완료'); }
+function loadLyrics(i) { if (!songs[i] || !q('lyric' + i)) return; q('lyric' + i).value = songs[i].lyrics; setStatus('가사 다시 불러오기 완료'); }
+function generateSongs() { const count = Number(val('count')) || 10; const start = songs.length; for (let i = 0; i < count; i++) songs.push(makeSong(start + i)); seed += count; renderSongs(); updateKpi(); saveApp(); setStatus('곡 생성 완료'); }
+function generateNextSingle() { songs.push(makeSong(songs.length)); seed += 1; renderSongs(); updateKpi(); saveApp(); setStatus('다음 곡 1개 추가 완료'); alert('다음 곡 1개 추가 완료'); }
+function deleteSong(i) { songs.splice(i, 1); if (queueIndex > songs.length) queueIndex = songs.length; renderSongs(); updateKpi(); saveApp(); setStatus('곡 삭제 완료'); }
+function duplicateSong(i) { const c = JSON.parse(JSON.stringify(songs[i])); c.title += ' 복제'; c.done = false; songs.splice(i + 1, 0, c); renderSongs(); updateKpi(); saveApp(); setStatus('곡 복제 완료'); }
+function clearSongs() { songs = []; queueIndex = 0; renderSongs(); updateKpi(); saveApp(); setStatus('전체 삭제 완료'); }
+function startQueue() { queueIndex = 0; updateKpi(); saveApp(); setStatus('큐 시작'); alert('큐 시작'); }
+function copyNextPrompt() { if (queueIndex >= songs.length) return alert('모든 곡 완료'); copyText(songs[queueIndex].simplePrompt); queueIndex += 1; updateKpi(); saveApp(); setStatus('다음곡 프롬프트 복사 완료'); }
+function toggleDone(i) { if (!songs[i]) return; songs[i].done = !songs[i].done; renderSongs(); updateKpi(); saveApp(); setStatus('완료 체크 변경'); }
+function updateKpi() { q('kpiCount').innerText = songs.length + '곡'; q('kpiDone').innerText = songs.filter((s) => s.done).length + '곡'; q('kpiQueue').innerText = songs.length ? Math.min(queueIndex + 1, songs.length) + ' / ' + songs.length : '대기'; }
+function generateAlbumCover() { const topic = val('topic') || '감성'; const genre = val('genre') || '발라드'; q('coverBox').innerText = `Album Title\n${topic} ${genre} Playlist\n\nThumbnail Copy\nBest ${genre} Songs Tonight\nSongs You Will Replay\n\nImage Prompt\nmusic album cover, ${genre}, cinematic lighting, emotional mood, youtube thumbnail style`; saveApp(); setStatus('앨범커버 생성 완료'); }
+function clearAlbumCover() { q('coverBox').innerText = '아직 생성 전'; saveApp(); setStatus('앨범커버 지우기 완료'); }
+function buildTimeline() { if (!songs.length) return '00:00 첫 곡'; let seconds = 0; const lines = []; songs.forEach((song) => { const mm = String(Math.floor(seconds / 60)).padStart(2, '0'); const ss = String(seconds % 60).padStart(2, '0'); lines.push(`${mm}:${ss} ${song.title}`); let add = 180; if (song.length === '2분 30초') add = 150; else if (song.length === '3분 30초') add = 210; else if (song.length === '4분') add = 240; seconds += add; }); return lines.join('\n'); }
+function renderYouTubeActions() { const box = q('youtubeActionBox'); if (!youtubePackData) { box.innerHTML = ''; return; } box.innerHTML = youtubePackData.titles.map((_, i) => `<button type="button" class="light yt-copy" data-idx="${i}">${i + 1}번 제목 복사</button>`).join('') + '<button type="button" id="btnCopyDescTags" class="light">설명+태그 복사</button>'; box.querySelectorAll('.yt-copy').forEach((b) => { b.onclick = () => copyText(youtubePackData.titles[Number(b.dataset.idx)] || ''); }); q('btnCopyDescTags').onclick = () => copyText('설명\n' + youtubePackData.description + '\n\n태그\n' + youtubePackData.tags.join(' ')); }
+function generateYouTubePack() { const genre = val('genre') || '발라드'; const count = songs.length || 10; const titles = [`지금 가장 많이 듣는 ${genre} 감성 플레이리스트 🌙 한번 틀면 끝까지 듣게 되는 노래 ${count}곡`,`밤에 들으면 더 좋은 ${genre} 모음 🎧 감성 터지는 노래 ${count}곡`,`요즘 유튜브에서 뜨는 ${genre} 감성 노래 모음 | 계속 듣게 되는 플레이리스트`,`잠들기 전에 듣는 ${genre} 감성 음악 🌌 마음이 편해지는 노래 ${count}곡`,`한번 들으면 반복하게 되는 ${genre} 감성 노래 모음 🎶 최고의 플레이리스트`]; const description = `${genre} 감성 음악 ${count}곡을 모은 플레이리스트입니다.\n\n잔잔한 밤, 드라이브, 공부, 휴식할 때 듣기 좋은 음악으로 구성했습니다.\n\n좋아요와 구독은 채널 운영에 큰 힘이 됩니다.`; const tags = [`#${genre}`,`#${genre}플레이리스트`,'#감성노래','#감성음악','#노래모음','#플레이리스트','#koreanmusic','#koreanplaylist','#koreanballad','#kpopplaylist','#studymusic','#relaxingmusic','#nightmusic','#emotionalsongs','#musicplaylist','#drivemusic','#latenightsongs','#healingmusic','#koreanemotionalmusic']; youtubePackData = { titles, description, tags, timeline: buildTimeline() }; q('youtubeBox').innerText = '유튜브 조회수형 제목 후보\n\n' + titles.map((t, i) => `${i + 1}. ${t}`).join('\n') + '\n\n설명\n' + description + '\n\n타임라인\n' + youtubePackData.timeline + '\n\n추천 태그\n' + tags.join(' '); renderYouTubeActions(); saveApp(); setStatus('유튜브 세트 생성 완료'); }
+function clearYouTubePack() { youtubePackData = null; q('youtubeBox').innerText = '아직 생성 전'; renderYouTubeActions(); saveApp(); setStatus('유튜브 세트 지우기 완료'); }
+function saveProject() { saveApp(); setStatus('프로젝트 저장 완료'); alert('프로젝트 저장 완료'); }
+function loadProject() { if (loadApp()) { renderSongs(); renderYouTubeActions(); updateKpi(); setStatus('프로젝트 불러오기 완료'); alert('프로젝트 불러오기 완료'); } else { setStatus('저장된 프로젝트 없음'); alert('저장된 프로젝트 없음'); } }
+function exportTXT() { let text = ''; songs.forEach((s, i) => { text += `\n${i + 1}. ${s.title}\n[STYLE]\n${s.style}\n[LYRICS]\n${s.lyrics}\n`; }); const blob = new Blob([text], { type: 'text/plain;charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'album.txt'; a.click(); setStatus('TXT 저장 완료'); }
 function importTXT() { q('txtFileInput').click(); }
-
-function handleTXTImport(file) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const text = String(e.target.result || '');
-    const chunks = text.split(/\n(?=\d+\.\s)/).map((v) => v.trim()).filter(Boolean);
-    const imported = [];
-    chunks.forEach((chunk) => {
-      const titleMatch = chunk.match(/^\d+\.\s(.+)$/m);
-      const styleMatch = chunk.match(/STYLE\n([\s\S]*?)\nLYRICS/m);
-      const lyricsMatch = chunk.match(/LYRICS\n([\s\S]*)$/m);
-      if (titleMatch) {
-        const song = {
-          title: titleMatch[1].trim(),
-          style: styleMatch ? styleMatch[1].trim() : '',
-          lyrics: lyricsMatch ? lyricsMatch[1].trim() : '',
-          genre: val('genre'), language: val('language'), gender: val('gender') === '자동' ? '여성' : val('gender'), voice: val('voice'), tempo: val('tempo'), rap: val('rap'), instrument: val('instrument'), structure: val('structure'), hook: val('hook'), length: val('length'), done: false
-        };
-        if (!song.style) song.style = buildStyle(song);
-        song.simplePrompt = buildSimplePrompt(song);
-        imported.push(song);
-      }
-    });
-    if (!imported.length) {
-      setStatus('TXT 불러오기 실패');
-      alert('TXT 형식을 읽지 못했습니다.');
-      return;
-    }
-    imported.forEach((song) => songs.push(song));
-    renderSongs();
-    updateKpi();
-    saveApp();
-    setStatus('TXT 불러오기 완료');
-    alert('TXT 불러오기 완료');
-  };
-  reader.readAsText(file, 'utf-8');
-}
-
+function handleTXTImport(file) { if (!file) return; const reader = new FileReader(); reader.onload = (e) => { const text = String(e.target.result || ''); const chunks = text.split(/\n(?=\d+\.\s)/).map((v) => v.trim()).filter(Boolean); const imported = []; chunks.forEach((chunk) => { const titleMatch = chunk.match(/^\d+\.\s(.+)$/m); const styleMatch = chunk.match(/STYLE\n([\s\S]*?)\nLYRICS/m); const lyricsMatch = chunk.match(/LYRICS\n([\s\S]*)$/m); if (titleMatch) { const song = { title: titleMatch[1].trim(), style: styleMatch ? styleMatch[1].trim() : '', lyrics: lyricsMatch ? lyricsMatch[1].trim() : '', genre: val('genre'), language: val('language'), gender: val('gender') === '자동' ? '여성' : val('gender'), voice: val('voice'), tempo: val('tempo'), rap: val('rap'), instrument: val('instrument'), structure: val('structure'), hook: val('hook'), length: val('length'), done: false }; if (!song.style) song.style = buildStyle(song); song.simplePrompt = buildSimplePrompt(song); imported.push(song); } }); if (!imported.length) { setStatus('TXT 불러오기 실패'); alert('TXT 형식을 읽지 못했습니다.'); return; } imported.forEach((song) => songs.push(song)); renderSongs(); updateKpi(); saveApp(); setStatus('TXT 불러오기 완료'); alert('TXT 불러오기 완료'); }; reader.readAsText(file, 'utf-8'); }
 function openSuno() { window.open('https://suno.com/create', '_blank'); }
 function openGPTImage() { window.open('https://chatgpt.com/?model=gpt-image-1', '_blank'); }
 
-function bindMainButtons() {
-  document.querySelectorAll('[data-help-target]').forEach((btn) => {
-    btn.addEventListener('click', () => toggleHelp(btn.dataset.helpTarget));
-  });
-  q('btnGenerateSongs').addEventListener('click', generateSongs);
-  q('btnGenerateNextSingle').addEventListener('click', generateNextSingle);
-  q('btnStartQueue').addEventListener('click', startQueue);
-  q('btnCopyNextPrompt').addEventListener('click', copyNextPrompt);
-  q('btnOpenSuno').addEventListener('click', openSuno);
-  q('btnGenerateAlbumCover').addEventListener('click', generateAlbumCover);
-  q('btnClearAlbumCover').addEventListener('click', clearAlbumCover);
-  q('btnGenerateYouTubePack').addEventListener('click', generateYouTubePack);
-  q('btnClearYouTubePack').addEventListener('click', clearYouTubePack);
-  q('btnSaveProject').addEventListener('click', saveProject);
-  q('btnLoadProject').addEventListener('click', loadProject);
-  q('btnExportTXT').addEventListener('click', exportTXT);
-  q('btnImportTXT').addEventListener('click', importTXT);
-  q('btnClearSongs').addEventListener('click', clearSongs);
-  q('btnOpenGPTImage').addEventListener('click', openGPTImage);
-  q('txtFileInput').addEventListener('change', (e) => { handleTXTImport(e.target.files[0]); e.target.value = ''; });
+function bindAll() {
+  document.querySelectorAll('.help-btn').forEach((btn) => { btn.onclick = () => toggleHelp(btn.dataset.target); });
+  q('btnGenerateSongs').onclick = generateSongs;
+  q('btnGenerateNextSingle').onclick = generateNextSingle;
+  q('btnStartQueue').onclick = startQueue;
+  q('btnCopyNextPrompt').onclick = copyNextPrompt;
+  q('btnOpenSuno').onclick = openSuno;
+  q('btnGenerateAlbumCover').onclick = generateAlbumCover;
+  q('btnClearAlbumCover').onclick = clearAlbumCover;
+  q('btnGenerateYouTubePack').onclick = generateYouTubePack;
+  q('btnClearYouTubePack').onclick = clearYouTubePack;
+  q('btnSaveProject').onclick = saveProject;
+  q('btnLoadProject').onclick = loadProject;
+  q('btnExportTXT').onclick = exportTXT;
+  q('btnImportTXT').onclick = importTXT;
+  q('btnClearSongs').onclick = clearSongs;
+  q('btnOpenGPTImage').onclick = openGPTImage;
+  q('txtFileInput').onchange = (e) => { handleTXTImport(e.target.files[0]); e.target.value = ''; };
 }
 
-bindMainButtons();
+bindAll();
 loadApp();
 renderSongs();
 renderYouTubeActions();
