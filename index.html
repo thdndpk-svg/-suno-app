@@ -1,386 +1,1132 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>AI Music Auto Studio v17</title>
-
-<style>
-
-body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-margin:0;
-padding:30px;
-}
-
-.container{
-max-width:1200px;
-margin:auto;
-}
-
-h1{
-font-size:32px;
-margin-bottom:10px;
-}
-
-.card{
-background:#111827;
-padding:20px;
-border-radius:15px;
-margin-bottom:20px;
-}
-
-textarea,select{
-width:100%;
-padding:10px;
-margin-top:10px;
-background:#0b1220;
-border:1px solid #334155;
-color:white;
-border-radius:10px;
-}
-
-button{
-padding:12px 18px;
-border-radius:10px;
-border:none;
-margin-top:10px;
-margin-right:5px;
-cursor:pointer;
-}
-
-.primary{background:#2563eb;color:white;}
-.green{background:#059669;color:white;}
-.orange{background:#d97706;color:white;}
-.purple{background:#7c3aed;color:white;}
-.gray{background:#374151;color:white;}
-
-.track{
-background:#0b1220;
-padding:15px;
-margin-top:15px;
-border-radius:12px;
-}
-
-.field{
-margin-top:10px;
-}
-
-.field-title{
-color:#93c5fd;
-font-size:14px;
-margin-bottom:5px;
-}
-
-.copyButtons button{
-margin-top:6px;
-}
-
-</style>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Music Auto Studio v18</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+    .wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .title h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+    .title p {
+      margin: 8px 0 0;
+      color: #cbd5e1;
+    }
+    .badge {
+      background: #1e293b;
+      color: #93c5fd;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      border: 1px solid #334155;
+    }
+    .menu-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .menu-btn {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: #111827;
+      color: #e2e8f0;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .menu-btn.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 20px;
+    }
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .card h2 {
+      margin: 0 0 16px;
+      font-size: 22px;
+    }
+    .section-title {
+      margin: 18px 0 10px;
+      font-size: 16px;
+      color: #93c5fd;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .full { grid-column: 1 / -1; }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: #0b1220;
+      color: #f8fafc;
+      font-size: 14px;
+      outline: none;
+    }
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    button {
+      border: none;
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .primary { background: #2563eb; color: white; }
+    .secondary { background: #1e293b; color: #e2e8f0; border: 1px solid #334155; }
+    .success { background: #059669; color: white; }
+    .warning { background: #d97706; color: white; }
+    .danger { background: #dc2626; color: white; }
+    .purple { background: #7c3aed; color: white; }
+    .listen-box {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #0b1220;
+      border: 1px solid #334155;
+      display: inline-block;
+      font-size: 14px;
+    }
+    .listening {
+      color: #fca5a5;
+      font-weight: bold;
+    }
+    .check-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #0b1220;
+      border: 1px solid #334155;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      color: #e2e8f0;
+      min-height: 44px;
+    }
+    .option input {
+      accent-color: #3b82f6;
+    }
+    .steps {
+      display: grid;
+      gap: 10px;
+    }
+    .step {
+      padding: 14px;
+      border-radius: 14px;
+      background: #0b1220;
+      border: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .status {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #1e293b;
+      color: #93c5fd;
+      white-space: nowrap;
+    }
+    .progress-wrap {
+      margin-top: 14px;
+    }
+    .progress-bar {
+      height: 12px;
+      background: #1e293b;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid #334155;
+    }
+    .progress {
+      width: 8%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #06b6d4);
+    }
+    .log {
+      margin-top: 12px;
+      padding: 14px;
+      background: #0b1220;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      min-height: 220px;
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+    .output-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #0b1220;
+      border: 1px solid #334155;
+    }
+    .output-box h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: #93c5fd;
+    }
+    .summary-line {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.7;
+    }
+    .track-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .track-item {
+      padding: 16px;
+      border-radius: 14px;
+      background: #0b1220;
+      border: 1px solid #334155;
+    }
+    .track-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .track-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .small {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .mini-box {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #111827;
+      border: 1px solid #334155;
+    }
+    .mini-box strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #93c5fd;
+      font-size: 14px;
+    }
+    .mini-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+    }
+    .copy-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .quick-copy-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #111827;
+      border: 1px solid #334155;
+    }
+    .quick-copy-status {
+      font-size: 14px;
+      color: #e2e8f0;
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title">
+        <h1>AI Music Auto Studio v18</h1>
+        <p>장르 확장 + 악기 추가 + 랩 추가 + Suno 최적화 완성본</p>
+      </div>
+      <div class="badge">Suno 최적 구조: Title · Style · Lyrics</div>
+    </div>
 
-<div class="container">
+    <div class="menu-bar">
+      <button class="menu-btn active">음악 제작</button>
+      <button class="menu-btn">동화 제작</button>
+      <button class="menu-btn">소설 제작</button>
+      <button class="menu-btn">영상 관리</button>
+      <button class="menu-btn">업로드 관리</button>
+    </div>
 
-<h1>AI Music Auto Studio v17</h1>
+    <div class="grid">
+      <div class="card">
+        <h2>프로젝트 설정</h2>
 
-<div class="card">
+        <div class="row">
+          <div class="full">
+            <label>음성 또는 텍스트 명령</label>
+            <textarea id="commandInput" placeholder="예: 비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘&#10;예: 1번곡 조금 더 경쾌하게 만들어줘&#10;예: 랩이 중간에 들어가는 힙합곡 8곡 만들어줘"></textarea>
 
-<h3>음성 / 텍스트 명령</h3>
+            <div class="btns">
+              <button class="primary" id="voiceBtn" onclick="startVoice()">🎤 음성 명령 시작</button>
+              <button class="secondary" onclick="analyzeCommand()">🧠 AI 분석</button>
+              <button class="secondary" onclick="applyDemoMainCommand()">예시 전체 명령</button>
+              <button class="secondary" onclick="applyDemoEditCommand()">예시 수정 명령</button>
+            </div>
 
-<textarea id="commandInput" placeholder="예: 비 오는 날 듣기 좋은 노래 10곡 만들어줘"></textarea>
+            <div class="listen-box" id="listenStatus">상태: 대기중</div>
+          </div>
+        </div>
 
-<button class="primary" onclick="startVoice()">🎤 음성 명령</button>
-<button class="gray" onclick="analyzeCommand()">AI 분석</button>
+        <h3 class="section-title">기본 설정</h3>
 
-</div>
+        <div class="row">
+          <div>
+            <label>곡 수</label>
+            <select id="trackCount">
+              <option>6</option>
+              <option>8</option>
+              <option selected>10</option>
+              <option>12</option>
+              <option>15</option>
+              <option>20</option>
+            </select>
+          </div>
+          <div>
+            <label>장르</label>
+            <select id="genreSelect">
+              <option selected>korean ballad</option>
+              <option>hip hop</option>
+              <option>trot</option>
+              <option>rock</option>
+              <option>heavy metal</option>
+              <option>cafe music</option>
+              <option>instrumental</option>
+              <option>korean pop</option>
+              <option>r&b</option>
+              <option>jazz</option>
+              <option>lofi chill</option>
+              <option>edm</option>
+              <option>classical crossover</option>
+              <option>ost style</option>
+              <option>children song</option>
+            </select>
+          </div>
+        </div>
 
-<div class="card">
+        <div class="row">
+          <div>
+            <label>분위기</label>
+            <select id="moodSelect">
+              <option selected>rainy mood</option>
+              <option>romantic mood</option>
+              <option>sad emotional</option>
+              <option>warm sentimental</option>
+              <option>bright cheerful</option>
+              <option>dreamy cinematic</option>
+              <option>dark intense</option>
+              <option>late night loneliness</option>
+              <option>study focus</option>
+              <option>sleep calm</option>
+              <option>drive energy</option>
+              <option>cafe relaxing</option>
+            </select>
+          </div>
+          <div>
+            <label>보컬 타입</label>
+            <select id="vocalSelect">
+              <option selected>female vocal</option>
+              <option>male vocal</option>
+              <option>duet vocal</option>
+              <option>instrumental only</option>
+              <option>soft female vocal</option>
+              <option>husky male vocal</option>
+              <option>clear bright vocal</option>
+              <option>emotional chorus vocal</option>
+            </select>
+          </div>
+        </div>
 
-<h3>기본 설정</h3>
+        <div class="row">
+          <div>
+            <label>보컬 스타일</label>
+            <select id="voiceToneSelect">
+              <option selected>soft and emotional</option>
+              <option>clear and bright</option>
+              <option>warm and gentle</option>
+              <option>husky and deep</option>
+              <option>powerful and sharp</option>
+              <option>sweet and tender</option>
+            </select>
+          </div>
+          <div>
+            <label>가사 언어</label>
+            <select id="lyricsLang">
+              <option value="korean" selected>한국어</option>
+              <option value="english">English</option>
+              <option value="japanese">日本語</option>
+            </select>
+          </div>
+        </div>
 
-<label>곡 수</label>
+        <h3 class="section-title">세부 선택</h3>
 
-<select id="trackCount">
-<option>6</option>
-<option>8</option>
-<option selected>10</option>
-<option>12</option>
-<option>15</option>
-<option>20</option>
-</select>
+        <div class="check-group">
+          <label class="option"><input type="checkbox" id="instrumentalOnly"> 가사 없는 연주곡</label>
+          <label class="option"><input type="checkbox" id="rapOption"> 가사 중간 랩 파트 추가</label>
+          <label class="option"><input type="checkbox" id="englishHookOption"> 영어 후렴 추가</label>
+          <label class="option"><input type="checkbox" id="repeatChorusOption"> 후렴 반복형</label>
+          <label class="option"><input type="checkbox" id="shortIntroOption"> 짧은 인트로</label>
+          <label class="option"><input type="checkbox" id="longIntroOption"> 긴 인트로</label>
+          <label class="option"><input type="checkbox" id="bridgeOption"> 브릿지 강조</label>
+        </div>
 
-<label>장르</label>
+        <h3 class="section-title">악기 추가</h3>
 
-<select id="genre">
-<option>korean ballad</option>
-<option>korean pop</option>
-<option>acoustic ballad</option>
-<option>lofi chill</option>
-</select>
+        <div class="check-group">
+          <label class="option"><input type="checkbox" class="instrument" value="piano"> 피아노</label>
+          <label class="option"><input type="checkbox" class="instrument" value="acoustic guitar"> 어쿠스틱 기타</label>
+          <label class="option"><input type="checkbox" class="instrument" value="electric guitar"> 일렉기타</label>
+          <label class="option"><input type="checkbox" class="instrument" value="bass"> 베이스</label>
+          <label class="option"><input type="checkbox" class="instrument" value="drums"> 드럼</label>
+          <label class="option"><input type="checkbox" class="instrument" value="violin"> 바이올린</label>
+          <label class="option"><input type="checkbox" class="instrument" value="cello"> 첼로</label>
+          <label class="option"><input type="checkbox" class="instrument" value="flute"> 플루트</label>
+          <label class="option"><input type="checkbox" class="instrument" value="saxophone"> 색소폰</label>
+          <label class="option"><input type="checkbox" class="instrument" value="synth"> 신스</label>
+          <label class="option"><input type="checkbox" class="instrument" value="pad"> 패드</label>
+          <label class="option"><input type="checkbox" class="instrument" value="orchestra"> 오케스트라</label>
+          <label class="option"><input type="checkbox" class="instrument" value="korean traditional instruments"> 국악기</label>
+          <label class="option"><input type="checkbox" class="instrument" value="strong beat"> 비트 강조</label>
+        </div>
 
-<label>분위기</label>
+        <div class="output-box">
+          <h3>AI 분석 결과</h3>
+          <div class="summary-line" id="analysisResult">
+주제: 사용자 명령 기반 음악 제작<br>
+장르: korean ballad<br>
+분위기: rainy mood<br>
+보컬: female vocal<br>
+가사 언어: 한국어<br>
+추천 작업: Suno용 Title / Style / Lyrics 생성 후 순차 복사
+          </div>
+        </div>
 
-<select id="mood">
-<option>rainy mood</option>
-<option>romantic mood</option>
-<option>sad emotional</option>
-<option>warm sentimental</option>
-</select>
+        <div class="quick-copy-box">
+          <h3 style="margin:0 0 10px; color:#93c5fd;">빠른 붙여넣기 복사</h3>
+          <div class="btns">
+            <button class="purple" onclick="copyNextStep()">⏭ Next Copy</button>
+            <button class="secondary" onclick="resetCopySequence()">🔄 복사 초기화</button>
+            <button class="warning" onclick="openSuno()">🎵 Suno 열기</button>
+          </div>
+          <div class="quick-copy-status" id="copySequenceStatus">
+            다음 복사 대상: 아직 생성된 곡이 없습니다.
+          </div>
+        </div>
 
-<label>보컬 타입</label>
+        <div class="btns">
+          <button class="success" onclick="generateTracks()">✍ 곡 생성</button>
+          <button class="warning" onclick="prepareMix()">🎧 자동 편집 준비</button>
+          <button class="danger" onclick="makeVideo()">🎬 영상 만들기</button>
+        </div>
+      </div>
 
-<select id="vocal">
-<option>female vocal</option>
-<option>male vocal</option>
-<option>duet vocal</option>
-</select>
+      <div class="card">
+        <h2>작업 진행 상태</h2>
 
-<label>가사 언어</label>
+        <div class="steps">
+          <div class="step"><span>음성/텍스트 명령 분석</span><span class="status" id="st1">대기중</span></div>
+          <div class="step"><span>곡별 Suno 자료 생성</span><span class="status" id="st2">대기중</span></div>
+          <div class="step"><span>개별 곡 수정 반영</span><span class="status" id="st3">대기중</span></div>
+          <div class="step"><span>mp3 첨부 후 자동 편집 준비</span><span class="status" id="st4">대기중</span></div>
+          <div class="step"><span>긴 영상 제작 준비</span><span class="status" id="st5">대기중</span></div>
+        </div>
 
-<select id="lyricsLang">
-<option value="korean">한국어</option>
-<option value="english">English</option>
-<option value="japanese">日本語</option>
-</select>
+        <div class="progress-wrap">
+          <div class="summary-line">전체 진행률</div>
+          <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+          </div>
+        </div>
 
-<br>
+        <div class="log" id="logBox">프로젝트를 시작하면 여기에 분석 로그와 수정 로그가 표시됩니다.</div>
+      </div>
+    </div>
 
-<button class="green" onclick="generateTracks()">곡 생성</button>
-<button class="purple" onclick="copyNext()">Next Copy</button>
-<button class="gray" onclick="resetCopy()">복사 초기화</button>
-<button class="orange" onclick="openSuno()">🎵 Suno 열기</button>
+    <div class="card" style="margin-top:20px;">
+      <h2>Suno 붙여넣기용 곡별 결과</h2>
+      <div class="track-list" id="trackList"></div>
+    </div>
+  </div>
 
-<div id="copyStatus" style="margin-top:10px;"></div>
+  <script>
+    let tracks = [];
+    let copySteps = [];
+    let copySequenceIndex = 0;
 
-</div>
+    function log(message) {
+      const logBox = document.getElementById("logBox");
+      const time = new Date().toLocaleTimeString("ko-KR");
+      logBox.textContent += `\n[${time}] ${message}`;
+      logBox.scrollTop = logBox.scrollHeight;
+    }
 
-<div class="card">
+    function setStatus(id, text) {
+      document.getElementById(id).textContent = text;
+    }
 
-<h3>Suno 붙여넣기용 결과</h3>
+    function setProgress(percent) {
+      document.getElementById("progressBar").style.width = percent + "%";
+    }
 
-<div id="tracks"></div>
+    function updateListeningState(isListening) {
+      const status = document.getElementById("listenStatus");
+      const btn = document.getElementById("voiceBtn");
 
-</div>
+      if (isListening) {
+        status.innerHTML = '상태: <span class="listening">🎤 듣는 중...</span>';
+        btn.textContent = "🎤 듣는 중...";
+      } else {
+        status.textContent = "상태: 대기중";
+        btn.textContent = "🎤 음성 명령 시작";
+      }
+    }
 
-</div>
+    function openSuno() {
+      window.open("https://suno.com/create", "_blank");
+    }
 
-<script>
+    function applyDemoMainCommand() {
+      document.getElementById("commandInput").value =
+        "비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘";
+      analyzeCommand();
+    }
 
-let tracks=[];
-let copySteps=[];
-let copyIndex=0;
+    function applyDemoEditCommand() {
+      document.getElementById("commandInput").value =
+        "1번곡 조금 더 경쾌하게 만들어줘";
+      analyzeCommand();
+    }
 
-function openSuno(){
-window.open("https://suno.com/create");
-}
+    function analyzeCommand() {
+      const text = document.getElementById("commandInput").value.trim().toLowerCase();
+      if (!text) {
+        alert("명령을 입력해 주세요.");
+        return;
+      }
 
-function generateTitle(){
+      setStatus("st1", "완료");
+      setProgress(16);
+      log(`명령 분석 시작: ${text}`);
 
-const titles=[
-"Rainy Window",
-"Midnight Rain",
-"Lonely Rain",
-"Rainy Memory",
-"Falling Rain",
-"Rainy Night Song",
-"Silent Rain",
-"Rainy Melody",
-"Window of Rain",
-"Rainy City Lights"
-];
+      const editMatch = text.match(/(\d+)번곡/);
+      if (editMatch) {
+        handleTrackEdit(document.getElementById("commandInput").value.trim(), parseInt(editMatch[1], 10));
+        return;
+      }
 
-return titles[Math.floor(Math.random()*titles.length)];
+      if (text.includes("20곡") || text.includes("20")) document.getElementById("trackCount").value = "20";
+      else if (text.includes("15곡") || text.includes("15")) document.getElementById("trackCount").value = "15";
+      else if (text.includes("12곡") || text.includes("12")) document.getElementById("trackCount").value = "12";
+      else if (text.includes("10곡") || text.includes("10")) document.getElementById("trackCount").value = "10";
+      else if (text.includes("8곡") || text.includes("8")) document.getElementById("trackCount").value = "8";
+      else if (text.includes("6곡") || text.includes("6")) document.getElementById("trackCount").value = "6";
 
-}
+      if (text.includes("발라드")) document.getElementById("genreSelect").value = "korean ballad";
+      if (text.includes("힙합")) document.getElementById("genreSelect").value = "hip hop";
+      if (text.includes("트로트")) document.getElementById("genreSelect").value = "trot";
+      if (text.includes("락")) document.getElementById("genreSelect").value = "rock";
+      if (text.includes("헤비메탈") || text.includes("메탈")) document.getElementById("genreSelect").value = "heavy metal";
+      if (text.includes("카페")) document.getElementById("genreSelect").value = "cafe music";
+      if (text.includes("연주곡") || text.includes("가사 없는")) {
+        document.getElementById("genreSelect").value = "instrumental";
+        document.getElementById("instrumentalOnly").checked = true;
+        document.getElementById("vocalSelect").value = "instrumental only";
+      }
 
-function generateLyrics(){
+      if (text.includes("비 오는 날") || text.includes("비오는 날") || text.includes("비")) {
+        document.getElementById("moodSelect").value = "rainy mood";
+      }
+      if (text.includes("로맨틱") || text.includes("설렘")) document.getElementById("moodSelect").value = "romantic mood";
+      if (text.includes("슬픈") || text.includes("이별")) document.getElementById("moodSelect").value = "sad emotional";
+      if (text.includes("따뜻")) document.getElementById("moodSelect").value = "warm sentimental";
+      if (text.includes("밝고") || text.includes("경쾌")) document.getElementById("moodSelect").value = "bright cheerful";
+      if (text.includes("몽환")) document.getElementById("moodSelect").value = "dreamy cinematic";
+      if (text.includes("어두운")) document.getElementById("moodSelect").value = "dark intense";
+      if (text.includes("새벽")) document.getElementById("moodSelect").value = "late night loneliness";
+      if (text.includes("공부")) document.getElementById("moodSelect").value = "study focus";
+      if (text.includes("수면") || text.includes("잠")) document.getElementById("moodSelect").value = "sleep calm";
+      if (text.includes("드라이브")) document.getElementById("moodSelect").value = "drive energy";
+      if (text.includes("카페")) document.getElementById("moodSelect").value = "cafe relaxing";
 
-const lang=document.getElementById("lyricsLang").value;
+      if (text.includes("여성보컬") || text.includes("여자보컬")) document.getElementById("vocalSelect").value = "female vocal";
+      if (text.includes("남성보컬") || text.includes("남자보컬")) document.getElementById("vocalSelect").value = "male vocal";
+      if (text.includes("듀엣")) document.getElementById("vocalSelect").value = "duet vocal";
 
-if(lang==="english"){
-return `[Verse]
-Rain falling on my window tonight
+      if (text.includes("영어 노래") || text.includes("english")) document.getElementById("lyricsLang").value = "english";
+      if (text.includes("일본어")) document.getElementById("lyricsLang").value = "japanese";
+      if (text.includes("한국어")) document.getElementById("lyricsLang").value = "korean";
+
+      if (text.includes("랩")) document.getElementById("rapOption").checked = true;
+      if (text.includes("영어 후렴")) document.getElementById("englishHookOption").checked = true;
+      if (text.includes("후렴 반복")) document.getElementById("repeatChorusOption").checked = true;
+      if (text.includes("짧은 인트로")) document.getElementById("shortIntroOption").checked = true;
+      if (text.includes("긴 인트로")) document.getElementById("longIntroOption").checked = true;
+      if (text.includes("브릿지")) document.getElementById("bridgeOption").checked = true;
+
+      if (text.includes("피아노")) checkInstrument("piano");
+      if (text.includes("어쿠스틱 기타")) checkInstrument("acoustic guitar");
+      if (text.includes("일렉기타")) checkInstrument("electric guitar");
+      if (text.includes("베이스")) checkInstrument("bass");
+      if (text.includes("드럼")) checkInstrument("drums");
+      if (text.includes("바이올린")) checkInstrument("violin");
+      if (text.includes("첼로")) checkInstrument("cello");
+      if (text.includes("플루트")) checkInstrument("flute");
+      if (text.includes("색소폰")) checkInstrument("saxophone");
+      if (text.includes("신스")) checkInstrument("synth");
+      if (text.includes("패드")) checkInstrument("pad");
+      if (text.includes("국악기")) checkInstrument("korean traditional instruments");
+      if (text.includes("오케스트라")) checkInstrument("orchestra");
+      if (text.includes("비트")) checkInstrument("strong beat");
+
+      updateAnalysis(document.getElementById("commandInput").value.trim());
+      log("AI 분석 완료: 설정값이 자동 반영되었습니다.");
+    }
+
+    function checkInstrument(value) {
+      document.querySelectorAll(".instrument").forEach(el => {
+        if (el.value === value) el.checked = true;
+      });
+    }
+
+    function getSelectedInstruments() {
+      return Array.from(document.querySelectorAll(".instrument:checked")).map(el => el.value);
+    }
+
+    function updateAnalysis(rawText = "") {
+      const total = document.getElementById("trackCount").value;
+      const genre = document.getElementById("genreSelect").value;
+      const mood = document.getElementById("moodSelect").value;
+      const vocal = document.getElementById("vocalSelect").value;
+      const lang = document.getElementById("lyricsLang").value;
+      const instruments = getSelectedInstruments();
+      const extras = [];
+
+      if (document.getElementById("instrumentalOnly").checked) extras.push("가사 없는 연주곡");
+      if (document.getElementById("rapOption").checked) extras.push("중간 랩 파트");
+      if (document.getElementById("englishHookOption").checked) extras.push("영어 후렴");
+      if (document.getElementById("repeatChorusOption").checked) extras.push("후렴 반복형");
+      if (document.getElementById("shortIntroOption").checked) extras.push("짧은 인트로");
+      if (document.getElementById("longIntroOption").checked) extras.push("긴 인트로");
+      if (document.getElementById("bridgeOption").checked) extras.push("브릿지 강조");
+
+      document.getElementById("analysisResult").innerHTML =
+        `주제: ${rawText || "사용자 명령 기반 음악 제작"}<br>` +
+        `곡 수: ${total}<br>` +
+        `장르: ${genre}<br>` +
+        `분위기: ${mood}<br>` +
+        `보컬: ${vocal}<br>` +
+        `가사 언어: ${lang}<br>` +
+        `악기: ${instruments.length ? instruments.join(", ") : "기본 구성"}<br>` +
+        `추가 옵션: ${extras.length ? extras.join(", ") : "없음"}<br>` +
+        `추천 작업: Suno용 Title / Style / Lyrics 생성 후 Next Copy로 빠르게 붙여넣기`;
+    }
+
+    function titlePoolByMood(mood) {
+      const map = {
+        "rainy mood": ["Rainy Window", "Midnight Rain", "Falling Rain", "Rainy Memory", "Silent Rain"],
+        "romantic mood": ["Love in Bloom", "Soft Heart", "Starlight Kiss", "Warm Embrace", "You and Me"],
+        "sad emotional": ["Last Goodbye", "Broken Light", "Tears in Night", "Empty Heart", "Faded You"],
+        "warm sentimental": ["Warm Coffee", "Autumn Light", "Gentle Hug", "Home Tonight", "Soft Morning"],
+        "bright cheerful": ["Sunny Smile", "Happy Steps", "Bright Day", "Joyful Ride", "Shining Heart"],
+        "dreamy cinematic": ["Moonlight Scene", "Dream of You", "Blue Horizon", "Silver Air", "Echo Sky"],
+        "dark intense": ["Dark Flame", "Shadow Drive", "Black Noise", "Fierce Heart", "Burning Night"],
+        "late night loneliness": ["Lonely Street", "Midnight Alone", "Quiet Room", "Last Train", "Night Echo"],
+        "study focus": ["Deep Focus", "Quiet Desk", "Still Mind", "Study Flow", "Clear Thought"],
+        "sleep calm": ["Sleep Cloud", "Night Drift", "Silent Pillow", "Dreaming Air", "Calm Moon"],
+        "drive energy": ["Night Highway", "Fast Lane", "Drive Fire", "City Motion", "Road Pulse"],
+        "cafe relaxing": ["Cafe Window", "Coffee Rain", "Lazy Afternoon", "Slow Table", "Warm Cafe"]
+      };
+      return map[mood] || ["Hidden Song", "Open Sky", "New Feeling", "Blue Song", "Quiet Light"];
+    }
+
+    function randomTitle(mood, index) {
+      const pool = titlePoolByMood(mood);
+      return `${pool[Math.floor(Math.random() * pool.length)]} ${index}`;
+    }
+
+    function generateLyrics(lang, options) {
+      const { instrumentalOnly, rapOption, englishHookOption, repeatChorusOption, bridgeOption } = options;
+
+      if (instrumentalOnly) {
+        return "[Instrumental]\nNo lyrics - instrumental track only";
+      }
+
+      let verse = "";
+      let chorus = "";
+      let bridge = "";
+      let rap = "";
+
+      if (lang === "english") {
+        verse = `[Verse]
+Rain is falling on my window tonight
 Memories slowly come alive
+I can hear your voice in the quiet air
+Like a dream I cannot hide`;
 
-[Chorus]
+        chorus = `[Chorus]
 In the rain I call your name
-Whisper softly in the dark`;
-}
+Softly burning like a flame
+Every drop becomes a song
+And in my heart you still belong`;
 
-if(lang==="japanese"){
-return `[Verse]
+        if (englishHookOption) {
+          chorus += `\nStay with me tonight`;
+        }
+
+        if (rapOption) {
+          rap = `
+
+[Rap]
+Cold city lights and a heart that won't sleep
+Running through memories buried so deep
+Falling and rising with every beat
+Your shadow still walks on the same old street`;
+        }
+
+        if (bridgeOption) {
+          bridge = `
+
+[Bridge]
+Even when the night grows colder
+I can feel your echo closer`;
+        }
+      } else if (lang === "japanese") {
+        verse = `[Verse]
 雨の窓に寄り添って
 静かに心が揺れる
+思い出だけがこの夜を
+優しく照らしてくれる`;
 
-[Chorus]
+        chorus = `[Chorus]
 雨の夜に君を思う
-この歌が届くように`;
-}
+この歌が届くように
+こぼれ落ちる涙さえ
+メロディーに変わっていく`;
 
-return `[Verse]
+        if (rapOption) {
+          rap = `
+
+[Rap]
+夜の街を抜けていく鼓動
+遠い記憶が今も残る
+消えない言葉を胸に抱いて
+雨の中でも前を向いて`;
+        }
+
+        if (bridgeOption) {
+          bridge = `
+
+[Bridge]
+静かな空に願いを重ね
+もう一度だけ君に会いたい`;
+        }
+      } else {
+        verse = `[Verse]
 비가 내리는 창가에 기대어
 조용히 번지는 오늘의 마음
+흐려진 거리 불빛 사이로
+네 기억이 다시 날 찾아와`;
 
-[Chorus]
+        chorus = `[Chorus]
 비 오는 날에도 네가 떠오르면
-이 노래가 천천히 너를 부를 거야`;
-
-}
-
-function generateTracks(){
-
-tracks=[];
-copySteps=[];
-copyIndex=0;
-
-const total=document.getElementById("trackCount").value;
-const genre=document.getElementById("genre").value;
-const mood=document.getElementById("mood").value;
-const vocal=document.getElementById("vocal").value;
-
-for(let i=1;i<=total;i++){
-
-const title=generateTitle();
-
-const style=`${genre}, ${vocal}, ${mood}, emotional melody`;
-
-const lyrics=generateLyrics();
-
-tracks.push({title,style,lyrics});
-
-copySteps.push({text:title,label:`${i}번곡 Title`});
-copySteps.push({text:style,label:`${i}번곡 Style`});
-copySteps.push({text:lyrics,label:`${i}번곡 Lyrics`});
-
-}
-
-renderTracks();
-
-updateCopyStatus();
-
-}
-
-function renderTracks(){
-
-let html="";
-
-tracks.forEach((t,i)=>{
-
-html+=`
-
-<div class="track">
-
-<b>${i+1}번곡</b>
-
-<div class="field">
-<div class="field-title">Title</div>
-${t.title}
-</div>
-
-<div class="field">
-<div class="field-title">Style</div>
-${t.style}
-</div>
-
-<div class="field">
-<div class="field-title">Lyrics</div>
-<pre>${t.lyrics}</pre>
-</div>
-
-<div class="copyButtons">
-
-<button onclick="copyText('${t.title}')">Title 복사</button>
-<button onclick="copyText('${t.style}')">Style 복사</button>
-<button onclick="copyText(\`${t.lyrics}\`)">Lyrics 복사</button>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-document.getElementById("tracks").innerHTML=html;
-
-}
-
-function copyText(text){
-
-navigator.clipboard.writeText(text);
-
-}
-
-function copyNext(){
-
-if(copyIndex>=copySteps.length){
-alert("모든 복사 완료");
-return;
-}
-
-navigator.clipboard.writeText(copySteps[copyIndex].text);
-
-copyIndex++;
-
-updateCopyStatus();
-
-}
-
-function resetCopy(){
-
-copyIndex=0;
-
-updateCopyStatus();
-
-}
-
-function updateCopyStatus(){
-
-if(copyIndex>=copySteps.length){
-
-document.getElementById("copyStatus").innerText="복사 완료";
-
-return;
-
-}
-
-document.getElementById("copyStatus").innerText=
-"다음 복사: "+copySteps[copyIndex].label;
-
-}
-
-function analyzeCommand(){
-
-const text=document.getElementById("commandInput").value;
-
-if(text.includes("20")) document.getElementById("trackCount").value=20;
-if(text.includes("15")) document.getElementById("trackCount").value=15;
-if(text.includes("12")) document.getElementById("trackCount").value=12;
-
-}
-
-function startVoice(){
-
-const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-
-const rec=new SpeechRecognition();
-
-rec.lang="ko-KR";
-
-rec.start();
-
-rec.onresult=function(e){
-
-document.getElementById("commandInput").value=e.results[0][0].transcript;
-
-};
-
-}
-
-</script>
-
+이 노래가 천천히 너를 부를 거야
+흩어진 마음 위로 번지는 멜로디
+오늘도 나는 너를 그리고 있어`;
+
+        if (englishHookOption) {
+          chorus += `\nStay with me tonight`;
+        }
+
+        if (rapOption) {
+          rap = `
+
+[Rap]
+젖은 거리 위를 걷는 발걸음
+희미해진 기억 속 멈춘 걸음
+사라진 너의 온기 따라가며
+비 속에 남은 이름을 또 불러`;
+        }
+
+        if (bridgeOption) {
+          bridge = `
+
+[Bridge]
+어두운 밤이 지나가도
+내 마음은 여전히 그 자리에`;
+        }
+      }
+
+      if (repeatChorusOption) {
+        chorus += `
+
+[Chorus Repeat]
+${chorus.replace("[Chorus]\n", "")}`;
+      }
+
+      return `${verse}${rap}${chorus}${bridge}`;
+    }
+
+    function buildStyle() {
+      const genre = document.getElementById("genreSelect").value;
+      const mood = document.getElementById("moodSelect").value;
+      const vocal = document.getElementById("vocalSelect").value;
+      const tone = document.getElementById("voiceToneSelect").value;
+      const lang = document.getElementById("lyricsLang").value;
+      const instruments = getSelectedInstruments();
+
+      const parts = [genre, vocal, `${tone} vocal`, mood];
+
+      if (lang === "korean") parts.push("korean lyrics");
+      if (lang === "english") parts.push("english lyrics");
+      if (lang === "japanese") parts.push("japanese lyrics");
+
+      if (document.getElementById("instrumentalOnly").checked) parts.push("instrumental track");
+      if (document.getElementById("rapOption").checked) parts.push("rap section in the middle");
+      if (document.getElementById("englishHookOption").checked) parts.push("english hook");
+      if (document.getElementById("repeatChorusOption").checked) parts.push("repetitive catchy chorus");
+      if (document.getElementById("shortIntroOption").checked) parts.push("short intro");
+      if (document.getElementById("longIntroOption").checked) parts.push("long atmospheric intro");
+      if (document.getElementById("bridgeOption").checked) parts.push("strong emotional bridge");
+
+      if (instruments.length) {
+        parts.push(`${instruments.join(", ")}`);
+      }
+
+      parts.push("polished arrangement");
+      parts.push("memorable melody");
+
+      return parts.join(", ");
+    }
+
+    function generateTracks() {
+      tracks = [];
+      copySteps = [];
+      copySequenceIndex = 0;
+
+      const total = parseInt(document.getElementById("trackCount").value, 10);
+      const mood = document.getElementById("moodSelect").value;
+      const lang = document.getElementById("lyricsLang").value;
+      const options = {
+        instrumentalOnly: document.getElementById("instrumentalOnly").checked,
+        rapOption: document.getElementById("rapOption").checked,
+        englishHookOption: document.getElementById("englishHookOption").checked,
+        repeatChorusOption: document.getElementById("repeatChorusOption").checked,
+        bridgeOption: document.getElementById("bridgeOption").checked
+      };
+
+      for (let i = 1; i <= total; i++) {
+        const title = randomTitle(mood, i);
+        const style = buildStyle();
+        const lyrics = generateLyrics(lang, options);
+
+        tracks.push({
+          index: i,
+          title,
+          style,
+          lyrics
+        });
+
+        copySteps.push({ id: `title-${i}`, label: `${i}번곡 Title` });
+        copySteps.push({ id: `style-${i}`, label: `${i}번곡 Style` });
+        copySteps.push({ id: `lyrics-${i}`, label: `${i}번곡 Lyrics` });
+      }
+
+      renderTracks();
+      updateCopySequenceStatus();
+      setStatus("st2", "완료");
+      setProgress(45);
+      log("곡별 Suno 자료 생성 완료: Title / Style / Lyrics");
+    }
+
+    function renderTracks() {
+      const trackList = document.getElementById("trackList");
+      trackList.innerHTML = "";
+
+      tracks.forEach(track => {
+        const div = document.createElement("div");
+        div.className = "track-item";
+        div.innerHTML = `
+          <div class="track-header">
+            <div class="track-title">${track.index}번곡</div>
+            <div class="small">Suno 입력용</div>
+          </div>
+
+          <div class="mini-box">
+            <strong>Title</strong>
+            <div class="mini-text" id="title-${track.index}">${escapeHtml(track.title)}</div>
+          </div>
+
+          <div class="mini-box">
+            <strong>Style</strong>
+            <div class="mini-text" id="style-${track.index}">${escapeHtml(track.style)}</div>
+          </div>
+
+          <div class="mini-box">
+            <strong>Lyrics</strong>
+            <div class="mini-text" id="lyrics-${track.index}">${escapeHtml(track.lyrics)}</div>
+          </div>
+
+          <div class="copy-row">
+            <button class="secondary" onclick="copyText('title-${track.index}', '${track.index}번곡 Title')">Title 복사</button>
+            <button class="secondary" onclick="copyText('style-${track.index}', '${track.index}번곡 Style')">Style 복사</button>
+            <button class="secondary" onclick="copyText('lyrics-${track.index}', '${track.index}번곡 Lyrics')">Lyrics 복사</button>
+            <button class="purple" onclick="copyAllTrack(${track.index})">전체 복사</button>
+            <button class="secondary" onclick="loadTrackEdit(${track.index})">${track.index}번곡 수정</button>
+          </div>
+        `;
+        trackList.appendChild(div);
+      });
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function copyText(id, label) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        log(`${label} 복사 완료`);
+      }).catch(() => {
+        alert("복사에 실패했습니다.");
+      });
+    }
+
+    function copyAllTrack(index) {
+      const track = tracks.find(t => t.index === index);
+      if (!track) return;
+
+      const allText =
+`[Title]
+${track.title}
+
+[Style]
+${track.style}
+
+[Lyrics]
+${track.lyrics}`;
+
+      navigator.clipboard.writeText(allText).then(() => {
+        log(`${index}번곡 전체 자료 복사 완료`);
+      }).catch(() => {
+        alert("복사에 실패했습니다.");
+      });
+    }
+
+    function copyNextStep() {
+      if (!copySteps.length) {
+        alert("먼저 곡을 생성해 주세요.");
+        return;
+      }
+      if (copySequenceIndex >= copySteps.length) {
+        alert("모든 복사를 완료했습니다. 복사 초기화를 눌러 다시 시작하세요.");
+        return;
+      }
+
+      const step = copySteps[copySequenceIndex];
+      const text = document.getElementById(step.id).innerText;
+
+      navigator.clipboard.writeText(text).then(() => {
+        log(`${step.label} 복사 완료`);
+        copySequenceIndex++;
+        updateCopySequenceStatus();
+      }).catch(() => {
+        alert("복사에 실패했습니다.");
+      });
+    }
+
+    function resetCopySequence() {
+      copySequenceIndex = 0;
+      updateCopySequenceStatus();
+      log("복사 순서를 처음으로 초기화했습니다.");
+    }
+
+    function updateCopySequenceStatus() {
+      const el = document.getElementById("copySequenceStatus");
+      if (!copySteps.length) {
+        el.textContent = "다음 복사 대상: 아직 생성된 곡이 없습니다.";
+        return;
+      }
+      if (copySequenceIndex >= copySteps.length) {
+        el.textContent = "복사 완료: 모든 곡 자료를 순서대로 복사했습니다.";
+        return;
+      }
+      el.textContent = `다음 복사 대상: ${copySteps[copySequenceIndex].label}`;
+    }
+
+    function loadTrackEdit(index) {
+      document.getElementById("commandInput").value = `${index}번곡 조금 더 경쾌하게 만들어줘`;
+      log(`${index}번곡 수정 명령 입력 준비 완료`);
+    }
+
+    function handleTrackEdit(text, trackNumber) {
+      const track = tracks.find(t => t.index === trackNumber);
+
+      if (!track) {
+        alert(`${trackNumber}번곡이 아직 생성되지 않았습니다. 먼저 곡을 생성해 주세요.`);
+        return;
+      }
+
+      if (text.includes("경쾌")) {
+        track.title += " Bright Ver.";
+        track.style += ", brighter energy, slightly upbeat rhythm";
+      } else if (text.includes("슬프")) {
+        track.title += " Sad Ver.";
+        track.style += ", more melancholic emotion, deeper sadness";
+      } else if (text.includes("따뜻")) {
+        track.title += " Warm Ver.";
+        track.style += ", warmer tone, softer atmosphere";
+      } else if (text.includes("강렬")) {
+        track.title += " Intense Ver.";
+        track.style += ", stronger impact, more dynamic expression";
+      } else {
+        track.title += " Edited Ver.";
+        track.style += ", refined based on user feedback";
+      }
+
+      renderTracks();
+      copySteps = [];
+      tracks.forEach(track => {
+        copySteps.push({ id: `title-${track.index}`, label: `${track.index}번곡 Title` });
+        copySteps.push({ id: `style-${track.index}`, label: `${track.index}번곡 Style` });
+        copySteps.push({ id: `lyrics-${track.index}`, label: `${track.index}번곡 Lyrics` });
+      });
+      copySequenceIndex = 0;
+      updateCopySequenceStatus();
+
+      setStatus("st3", "완료");
+      setProgress(62);
+      log(`${trackNumber}번곡 수정 반영 완료: ${text}`);
+    }
+
+    function prepareMix() {
+      setStatus("st4", "완료");
+      setProgress(82);
+      log("mp3 첨부 후 자동 편집 준비 완료");
+    }
+
+    function makeVideo() {
+      setStatus("st5", "완료");
+      setProgress(100);
+      log("긴 영상 제작 준비 완료");
+    }
+
+    function startVoice() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!SpeechRecognition) {
+        alert("이 브라우저는 음성 인식을 지원하지 않습니다. 크롬에서 실행해 주세요.");
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "ko-KR";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      updateListeningState(true);
+      log("음성 인식 시작");
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const text = event.results[0][0].transcript;
+        document.getElementById("commandInput").value = text;
+        log(`음성 인식 결과: ${text}`);
+        updateListeningState(false);
+        analyzeCommand();
+      };
+
+      recognition.onerror = function(event) {
+        log("음성 인식 오류: " + event.error);
+        updateListeningState(false);
+      };
+
+      recognition.onend = function() {
+        updateListeningState(false);
+      };
+    }
+
+    document.querySelectorAll("select, input").forEach(el => {
+      el.addEventListener("change", () => updateAnalysis(document.getElementById("commandInput").value.trim()));
+      el.addEventListener("input", () => updateAnalysis(document.getElementById("commandInput").value.trim()));
+    });
+
+    updateAnalysis();
+  </script>
 </body>
 </html>
