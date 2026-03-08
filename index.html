@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v21 Cute Mobile Fix</title>
+  <title>AI Music Auto Studio v22 Final</title>
   <style>
     * {
       box-sizing: border-box;
@@ -182,6 +182,15 @@
       word-break:break-word;
     }
 
+    .hero-right{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:flex-end;
+      min-width:220px;
+      max-width:100%;
+    }
+
     .badge{
       background:linear-gradient(135deg,#ffd9e8,#dff4ff);
       color:#6b5ca5;
@@ -191,7 +200,25 @@
       border:1px solid rgba(255,255,255,0.9);
       box-shadow:0 8px 22px rgba(255, 182, 214, 0.16);
       word-break:break-word;
+      text-align:center;
     }
+
+    .ai-status{
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:12px;
+      font-weight:bold;
+      border:1px solid rgba(148,163,184,.18);
+      background:rgba(255,255,255,.92);
+      box-shadow:0 6px 14px rgba(148,163,184,.08);
+      text-align:center;
+      min-width:180px;
+      max-width:100%;
+    }
+
+    .ai-offline{ color:#dc2626; }
+    .ai-online{ color:#059669; }
+    .ai-working{ color:#d97706; }
 
     .menu-bar{
       display:flex;
@@ -706,7 +733,8 @@
       .check-group,
       .track-header,
       .status-grid,
-      .candidate-list{
+      .candidate-list,
+      .hero-right{
         flex-direction:column;
         align-items:stretch;
       }
@@ -740,6 +768,11 @@
       .status{
         align-self:flex-start;
       }
+
+      .ai-status{
+        width:100%;
+        min-width:0;
+      }
     }
   </style>
 </head>
@@ -764,11 +797,14 @@
         <div class="title-wrap">
           <div class="mascot">🎀</div>
           <div class="title">
-            <h1>AI Music Auto Studio v21 Cute</h1>
-            <p>귀여운 엔터테인먼트 제작툴 UI · 관리 기능 통합판 · 저장/불러오기 · 곡별 상태 · 메모 · 제목 후보 · 체크리스트까지 포함</p>
+            <h1>AI Music Auto Studio v22 Final</h1>
+            <p>귀여운 엔터테인먼트 제작툴 UI · 저장/불러오기 · 곡별 상태 · 메모 · 제목 후보 · 체크리스트 · 최종 앨범 길이 · 확장 방식 · AI 상태 표시</p>
           </div>
         </div>
-        <div class="badge">실행 → 노래 제작 → Suno 제작 → mp3 저장 → 노래 편집 시작</div>
+        <div class="hero-right">
+          <div class="badge">실행 → 노래 제작 → Suno 제작 → mp3 저장 → 노래 편집 시작</div>
+          <div id="aiStatus" class="ai-status ai-online">🟢 AI ONLINE - 대기중</div>
+        </div>
       </div>
 
       <div class="menu-bar">
@@ -804,7 +840,13 @@
               3. 필요하면 옵션을 수정한 뒤 <span class="pill">노래 제작</span> 버튼을 누릅니다.<br>
               4. 생성된 <strong>Title / Style / Lyrics</strong>를 Suno에 붙여넣습니다.<br>
               5. Suno에서 완성된 mp3를 저장하고 <span class="pill">현재 mp3 개수</span>를 입력해 관리합니다.<br>
-              6. <span class="pill">노래 편집 시작</span>을 눌러 다음 단계로 넘어갑니다.
+              6. <span class="pill">노래 편집 시작</span>을 눌러 다음 단계로 넘어갑니다.<br><br>
+
+              <strong>추가 설명</strong><br>
+              - 곡 길이: 개별 곡 길이<br>
+              - 최종 앨범 길이: 최종 믹스/영상 총 길이<br>
+              - 확장 방식: 곡을 반복/재배열하는 방식<br>
+              - AI 상태: 연결 여부와 작업중 여부 표시
             </div>
           </div>
         </div>
@@ -859,6 +901,28 @@
               <option>더 대중적으로</option>
               <option>더 강렬하게</option>
               <option>더 단순하게</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>최종 앨범 길이</label>
+            <select id="albumDuration">
+              <option>30분</option>
+              <option>1시간</option>
+              <option selected>2시간</option>
+              <option>3시간</option>
+              <option>4시간</option>
+            </select>
+          </div>
+          <div>
+            <label>확장 방식</label>
+            <select id="albumExpansionMode">
+              <option>1회 재생</option>
+              <option selected>순차 반복</option>
+              <option>랜덤 반복</option>
+              <option>자연스러운 믹스 반복</option>
             </select>
           </div>
         </div>
@@ -966,6 +1030,8 @@
 주제: 사용자 명령 기반 음악 제작<br>
 곡 수: 10<br>
 곡 길이: 3분<br>
+최종 앨범 길이: 2시간<br>
+확장 방식: 순차 반복<br>
 장르: 발라드<br>
 분위기: 비 오는 날<br>
 보컬: 여성 보컬<br>
@@ -1065,6 +1131,24 @@
     let tracks = [];
     let copySteps = [];
     let copySequenceIndex = 0;
+    let aiConnectionState = "online";
+
+    function updateAIStatus(state) {
+      aiConnectionState = state;
+      const el = document.getElementById("aiStatus");
+      el.className = "ai-status";
+
+      if (state === "offline") {
+        el.classList.add("ai-offline");
+        el.innerHTML = "🔴 AI OFFLINE";
+      } else if (state === "working") {
+        el.classList.add("ai-working");
+        el.innerHTML = "🟡 AI 작업중...";
+      } else {
+        el.classList.add("ai-online");
+        el.innerHTML = "🟢 AI ONLINE - 대기중";
+      }
+    }
 
     function toggleHelp() {
       document.getElementById("helpPanel").classList.toggle("show");
@@ -1181,6 +1265,7 @@
         return;
       }
 
+      updateAIStatus("working");
       setStatus("st1", "완료");
       setProgress(18);
       log(`실행 시작: ${text}`);
@@ -1188,16 +1273,20 @@
       const editMatch = text.match(/(\d+)번곡/);
       if (editMatch) {
         handleTrackEdit(text, parseInt(editMatch[1], 10));
+        updateAIStatus("online");
         return;
       }
 
       updateAnalysis(text);
       log("AI 자동분석 완료: 설정값 반영");
+      updateAIStatus("online");
     }
 
     function updateAnalysis(rawText = "") {
       const total = document.getElementById("trackCount").value;
       const duration = document.getElementById("songDuration").value;
+      const albumDuration = document.getElementById("albumDuration").value;
+      const albumMode = document.getElementById("albumExpansionMode").value;
       const genre = document.getElementById("genreSelect").value;
       const mood = document.getElementById("moodSelect").value;
       const vocal = document.getElementById("vocalSelect").value;
@@ -1219,6 +1308,8 @@
         `주제: ${rawText || "사용자 명령 기반 음악 제작"}<br>` +
         `곡 수: ${total}<br>` +
         `곡 길이: ${duration}<br>` +
+        `최종 앨범 길이: ${albumDuration}<br>` +
+        `확장 방식: ${albumMode}<br>` +
         `장르: ${genre}<br>` +
         `분위기: ${mood}<br>` +
         `보컬: ${vocal}<br>` +
@@ -1385,6 +1476,8 @@ ${chorus.replace("[Chorus]\n", "")}`;
       const strength = strengthToStyle(document.getElementById("styleStrength").value);
       const lang = document.getElementById("lyricsLang").value;
       const duration = document.getElementById("songDuration").value;
+      const albumDuration = document.getElementById("albumDuration").value;
+      const albumMode = document.getElementById("albumExpansionMode").value;
       const instruments = getSelectedInstruments();
 
       const parts = [genre, vocal, strength, mood];
@@ -1397,6 +1490,17 @@ ${chorus.replace("[Chorus]\n", "")}`;
       if (duration === "3분") parts.push("standard song format");
       if (duration === "4분") parts.push("full song structure");
       if (duration === "5분") parts.push("long developed arrangement");
+
+      if (albumDuration === "30분") parts.push("short album mix target");
+      if (albumDuration === "1시간") parts.push("1 hour album target");
+      if (albumDuration === "2시간") parts.push("2 hour album target");
+      if (albumDuration === "3시간") parts.push("3 hour album target");
+      if (albumDuration === "4시간") parts.push("4 hour album target");
+
+      if (albumMode === "1회 재생") parts.push("single play sequence");
+      if (albumMode === "순차 반복") parts.push("sequential loop arrangement");
+      if (albumMode === "랜덤 반복") parts.push("random loop arrangement");
+      if (albumMode === "자연스러운 믹스 반복") parts.push("smooth mixed looping structure");
 
       if (document.getElementById("instrumentalOnly").checked) parts.push("instrumental track");
       if (document.getElementById("rapOption").checked) parts.push("rap section in the middle");
@@ -1415,6 +1519,8 @@ ${chorus.replace("[Chorus]\n", "")}`;
     }
 
     function generateTracks() {
+      updateAIStatus("working");
+
       tracks = [];
       copySteps = [];
       copySequenceIndex = 0;
@@ -1456,6 +1562,7 @@ ${chorus.replace("[Chorus]\n", "")}`;
       setStatus("st2", "완료");
       setProgress(45);
       log("노래 제작 완료: Title 후보 / Style / Lyrics 생성");
+      updateAIStatus("online");
     }
 
     function chooseTitle(index, title) {
@@ -1633,6 +1740,8 @@ ${track.lyrics}`;
         return;
       }
 
+      updateAIStatus("working");
+
       if (text.includes("경쾌")) {
         track.title += " Bright Ver.";
         track.style += ", brighter energy, slightly upbeat rhythm";
@@ -1665,19 +1774,24 @@ ${track.lyrics}`;
       setStatus("st3", "완료");
       setProgress(62);
       log(`${trackNumber}번곡 수정 반영 완료: ${text}`);
+      updateAIStatus("online");
     }
 
     function startSongEditing() {
+      updateAIStatus("working");
       setStatus("st4", "완료");
       setProgress(82);
       log("노래 편집 시작");
       log("정해진 입력 폴더에 mp3를 넣은 뒤 편집을 진행하는 단계입니다.");
+      updateAIStatus("online");
     }
 
     function makeVideo() {
+      updateAIStatus("working");
       setStatus("st5", "완료");
       setProgress(100);
       log("긴 영상 제작 준비 완료");
+      updateAIStatus("online");
     }
 
     function collectProjectData() {
@@ -1686,6 +1800,8 @@ ${track.lyrics}`;
         trackCount: document.getElementById("trackCount").value,
         songDuration: document.getElementById("songDuration").value,
         styleStrength: document.getElementById("styleStrength").value,
+        albumDuration: document.getElementById("albumDuration").value,
+        albumExpansionMode: document.getElementById("albumExpansionMode").value,
         genreSelect: document.getElementById("genreSelect").value,
         moodSelect: document.getElementById("moodSelect").value,
         vocalSelect: document.getElementById("vocalSelect").value,
@@ -1713,6 +1829,8 @@ ${track.lyrics}`;
       document.getElementById("trackCount").value = data.trackCount || "10";
       document.getElementById("songDuration").value = data.songDuration || "3분";
       document.getElementById("styleStrength").value = data.styleStrength || "기본";
+      document.getElementById("albumDuration").value = data.albumDuration || "2시간";
+      document.getElementById("albumExpansionMode").value = data.albumExpansionMode || "순차 반복";
       document.getElementById("genreSelect").value = data.genreSelect || "발라드";
       document.getElementById("moodSelect").value = data.moodSelect || "비 오는 날";
       document.getElementById("vocalSelect").value = data.vocalSelect || "여성 보컬";
@@ -1817,6 +1935,7 @@ ${track.lyrics}`;
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
       if (!SpeechRecognition) {
+        updateAIStatus("offline");
         alert("이 브라우저는 음성 인식을 지원하지 않습니다. 크롬에서 실행해 주세요.");
         return;
       }
@@ -1827,6 +1946,7 @@ ${track.lyrics}`;
       recognition.maxAlternatives = 1;
 
       updateListeningState(true);
+      updateAIStatus("working");
       log("음성 입력 대기 시작");
       recognition.start();
 
@@ -1836,15 +1956,20 @@ ${track.lyrics}`;
         log(`음성 입력 완료: ${text}`);
         updateListeningState(false);
         updateAnalysis(text);
+        updateAIStatus("online");
       };
 
       recognition.onerror = function(event) {
         log("음성 인식 오류: " + event.error);
         updateListeningState(false);
+        updateAIStatus("offline");
       };
 
       recognition.onend = function() {
         updateListeningState(false);
+        if (aiConnectionState !== "offline") {
+          updateAIStatus("online");
+        }
       };
     }
 
@@ -1862,6 +1987,7 @@ ${track.lyrics}`;
     refreshSavedProjects();
     updateAnalysis();
     updateMp3Status();
+    updateAIStatus("online");
   </script>
 </body>
 </html>
