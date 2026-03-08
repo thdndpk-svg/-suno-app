@@ -3,526 +3,648 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v20</title>
+  <title>AI Music Auto Studio v21 Cute</title>
   <style>
     * { box-sizing: border-box; }
 
-    :root {
-      --bg: #07111f;
-      --panel: rgba(15, 23, 42, 0.82);
-      --panel-2: rgba(17, 24, 39, 0.92);
-      --line: rgba(148, 163, 184, 0.16);
-      --line-strong: rgba(96, 165, 250, 0.24);
-      --text: #f8fafc;
-      --sub: #cbd5e1;
-      --muted: #94a3b8;
-      --blue: #3b82f6;
-      --blue-2: #60a5fa;
-      --cyan: #22d3ee;
-      --green: #10b981;
-      --amber: #f59e0b;
-      --red: #ef4444;
-      --purple: #8b5cf6;
-      --shadow: 0 24px 60px rgba(0,0,0,0.35);
-      --radius: 22px;
+    :root{
+      --bg1:#fff8fc;
+      --bg2:#f6f8ff;
+      --bg3:#eefcff;
+      --card:rgba(255,255,255,0.76);
+      --card-strong:rgba(255,255,255,0.9);
+      --line:rgba(255,255,255,0.78);
+      --text:#334155;
+      --sub:#64748b;
+      --muted:#94a3b8;
+      --pink:#ff9fbe;
+      --pink2:#ffc1d4;
+      --purple:#b89cff;
+      --mint:#82ead8;
+      --sky:#8ecbff;
+      --yellow:#ffd978;
+      --green:#6dd8bf;
+      --shadow:0 20px 50px rgba(171, 188, 255, 0.24);
+      --radius:22px;
     }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 28%),
-        radial-gradient(circle at top right, rgba(139,92,246,0.16), transparent 24%),
-        linear-gradient(180deg, #08111d 0%, #0b1220 45%, #08101a 100%);
-      min-height: 100vh;
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3));
+      min-height:100vh;
+      overflow-x:hidden;
+      position:relative;
     }
 
-    .wrap {
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 28px;
+    .bg-wrap{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      pointer-events:none;
+      z-index:0;
     }
 
-    .hero {
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(135deg, rgba(30,41,59,0.88), rgba(15,23,42,0.9));
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      padding: 28px;
-      box-shadow: var(--shadow);
-      margin-bottom: 22px;
+    .bubble{
+      position:absolute;
+      border-radius:50%;
+      opacity:.45;
+      filter:blur(1px);
+      animation:floatUp linear infinite;
+    }
+    .bubble.b1{ width:120px;height:120px; left:5%; bottom:-140px; background:radial-gradient(circle,#ffd7e6,transparent 70%); animation-duration:16s; }
+    .bubble.b2{ width:180px;height:180px; left:18%; bottom:-180px; background:radial-gradient(circle,#d9e8ff,transparent 70%); animation-duration:22s; animation-delay:2s; }
+    .bubble.b3{ width:100px;height:100px; left:36%; bottom:-130px; background:radial-gradient(circle,#d8fff5,transparent 70%); animation-duration:18s; animation-delay:1s; }
+    .bubble.b4{ width:210px;height:210px; left:55%; bottom:-220px; background:radial-gradient(circle,#f1ddff,transparent 70%); animation-duration:24s; animation-delay:3s; }
+    .bubble.b5{ width:130px;height:130px; left:73%; bottom:-150px; background:radial-gradient(circle,#ffe8b5,transparent 70%); animation-duration:17s; animation-delay:4s; }
+    .bubble.b6{ width:170px;height:170px; left:88%; bottom:-190px; background:radial-gradient(circle,#d7f1ff,transparent 70%); animation-duration:20s; animation-delay:1.5s; }
+
+    .star{
+      position:absolute;
+      width:18px;
+      height:18px;
+      background:linear-gradient(135deg,#fff,#ffe3f0);
+      clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+      opacity:.7;
+      animation:twinkle 3s ease-in-out infinite;
+    }
+    .star.s1{ top:8%; left:10%; animation-delay:0s; }
+    .star.s2{ top:18%; left:84%; animation-delay:1s; }
+    .star.s3{ top:40%; left:6%; animation-delay:2s; }
+    .star.s4{ top:62%; left:92%; animation-delay:1.4s; }
+    .star.s5{ top:78%; left:20%; animation-delay:.7s; }
+
+    @keyframes floatUp{
+      0%{ transform:translateY(0) translateX(0) scale(1); opacity:0; }
+      10%{ opacity:.45; }
+      50%{ transform:translateY(-50vh) translateX(20px) scale(1.05); }
+      100%{ transform:translateY(-120vh) translateX(-20px) scale(1.1); opacity:0; }
     }
 
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: auto -80px -80px auto;
-      width: 240px;
-      height: 240px;
-      background: radial-gradient(circle, rgba(34,211,238,0.18), transparent 60%);
-      pointer-events: none;
+    @keyframes twinkle{
+      0%,100%{ transform:scale(1) rotate(0deg); opacity:.45; }
+      50%{ transform:scale(1.25) rotate(12deg); opacity:1; }
     }
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 18px;
-      flex-wrap: wrap;
+    .wrap{
+      max-width:1500px;
+      margin:0 auto;
+      padding:28px;
+      position:relative;
+      z-index:1;
     }
 
-    .title h1 {
-      margin: 0;
-      font-size: 34px;
-      letter-spacing: -0.3px;
+    .hero{
+      background:linear-gradient(135deg, rgba(255,255,255,.76), rgba(255,255,255,.56));
+      border:1px solid var(--line);
+      border-radius:30px;
+      padding:26px;
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+      position:relative;
+      overflow:hidden;
+      backdrop-filter:blur(16px);
     }
 
-    .title p {
-      margin: 10px 0 0;
-      color: var(--sub);
-      font-size: 15px;
-      line-height: 1.7;
-      max-width: 760px;
+    .hero::after{
+      content:"";
+      position:absolute;
+      right:-30px;
+      top:-20px;
+      width:160px;
+      height:160px;
+      background:radial-gradient(circle, rgba(255,193,212,.6), transparent 65%);
+      pointer-events:none;
     }
 
-    .badge {
-      background: linear-gradient(135deg, rgba(59,130,246,0.18), rgba(139,92,246,0.16));
-      color: #dbeafe;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      border: 1px solid rgba(96,165,250,0.22);
-      white-space: nowrap;
-      backdrop-filter: blur(10px);
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:18px;
+      flex-wrap:wrap;
     }
 
-    .menu-bar {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin: 20px 0 0;
+    .title-wrap{
+      display:flex;
+      align-items:flex-start;
+      gap:16px;
     }
 
-    .menu-btn {
-      padding: 11px 16px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: rgba(15,23,42,0.74);
-      color: #dbeafe;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s ease;
+    .mascot{
+      width:74px;
+      height:74px;
+      border-radius:22px;
+      background:linear-gradient(135deg,#ffd1e2,#b9e4ff);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:34px;
+      box-shadow:0 14px 26px rgba(255, 182, 214, 0.25);
+      border:1px solid rgba(255,255,255,.9);
+      flex-shrink:0;
     }
 
-    .menu-btn:hover {
-      transform: translateY(-1px);
-      border-color: var(--line-strong);
+    .title h1{
+      margin:0;
+      font-size:34px;
+      color:#5b5bd6;
+      letter-spacing:-0.4px;
     }
 
-    .menu-btn.active {
-      background: linear-gradient(135deg, rgba(37,99,235,0.92), rgba(124,58,237,0.88));
-      color: white;
-      border-color: transparent;
-      box-shadow: 0 14px 28px rgba(59,130,246,0.22);
+    .title p{
+      margin:10px 0 0;
+      color:var(--sub);
+      line-height:1.7;
+      font-size:15px;
+      max-width:760px;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1.35fr 0.65fr;
-      gap: 22px;
-      align-items: start;
+    .badge{
+      background:linear-gradient(135deg,#ffd9e8,#dff4ff);
+      color:#6b5ca5;
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:13px;
+      border:1px solid rgba(255,255,255,0.82);
+      box-shadow:0 8px 22px rgba(255, 182, 214, 0.2);
+      white-space:nowrap;
     }
 
-    .card {
-      background: linear-gradient(180deg, rgba(15,23,42,0.88), rgba(17,24,39,0.9));
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 22px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
+    .menu-bar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:20px 0 0;
     }
 
-    .card h2 {
-      margin: 0 0 16px;
-      font-size: 22px;
-      letter-spacing: -0.2px;
+    .menu-btn{
+      padding:11px 16px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.75);
+      background:rgba(255,255,255,.65);
+      color:#6d6db8;
+      font-weight:bold;
+      cursor:pointer;
+      transition:.2s ease;
+      box-shadow:0 8px 18px rgba(165, 189, 255, 0.12);
     }
 
-    .section-title {
-      margin: 20px 0 12px;
-      font-size: 15px;
-      color: #93c5fd;
-      font-weight: bold;
+    .menu-btn:hover{ transform:translateY(-2px); }
+
+    .menu-btn.active{
+      background:linear-gradient(135deg,#ff9fbe,#bda4ff);
+      color:white;
+      border-color:transparent;
     }
 
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 14px;
+    .grid{
+      display:grid;
+      grid-template-columns:1.25fr .75fr;
+      gap:22px;
+      align-items:start;
     }
 
-    .full { grid-column: 1 / -1; }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(16px);
+    }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: var(--sub);
-      font-weight: bold;
-      letter-spacing: 0.1px;
+    .card h2{
+      margin:0 0 16px;
+      font-size:22px;
+      color:#6b5ca5;
+    }
+
+    .section-title{
+      margin:20px 0 12px;
+      font-size:15px;
+      color:#5f84d8;
+      font-weight:bold;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .triple{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .full{ grid-column:1 / -1; }
+
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-size:13px;
+      color:#64748b;
+      font-weight:bold;
     }
 
     input[type="text"],
     input[type="number"],
     select,
-    textarea {
-      width: 100%;
-      padding: 13px 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(148,163,184,0.18);
-      background: rgba(8, 15, 28, 0.86);
-      color: var(--text);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    textarea{
+      width:100%;
+      padding:13px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.85);
+      background:rgba(255,255,255,.84);
+      color:var(--text);
+      font-size:14px;
+      outline:none;
+      transition:.2s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
     }
 
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    select:focus,
-    textarea:focus {
-      border-color: rgba(96,165,250,0.42);
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+    input:focus, select:focus, textarea:focus{
+      border-color:#b3c8ff;
+      box-shadow:0 0 0 4px rgba(179,200,255,.28);
     }
 
-    textarea {
-      min-height: 124px;
-      resize: vertical;
-      line-height: 1.6;
+    textarea{
+      min-height:124px;
+      resize:vertical;
+      line-height:1.6;
     }
 
-    .btns {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 12px;
+    .btns{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
     }
 
-    button {
-      border: none;
-      padding: 12px 16px;
-      border-radius: 14px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-      transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+    button{
+      border:none;
+      padding:12px 16px;
+      border-radius:16px;
+      cursor:pointer;
+      font-size:14px;
+      font-weight:bold;
+      transition:.16s ease;
+      box-shadow:0 10px 22px rgba(157, 178, 255, 0.2);
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      opacity: 0.98;
+    button:hover{
+      transform:translateY(-2px) scale(1.01);
     }
 
-    .primary { background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; }
-    .secondary { background: rgba(30,41,59,0.96); color: #e2e8f0; border: 1px solid var(--line); }
-    .success { background: linear-gradient(135deg, #059669, #10b981); color: white; }
-    .warning { background: linear-gradient(135deg, #d97706, #f59e0b); color: white; }
-    .danger { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; }
-    .purple { background: linear-gradient(135deg, #7c3aed, #8b5cf6); color: white; }
+    .primary{ background:linear-gradient(135deg,#8ecbff,#7aa8ff); color:white; }
+    .secondary{ background:linear-gradient(135deg,#fff,#eef4ff); color:#617399; border:1px solid rgba(255,255,255,.9); }
+    .success{ background:linear-gradient(135deg,#8be8d4,#65d8c0); color:white; }
+    .warning{ background:linear-gradient(135deg,#ffd37a,#ffb86c); color:white; }
+    .danger{ background:linear-gradient(135deg,#ff9db5,#ff7f9d); color:white; }
+    .purple{ background:linear-gradient(135deg,#b99cff,#8f8dff); color:white; }
 
-    .listen-box {
-      margin-top: 12px;
-      padding: 11px 14px;
-      border-radius: 14px;
-      background: rgba(8,15,28,0.86);
-      border: 1px solid var(--line);
-      display: inline-block;
-      font-size: 14px;
-      color: var(--sub);
+    .listen-box{
+      margin-top:12px;
+      padding:11px 14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(255,255,255,.9);
+      display:inline-block;
+      font-size:14px;
+      color:#64748b;
     }
 
-    .listening {
-      color: #fca5a5;
-      font-weight: bold;
+    .listening{
+      color:#ff6a95;
+      font-weight:bold;
     }
 
-    .check-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .check-group{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
     }
 
-    .option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(8,15,28,0.86);
-      border: 1px solid rgba(148,163,184,0.16);
-      padding: 10px 14px;
-      border-radius: 14px;
-      font-size: 14px;
-      color: #e2e8f0;
-      min-height: 44px;
-      transition: border-color 0.2s ease, transform 0.15s ease;
+    .option{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      background:rgba(255,255,255,.78);
+      border:1px solid rgba(255,255,255,.9);
+      padding:10px 14px;
+      border-radius:16px;
+      font-size:14px;
+      color:#50627e;
+      min-height:44px;
     }
 
-    .option:hover {
-      border-color: rgba(96,165,250,0.3);
-      transform: translateY(-1px);
+    .option input{
+      accent-color:#7aa8ff;
     }
 
-    .option input {
-      accent-color: #3b82f6;
+    details{
+      margin-top:14px;
+      background:rgba(255,255,255,.62);
+      border:1px solid rgba(255,255,255,.9);
+      border-radius:18px;
+      padding:14px;
     }
 
-    details {
-      margin-top: 14px;
-      background: rgba(8,15,28,0.8);
-      border: 1px solid rgba(148,163,184,0.16);
-      border-radius: 16px;
-      padding: 14px;
+    summary{
+      cursor:pointer;
+      font-weight:bold;
+      color:#6b7fd1;
+      outline:none;
+      list-style:none;
     }
 
-    summary {
-      cursor: pointer;
-      font-weight: bold;
-      color: #93c5fd;
-      outline: none;
-      list-style: none;
+    summary::-webkit-details-marker{ display:none; }
+    summary::before{
+      content:"▸";
+      display:inline-block;
+      margin-right:8px;
+      transition:transform .2s ease;
+    }
+    details[open] summary::before{ transform:rotate(90deg); }
+
+    .steps{
+      display:grid;
+      gap:10px;
     }
 
-    summary::-webkit-details-marker {
-      display: none;
+    .step{
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.7);
+      border:1px solid rgba(255,255,255,.85);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
     }
 
-    summary::before {
-      content: "▸";
-      display: inline-block;
-      margin-right: 8px;
-      transition: transform 0.2s ease;
+    .status{
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:linear-gradient(135deg,#eef4ff,#fff);
+      color:#5f84d8;
+      white-space:nowrap;
+      border:1px solid rgba(255,255,255,.95);
     }
 
-    details[open] summary::before {
-      transform: rotate(90deg);
+    .progress-wrap{ margin-top:14px; }
+
+    .progress-bar{
+      height:12px;
+      background:rgba(255,255,255,.8);
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.95);
     }
 
-    .steps {
-      display: grid;
-      gap: 10px;
+    .progress{
+      width:8%;
+      height:100%;
+      background:linear-gradient(90deg,#8ecbff,#8be8d4,#b99cff,#ff9db5);
     }
 
-    .step {
-      padding: 14px;
-      border-radius: 16px;
-      background: rgba(8,15,28,0.84);
-      border: 1px solid rgba(148,163,184,0.15);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+    .log{
+      margin-top:12px;
+      padding:14px;
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(255,255,255,.9);
+      border-radius:16px;
+      min-height:260px;
+      font-size:13px;
+      color:#64748b;
+      line-height:1.7;
+      white-space:pre-line;
     }
 
-    .status {
-      font-size: 12px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(30,41,59,0.95);
-      color: #93c5fd;
-      white-space: nowrap;
-      border: 1px solid rgba(148,163,184,0.12);
+    .output-box, .quick-copy-box, .folder-guide, .help-panel, .save-load-box{
+      margin-top:14px;
+      padding:15px;
+      border-radius:18px;
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(255,255,255,.88);
     }
 
-    .progress-wrap {
-      margin-top: 14px;
+    .output-box h3, .save-load-box h3{
+      margin:0 0 10px;
+      font-size:16px;
+      color:#5f84d8;
     }
 
-    .progress-bar {
-      height: 12px;
-      background: rgba(30,41,59,0.9);
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid rgba(148,163,184,0.12);
+    .summary-line{
+      font-size:14px;
+      color:#64748b;
+      line-height:1.75;
     }
 
-    .progress {
-      width: 8%;
-      height: 100%;
-      background: linear-gradient(90deg, #2563eb, #22d3ee, #8b5cf6);
+    .track-list{
+      display:grid;
+      gap:14px;
+      margin-top:14px;
     }
 
-    .log {
-      margin-top: 12px;
-      padding: 14px;
-      background: rgba(8,15,28,0.84);
-      border: 1px solid rgba(148,163,184,0.15);
-      border-radius: 16px;
-      min-height: 260px;
-      font-size: 13px;
-      color: var(--sub);
-      line-height: 1.7;
-      white-space: pre-line;
+    .track-item{
+      padding:18px;
+      border-radius:20px;
+      background:var(--card-strong);
+      border:1px solid rgba(255,255,255,.9);
+      box-shadow:var(--shadow);
     }
 
-    .output-box {
-      margin-top: 14px;
-      padding: 15px;
-      border-radius: 16px;
-      background: rgba(8,15,28,0.82);
-      border: 1px solid rgba(148,163,184,0.15);
+    .track-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
     }
 
-    .output-box h3 {
-      margin: 0 0 10px;
-      font-size: 16px;
-      color: #93c5fd;
+    .track-title{
+      font-size:19px;
+      font-weight:bold;
+      color:#6b5ca5;
     }
 
-    .summary-line {
-      font-size: 14px;
-      color: var(--sub);
-      line-height: 1.75;
+    .small{
+      font-size:12px;
+      color:#94a3b8;
     }
 
-    .track-list {
-      display: grid;
-      gap: 14px;
-      margin-top: 14px;
+    .mini-box{
+      margin-top:10px;
+      padding:13px;
+      border-radius:15px;
+      background:rgba(255,255,255,.84);
+      border:1px solid rgba(255,255,255,.96);
     }
 
-    .track-item {
-      padding: 18px;
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgba(8,15,28,0.9), rgba(12,18,32,0.92));
-      border: 1px solid rgba(148,163,184,0.14);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+    .mini-box strong{
+      display:block;
+      margin-bottom:6px;
+      color:#5f84d8;
+      font-size:14px;
     }
 
-    .track-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
+    .mini-text{
+      font-size:14px;
+      line-height:1.68;
+      color:#4b5563;
+      white-space:pre-wrap;
     }
 
-    .track-title {
-      font-size: 19px;
-      font-weight: bold;
-      letter-spacing: -0.2px;
+    .copy-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
     }
 
-    .small {
-      font-size: 12px;
-      color: var(--muted);
+    .quick-copy-status{
+      font-size:14px;
+      color:#5b6575;
+      margin-top:8px;
+      line-height:1.6;
     }
 
-    .mini-box {
-      margin-top: 10px;
-      padding: 13px;
-      border-radius: 14px;
-      background: rgba(17,24,39,0.84);
-      border: 1px solid rgba(148,163,184,0.13);
+    .help-panel{
+      display:none;
+      color:#5b6575;
+      line-height:1.8;
+      font-size:14px;
     }
 
-    .mini-box strong {
-      display: block;
-      margin-bottom: 6px;
-      color: #93c5fd;
-      font-size: 14px;
+    .help-panel.show{
+      display:block;
     }
 
-    .mini-text {
-      font-size: 14px;
-      line-height: 1.68;
-      color: #e2e8f0;
-      white-space: pre-wrap;
+    .help-panel strong{
+      color:#5668b4;
     }
 
-    .copy-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
+    .pill{
+      display:inline-block;
+      padding:5px 9px;
+      border-radius:999px;
+      background:linear-gradient(135deg,#fff,#f4f8ff);
+      border:1px solid rgba(255,255,255,.96);
+      color:#6b5ca5;
+      font-size:12px;
+      margin:3px 6px 3px 0;
     }
 
-    .quick-copy-box {
-      margin-top: 14px;
-      padding: 15px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, rgba(17,24,39,0.92), rgba(30,41,59,0.78));
-      border: 1px solid rgba(148,163,184,0.14);
+    .status-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
     }
 
-    .quick-copy-status {
-      font-size: 14px;
-      color: #e2e8f0;
-      margin-top: 8px;
-      line-height: 1.6;
+    .status-chip{
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.8);
+      border:1px solid rgba(255,255,255,.92);
+      font-size:13px;
+      color:#5b6575;
     }
 
-    .folder-guide {
-      margin-top: 12px;
-      padding: 13px;
-      border-radius: 14px;
-      background: rgba(17,24,39,0.84);
-      border: 1px solid rgba(148,163,184,0.13);
-      font-size: 13px;
-      color: var(--sub);
-      line-height: 1.8;
+    .candidate-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
     }
 
-    .help-panel {
-      display: none;
-      margin-top: 12px;
-      padding: 16px;
-      border-radius: 16px;
-      background: rgba(8,15,28,0.88);
-      border: 1px solid rgba(96,165,250,0.18);
-      color: var(--sub);
-      line-height: 1.8;
-      font-size: 14px;
+    .candidate-btn{
+      padding:8px 12px;
+      border-radius:999px;
+      background:linear-gradient(135deg,#fff,#eef4ff);
+      border:1px solid rgba(255,255,255,.95);
+      color:#617399;
+      font-size:12px;
+      cursor:pointer;
     }
 
-    .help-panel.show {
-      display: block;
+    .memo-area{
+      width:100%;
+      margin-top:10px;
+      min-height:72px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.95);
+      background:rgba(255,255,255,.88);
+      color:#4b5563;
+      resize:vertical;
     }
 
-    .help-panel strong {
-      color: #dbeafe;
+    .checklist{
+      display:grid;
+      gap:8px;
+      margin-top:10px;
     }
 
-    .pill {
-      display: inline-block;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: rgba(30,41,59,0.9);
-      border: 1px solid rgba(148,163,184,0.16);
-      color: #dbeafe;
-      font-size: 12px;
-      margin: 3px 6px 3px 0;
+    .check-item{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.82);
+      border:1px solid rgba(255,255,255,.95);
+      font-size:13px;
+      color:#5b6575;
     }
 
-    @media (max-width: 980px) {
-      .grid { grid-template-columns: 1fr; }
-      .row { grid-template-columns: 1fr; }
-      .wrap { padding: 18px; }
-      .title h1 { font-size: 28px; }
+    @media (max-width:1100px){
+      .grid{ grid-template-columns:1fr; }
+      .row, .triple{ grid-template-columns:1fr; }
+    }
+
+    @media (max-width:980px){
+      .wrap{ padding:18px; }
+      .title h1{ font-size:28px; }
+      .title-wrap{ align-items:center; }
+      .mascot{ width:62px; height:62px; font-size:28px; }
     }
   </style>
 </head>
 <body>
+  <div class="bg-wrap">
+    <div class="bubble b1"></div>
+    <div class="bubble b2"></div>
+    <div class="bubble b3"></div>
+    <div class="bubble b4"></div>
+    <div class="bubble b5"></div>
+    <div class="bubble b6"></div>
+    <div class="star s1"></div>
+    <div class="star s2"></div>
+    <div class="star s3"></div>
+    <div class="star s4"></div>
+    <div class="star s5"></div>
+  </div>
+
   <div class="wrap">
     <div class="hero">
       <div class="topbar">
-        <div class="title">
-          <h1>AI Music Auto Studio v20</h1>
-          <p>엔터테인먼트 제작 스타일 UI · 한국어 옵션 구성 · Suno용 Title / Style / Lyrics 자동 생성 · 빠른 붙여넣기 작업 흐름</p>
+        <div class="title-wrap">
+          <div class="mascot">🎀</div>
+          <div class="title">
+            <h1>AI Music Auto Studio v21 Cute</h1>
+            <p>귀여운 엔터테인먼트 제작툴 UI · 관리 기능 통합판 · 저장/불러오기 · 곡별 상태 · 메모 · 제목 후보 · 체크리스트까지 포함</p>
+          </div>
         </div>
-        <div class="badge">실행 → 자동분석 → 노래 제작 → Suno 제작 → 노래 편집 시작</div>
+        <div class="badge">실행 → 노래 제작 → Suno 제작 → mp3 저장 → 노래 편집 시작</div>
       </div>
 
       <div class="menu-bar">
@@ -544,7 +666,7 @@
             <textarea id="commandInput" placeholder="예: 비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘&#10;예: 중간에 랩이 들어가는 힙합 8곡 만들어줘&#10;예: 1번곡 조금 더 경쾌하게 만들어줘"></textarea>
 
             <div class="btns">
-              <button class="primary" id="voiceBtn" onclick="startVoice()">음성</button>
+              <button class="primary" onclick="startVoice()">음성</button>
               <button class="success" onclick="runCommand()">실행</button>
               <button class="secondary" onclick="toggleHelp()">설명</button>
             </div>
@@ -554,38 +676,40 @@
             <div class="help-panel" id="helpPanel">
               <strong>사용 방법</strong><br>
               1. <span class="pill">음성</span> 버튼을 누르고 말하거나, 텍스트 창에 직접 입력합니다.<br>
-              2. <span class="pill">실행</span> 버튼을 누르면 AI가 명령을 분석해 장르, 분위기, 보컬, 가사 언어 등을 자동 반영합니다.<br>
-              3. 필요하면 기본 설정을 손으로 수정한 뒤 <span class="pill">노래 제작</span> 버튼을 누릅니다.<br>
+              2. <span class="pill">실행</span> 버튼을 누르면 AI가 명령을 분석해 설정을 반영합니다.<br>
+              3. 필요하면 옵션을 수정한 뒤 <span class="pill">노래 제작</span> 버튼을 누릅니다.<br>
               4. 생성된 <strong>Title / Style / Lyrics</strong>를 Suno에 붙여넣습니다.<br>
-              5. Suno에서 완성된 mp3를 지정 폴더에 넣고 <span class="pill">노래 편집 시작</span>을 누릅니다.<br><br>
+              5. Suno에서 완성된 mp3를 저장하고 <span class="pill">현재 mp3 개수</span>를 입력해 관리합니다.<br>
+              6. <span class="pill">노래 편집 시작</span>을 눌러 다음 단계로 넘어갑니다.<br><br>
 
-              <strong>입력 예시</strong><br>
-              - 비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘<br>
-              - 카페 음악 느낌의 가사 없는 연주곡 12곡 만들어줘<br>
-              - 중간에 랩이 들어가는 힙합 남성보컬 8곡 만들어줘<br>
-              - 영어 노래로 밝고 경쾌한 팝 6곡 만들어줘<br><br>
-
-              <strong>곡 수정 예시</strong><br>
-              - 1번곡 조금 더 경쾌하게 만들어줘<br>
-              - 2번곡 더 슬프게 바꿔줘<br>
-              - 3번곡 더 따뜻한 느낌으로 수정해줘<br>
-              - 4번곡 더 강렬하게 바꿔줘<br><br>
-
-              <strong>빠른 복사 기능</strong><br>
-              <span class="pill">Next Copy</span>는 순서대로<br>
-              1번곡 Title → 1번곡 Style → 1번곡 Lyrics → 2번곡 Title → 2번곡 Style → 2번곡 Lyrics<br>
-              순으로 복사합니다.<br><br>
-
-              <strong>참고</strong><br>
-              - 장르, 분위기, 보컬 타입은 모두 한국어로 표시되지만, 내부 Style은 Suno 인식을 위해 영어 형식으로 생성됩니다.<br>
-              - 현재는 UI와 생성 로직 중심 단계이며, 실제 mp3 편집 엔진은 별도 연결 단계가 필요합니다.
+              <strong>추천 사용 순서</strong><br>
+              실행 → 노래 제작 → Title/Style/Lyrics 복사 → Suno 제작 → mp3 저장 → 상태 체크 → 노래 편집 시작
             </div>
+          </div>
+        </div>
+
+        <div class="save-load-box">
+          <h3>프로젝트 저장 / 불러오기</h3>
+          <div class="row">
+            <div>
+              <label>프로젝트 이름</label>
+              <input type="text" id="projectName" placeholder="예: 비오는날_발라드_10곡" />
+            </div>
+            <div>
+              <label>저장된 프로젝트</label>
+              <select id="savedProjects"></select>
+            </div>
+          </div>
+          <div class="btns">
+            <button class="secondary" onclick="saveProject()">저장</button>
+            <button class="secondary" onclick="loadProject()">불러오기</button>
+            <button class="secondary" onclick="deleteProject()">삭제</button>
           </div>
         </div>
 
         <h3 class="section-title">기본 설정</h3>
 
-        <div class="row">
+        <div class="triple">
           <div>
             <label>곡 수</label>
             <select id="trackCount">
@@ -604,6 +728,16 @@
               <option selected>3분</option>
               <option>4분</option>
               <option>5분</option>
+            </select>
+          </div>
+          <div>
+            <label>Style 강도</label>
+            <select id="styleStrength">
+              <option>기본</option>
+              <option>더 감성적으로</option>
+              <option>더 대중적으로</option>
+              <option>더 강렬하게</option>
+              <option>더 단순하게</option>
             </select>
           </div>
         </div>
@@ -719,8 +853,36 @@
           </div>
         </div>
 
+        <div class="save-load-box">
+          <h3>파일 / 진행 관리</h3>
+          <div class="row">
+            <div>
+              <label>입력 폴더</label>
+              <input type="text" id="inputFolder" value="project/music-input/" />
+            </div>
+            <div>
+              <label>편집 출력 폴더</label>
+              <input type="text" id="outputFolder" value="project/music-output/" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>영상 출력 폴더</label>
+              <input type="text" id="videoFolder" value="project/video-output/" />
+            </div>
+            <div>
+              <label>현재 mp3 개수</label>
+              <input type="number" id="mp3Count" value="0" min="0" />
+            </div>
+          </div>
+          <div class="status-grid">
+            <div class="status-chip" id="targetTrackStatus">목표 곡 수: 10곡</div>
+            <div class="status-chip" id="mp3CheckStatus">현재 mp3: 0곡 / 부족: 10곡</div>
+          </div>
+        </div>
+
         <div class="quick-copy-box">
-          <h3 style="margin:0 0 10px; color:#93c5fd;">빠른 붙여넣기 복사</h3>
+          <h3 style="margin:0 0 10px; color:#5f84d8;">빠른 붙여넣기 복사</h3>
           <div class="btns">
             <button class="purple" onclick="copyNextStep()">⏭ Next Copy</button>
             <button class="secondary" onclick="resetCopySequence()">🔄 복사 초기화</button>
@@ -735,11 +897,6 @@
           <button class="success" onclick="generateTracks()">노래 제작</button>
           <button class="warning" onclick="startSongEditing()">노래 편집 시작</button>
           <button class="danger" onclick="makeVideo()">영상 만들기</button>
-        </div>
-
-        <div class="folder-guide">
-          입력 폴더 예시: <strong>project/music-input/</strong><br>
-          Suno에서 만든 mp3를 이 폴더에 넣은 뒤 <strong>노래 편집 시작</strong>을 누르는 흐름입니다.
         </div>
       </div>
 
@@ -758,6 +915,18 @@
           <div class="summary-line">전체 진행률</div>
           <div class="progress-bar">
             <div class="progress" id="progressBar"></div>
+          </div>
+        </div>
+
+        <div class="output-box">
+          <h3>최종 체크리스트</h3>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox" id="checkTitle"> Title 확인</label>
+            <label class="check-item"><input type="checkbox" id="checkStyle"> Style 확인</label>
+            <label class="check-item"><input type="checkbox" id="checkLyrics"> Lyrics 확인</label>
+            <label class="check-item"><input type="checkbox" id="checkSuno"> Suno 제작 완료</label>
+            <label class="check-item"><input type="checkbox" id="checkMp3"> mp3 저장 완료</label>
+            <label class="check-item"><input type="checkbox" id="checkEdit"> 노래 편집 시작 가능</label>
           </div>
         </div>
 
@@ -797,14 +966,10 @@
 
     function updateListeningState(isListening) {
       const status = document.getElementById("listenStatus");
-      const btn = document.getElementById("voiceBtn");
-
       if (isListening) {
         status.innerHTML = '상태: <span class="listening">듣는 중...</span>';
-        btn.textContent = "음성";
       } else {
         status.textContent = "상태: 대기중";
-        btn.textContent = "음성";
       }
     }
 
@@ -865,81 +1030,27 @@
       return map[vocal] || vocal;
     }
 
-    function applyCommandToSelections(rawText) {
-      const text = rawText.toLowerCase();
+    function strengthToStyle(strength) {
+      const map = {
+        "기본": "balanced and polished",
+        "더 감성적으로": "more emotional and heartfelt",
+        "더 대중적으로": "more mainstream and catchy",
+        "더 강렬하게": "more intense and impactful",
+        "더 단순하게": "more minimal and simple"
+      };
+      return map[strength] || "balanced and polished";
+    }
 
-      if (text.includes("20곡") || text.includes("20")) document.getElementById("trackCount").value = "20";
-      else if (text.includes("15곡") || text.includes("15")) document.getElementById("trackCount").value = "15";
-      else if (text.includes("12곡") || text.includes("12")) document.getElementById("trackCount").value = "12";
-      else if (text.includes("10곡") || text.includes("10")) document.getElementById("trackCount").value = "10";
-      else if (text.includes("8곡") || text.includes("8")) document.getElementById("trackCount").value = "8";
-      else if (text.includes("6곡") || text.includes("6")) document.getElementById("trackCount").value = "6";
+    function getSelectedInstruments() {
+      return Array.from(document.querySelectorAll(".instrument:checked")).map(el => el.value);
+    }
 
-      if (text.includes("2분")) document.getElementById("songDuration").value = "2분";
-      if (text.includes("3분")) document.getElementById("songDuration").value = "3분";
-      if (text.includes("4분")) document.getElementById("songDuration").value = "4분";
-      if (text.includes("5분")) document.getElementById("songDuration").value = "5분";
-
-      if (text.includes("발라드")) document.getElementById("genreSelect").value = "발라드";
-      if (text.includes("힙합")) document.getElementById("genreSelect").value = "힙합";
-      if (text.includes("트로트")) document.getElementById("genreSelect").value = "트로트";
-      if (text.includes("락")) document.getElementById("genreSelect").value = "락";
-      if (text.includes("헤비메탈") || text.includes("메탈")) document.getElementById("genreSelect").value = "헤비메탈";
-      if (text.includes("카페")) document.getElementById("genreSelect").value = "카페음악";
-      if (text.includes("연주곡") || text.includes("가사 없는")) {
-        document.getElementById("genreSelect").value = "가사 없는 연주곡";
-        document.getElementById("instrumentalOnly").checked = true;
-        document.getElementById("vocalSelect").value = "연주곡 전용";
-      }
-      if (text.includes("팝")) document.getElementById("genreSelect").value = "팝";
-      if (text.includes("재즈")) document.getElementById("genreSelect").value = "재즈";
-      if (text.includes("로파이")) document.getElementById("genreSelect").value = "로파이";
-      if (text.includes("동요")) document.getElementById("genreSelect").value = "동요";
-
-      if (text.includes("비 오는 날") || text.includes("비오는 날") || text.includes("비")) {
-        document.getElementById("moodSelect").value = "비 오는 날";
-      }
-      if (text.includes("로맨틱") || text.includes("설렘")) document.getElementById("moodSelect").value = "로맨틱";
-      if (text.includes("슬픈") || text.includes("이별")) document.getElementById("moodSelect").value = "슬픔 / 감성";
-      if (text.includes("따뜻")) document.getElementById("moodSelect").value = "따뜻함 / 위로";
-      if (text.includes("밝고") || text.includes("경쾌")) document.getElementById("moodSelect").value = "밝고 경쾌함";
-      if (text.includes("몽환")) document.getElementById("moodSelect").value = "몽환적";
-      if (text.includes("어두운")) document.getElementById("moodSelect").value = "어둡고 강렬함";
-      if (text.includes("새벽")) document.getElementById("moodSelect").value = "새벽 감성";
-      if (text.includes("공부")) document.getElementById("moodSelect").value = "공부 집중";
-      if (text.includes("수면") || text.includes("잠")) document.getElementById("moodSelect").value = "수면 / 편안함";
-      if (text.includes("드라이브")) document.getElementById("moodSelect").value = "드라이브";
-      if (text.includes("카페")) document.getElementById("moodSelect").value = "카페 휴식";
-
-      if (text.includes("여성보컬") || text.includes("여자보컬")) document.getElementById("vocalSelect").value = "여성 보컬";
-      if (text.includes("남성보컬") || text.includes("남자보컬")) document.getElementById("vocalSelect").value = "남성 보컬";
-      if (text.includes("듀엣")) document.getElementById("vocalSelect").value = "듀엣 보컬";
-
-      if (text.includes("영어 노래") || text.includes("english")) document.getElementById("lyricsLang").value = "english";
-      if (text.includes("일본어")) document.getElementById("lyricsLang").value = "japanese";
-      if (text.includes("한국어")) document.getElementById("lyricsLang").value = "korean";
-
-      if (text.includes("랩")) document.getElementById("rapOption").checked = true;
-      if (text.includes("영어 후렴")) document.getElementById("englishHookOption").checked = true;
-      if (text.includes("후렴 반복")) document.getElementById("repeatChorusOption").checked = true;
-      if (text.includes("짧은 인트로")) document.getElementById("shortIntroOption").checked = true;
-      if (text.includes("긴 인트로")) document.getElementById("longIntroOption").checked = true;
-      if (text.includes("브릿지")) document.getElementById("bridgeOption").checked = true;
-
-      if (text.includes("피아노")) checkInstrument("piano");
-      if (text.includes("어쿠스틱 기타")) checkInstrument("acoustic guitar");
-      if (text.includes("일렉기타")) checkInstrument("electric guitar");
-      if (text.includes("베이스")) checkInstrument("bass");
-      if (text.includes("드럼")) checkInstrument("drums");
-      if (text.includes("바이올린")) checkInstrument("violin");
-      if (text.includes("첼로")) checkInstrument("cello");
-      if (text.includes("플루트")) checkInstrument("flute");
-      if (text.includes("색소폰")) checkInstrument("saxophone");
-      if (text.includes("신스")) checkInstrument("synth");
-      if (text.includes("패드")) checkInstrument("pad");
-      if (text.includes("국악기")) checkInstrument("korean traditional instruments");
-      if (text.includes("오케스트라")) checkInstrument("orchestra");
-      if (text.includes("비트")) checkInstrument("strong beat");
+    function updateMp3Status() {
+      const target = parseInt(document.getElementById("trackCount").value || 0, 10);
+      const current = parseInt(document.getElementById("mp3Count").value || 0, 10);
+      const missing = Math.max(target - current, 0);
+      document.getElementById("targetTrackStatus").textContent = `목표 곡 수: ${target}곡`;
+      document.getElementById("mp3CheckStatus").textContent = `현재 mp3: ${current}곡 / 부족: ${missing}곡`;
     }
 
     function runCommand() {
@@ -959,19 +1070,8 @@
         return;
       }
 
-      applyCommandToSelections(text);
       updateAnalysis(text);
       log("AI 자동분석 완료: 설정값 반영");
-    }
-
-    function checkInstrument(value) {
-      document.querySelectorAll(".instrument").forEach(el => {
-        if (el.value === value) el.checked = true;
-      });
-    }
-
-    function getSelectedInstruments() {
-      return Array.from(document.querySelectorAll(".instrument:checked")).map(el => el.value);
     }
 
     function updateAnalysis(rawText = "") {
@@ -980,6 +1080,7 @@
       const genre = document.getElementById("genreSelect").value;
       const mood = document.getElementById("moodSelect").value;
       const vocal = document.getElementById("vocalSelect").value;
+      const strength = document.getElementById("styleStrength").value;
       const langMap = { korean: "한국어", english: "영어", japanese: "일본어" };
       const lang = langMap[document.getElementById("lyricsLang").value];
       const instruments = getSelectedInstruments();
@@ -1001,9 +1102,12 @@
         `분위기: ${mood}<br>` +
         `보컬: ${vocal}<br>` +
         `가사 언어: ${lang}<br>` +
+        `Style 강도: ${strength}<br>` +
         `악기: ${instruments.length ? instruments.join(", ") : "기본 구성"}<br>` +
         `추가 옵션: ${extras.length ? extras.join(", ") : "없음"}<br>` +
-        `추천 작업: 실행 → 노래 제작 → Suno 제작 → 노래 편집 시작`;
+        `추천 작업: 실행 → 노래 제작 → Suno 제작 → mp3 저장 → 노래 편집 시작`;
+
+      updateMp3Status();
     }
 
     function titlePoolByMood(moodKr) {
@@ -1025,9 +1129,14 @@
       return map[mood] || ["Hidden Song", "Open Sky", "New Feeling", "Blue Song", "Quiet Light"];
     }
 
-    function randomTitle(moodKr, index) {
+    function titleCandidates(moodKr, index) {
       const pool = titlePoolByMood(moodKr);
-      return `${pool[Math.floor(Math.random() * pool.length)]} ${index}`;
+      const results = [];
+      while (results.length < 3) {
+        const candidate = `${pool[Math.floor(Math.random() * pool.length)]} ${index}`;
+        if (!results.includes(candidate)) results.push(candidate);
+      }
+      return results;
     }
 
     function generateLyrics(lang, options) {
@@ -1152,12 +1261,12 @@ ${chorus.replace("[Chorus]\n", "")}`;
       const genre = genreToStyle(document.getElementById("genreSelect").value);
       const mood = moodToStyle(document.getElementById("moodSelect").value);
       const vocal = vocalToStyle(document.getElementById("vocalSelect").value);
-      const tone = "balanced expressive tone";
+      const strength = strengthToStyle(document.getElementById("styleStrength").value);
       const lang = document.getElementById("lyricsLang").value;
       const duration = document.getElementById("songDuration").value;
       const instruments = getSelectedInstruments();
 
-      const parts = [genre, vocal, tone, mood];
+      const parts = [genre, vocal, strength, mood];
 
       if (lang === "korean") parts.push("korean lyrics");
       if (lang === "english") parts.push("english lyrics");
@@ -1201,11 +1310,20 @@ ${chorus.replace("[Chorus]\n", "")}`;
       };
 
       for (let i = 1; i <= total; i++) {
-        const title = randomTitle(mood, i);
+        const candidates = titleCandidates(mood, i);
+        const title = candidates[0];
         const style = buildStyle();
         const lyrics = generateLyrics(lang, options);
 
-        tracks.push({ index: i, title, style, lyrics });
+        tracks.push({
+          index: i,
+          title,
+          style,
+          lyrics,
+          titleCandidates: candidates,
+          memo: "",
+          status: "대기중"
+        });
 
         copySteps.push({ id: `title-${i}`, label: `${i}번곡 Title` });
         copySteps.push({ id: `style-${i}`, label: `${i}번곡 Style` });
@@ -1216,7 +1334,28 @@ ${chorus.replace("[Chorus]\n", "")}`;
       updateCopySequenceStatus();
       setStatus("st2", "완료");
       setProgress(45);
-      log("노래 제작 완료: Suno용 Title / Style / Lyrics 생성");
+      log("노래 제작 완료: Title 후보 / Style / Lyrics 생성");
+    }
+
+    function chooseTitle(index, title) {
+      const track = tracks.find(t => t.index === index);
+      if (!track) return;
+      track.title = title;
+      renderTracks();
+      log(`${index}번곡 제목 선택: ${title}`);
+    }
+
+    function updateTrackMemo(index, value) {
+      const track = tracks.find(t => t.index === index);
+      if (!track) return;
+      track.memo = value;
+    }
+
+    function updateTrackStatus(index, value) {
+      const track = tracks.find(t => t.index === index);
+      if (!track) return;
+      track.status = value;
+      log(`${index}번곡 상태 변경: ${value}`);
     }
 
     function renderTracks() {
@@ -1229,12 +1368,15 @@ ${chorus.replace("[Chorus]\n", "")}`;
         div.innerHTML = `
           <div class="track-header">
             <div class="track-title">${track.index}번곡</div>
-            <div class="small">Suno 입력용</div>
+            <div class="small">상태: ${track.status}</div>
           </div>
 
           <div class="mini-box">
             <strong>Title</strong>
             <div class="mini-text" id="title-${track.index}">${escapeHtml(track.title)}</div>
+            <div class="candidate-list">
+              ${track.titleCandidates.map(t => `<button type="button" class="candidate-btn" onclick="chooseTitle(${track.index}, '${escapeJs(t)}')">${escapeHtml(t)}</button>`).join("")}
+            </div>
           </div>
 
           <div class="mini-box">
@@ -1245,6 +1387,22 @@ ${chorus.replace("[Chorus]\n", "")}`;
           <div class="mini-box">
             <strong>Lyrics</strong>
             <div class="mini-text" id="lyrics-${track.index}">${escapeHtml(track.lyrics)}</div>
+          </div>
+
+          <div class="mini-box">
+            <strong>곡 상태 체크</strong>
+            <select onchange="updateTrackStatus(${track.index}, this.value)">
+              <option ${track.status === "대기중" ? "selected" : ""}>대기중</option>
+              <option ${track.status === "Suno 제작 완료" ? "selected" : ""}>Suno 제작 완료</option>
+              <option ${track.status === "mp3 저장 완료" ? "selected" : ""}>mp3 저장 완료</option>
+              <option ${track.status === "수정 필요" ? "selected" : ""}>수정 필요</option>
+              <option ${track.status === "편집 준비 완료" ? "selected" : ""}>편집 준비 완료</option>
+            </select>
+          </div>
+
+          <div class="mini-box">
+            <strong>곡 메모</strong>
+            <textarea class="memo-area" placeholder="예: 후렴은 좋지만 보컬이 약함 / 다시 제작 필요" oninput="updateTrackMemo(${track.index}, this.value)">${escapeHtml(track.memo)}</textarea>
           </div>
 
           <div class="copy-row">
@@ -1260,10 +1418,14 @@ ${chorus.replace("[Chorus]\n", "")}`;
     }
 
     function escapeHtml(text) {
-      return text
+      return String(text)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;");
+    }
+
+    function escapeJs(text) {
+      return String(text).replaceAll("\\", "\\\\").replaceAll("'", "\\'");
     }
 
     function copyText(id, label) {
@@ -1367,6 +1529,8 @@ ${track.lyrics}`;
         track.style += ", refined based on user feedback";
       }
 
+      track.status = "수정 필요";
+
       renderTracks();
       copySteps = [];
       tracks.forEach(track => {
@@ -1395,6 +1559,139 @@ ${track.lyrics}`;
       log("긴 영상 제작 준비 완료");
     }
 
+    function collectProjectData() {
+      return {
+        projectName: document.getElementById("projectName").value,
+        trackCount: document.getElementById("trackCount").value,
+        songDuration: document.getElementById("songDuration").value,
+        styleStrength: document.getElementById("styleStrength").value,
+        genreSelect: document.getElementById("genreSelect").value,
+        moodSelect: document.getElementById("moodSelect").value,
+        vocalSelect: document.getElementById("vocalSelect").value,
+        lyricsLang: document.getElementById("lyricsLang").value,
+        instrumentalOnly: document.getElementById("instrumentalOnly").checked,
+        rapOption: document.getElementById("rapOption").checked,
+        englishHookOption: document.getElementById("englishHookOption").checked,
+        repeatChorusOption: document.getElementById("repeatChorusOption").checked,
+        shortIntroOption: document.getElementById("shortIntroOption").checked,
+        longIntroOption: document.getElementById("longIntroOption").checked,
+        bridgeOption: document.getElementById("bridgeOption").checked,
+        inputFolder: document.getElementById("inputFolder").value,
+        outputFolder: document.getElementById("outputFolder").value,
+        videoFolder: document.getElementById("videoFolder").value,
+        mp3Count: document.getElementById("mp3Count").value,
+        instruments: Array.from(document.querySelectorAll(".instrument:checked")).map(el => el.value),
+        commandInput: document.getElementById("commandInput").value,
+        tracks
+      };
+    }
+
+    function applyProjectData(data) {
+      if (!data) return;
+      document.getElementById("projectName").value = data.projectName || "";
+      document.getElementById("trackCount").value = data.trackCount || "10";
+      document.getElementById("songDuration").value = data.songDuration || "3분";
+      document.getElementById("styleStrength").value = data.styleStrength || "기본";
+      document.getElementById("genreSelect").value = data.genreSelect || "발라드";
+      document.getElementById("moodSelect").value = data.moodSelect || "비 오는 날";
+      document.getElementById("vocalSelect").value = data.vocalSelect || "여성 보컬";
+      document.getElementById("lyricsLang").value = data.lyricsLang || "korean";
+      document.getElementById("instrumentalOnly").checked = !!data.instrumentalOnly;
+      document.getElementById("rapOption").checked = !!data.rapOption;
+      document.getElementById("englishHookOption").checked = !!data.englishHookOption;
+      document.getElementById("repeatChorusOption").checked = !!data.repeatChorusOption;
+      document.getElementById("shortIntroOption").checked = !!data.shortIntroOption;
+      document.getElementById("longIntroOption").checked = !!data.longIntroOption;
+      document.getElementById("bridgeOption").checked = !!data.bridgeOption;
+      document.getElementById("inputFolder").value = data.inputFolder || "project/music-input/";
+      document.getElementById("outputFolder").value = data.outputFolder || "project/music-output/";
+      document.getElementById("videoFolder").value = data.videoFolder || "project/video-output/";
+      document.getElementById("mp3Count").value = data.mp3Count || "0";
+      document.getElementById("commandInput").value = data.commandInput || "";
+
+      document.querySelectorAll(".instrument").forEach(el => {
+        el.checked = (data.instruments || []).includes(el.value);
+      });
+
+      tracks = data.tracks || [];
+      renderTracks();
+
+      copySteps = [];
+      tracks.forEach(track => {
+        copySteps.push({ id: `title-${track.index}`, label: `${track.index}번곡 Title` });
+        copySteps.push({ id: `style-${track.index}`, label: `${track.index}번곡 Style` });
+        copySteps.push({ id: `lyrics-${track.index}`, label: `${track.index}번곡 Lyrics` });
+      });
+      copySequenceIndex = 0;
+      updateCopySequenceStatus();
+      updateAnalysis(document.getElementById("commandInput").value.trim());
+    }
+
+    function getProjects() {
+      try {
+        return JSON.parse(localStorage.getItem("aiMusicProjects") || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function setProjects(obj) {
+      localStorage.setItem("aiMusicProjects", JSON.stringify(obj));
+    }
+
+    function refreshSavedProjects() {
+      const select = document.getElementById("savedProjects");
+      const projects = getProjects();
+      select.innerHTML = "";
+      const keys = Object.keys(projects);
+      if (!keys.length) {
+        const opt = document.createElement("option");
+        opt.textContent = "저장된 프로젝트 없음";
+        opt.value = "";
+        select.appendChild(opt);
+        return;
+      }
+      keys.forEach(key => {
+        const opt = document.createElement("option");
+        opt.textContent = key;
+        opt.value = key;
+        select.appendChild(opt);
+      });
+    }
+
+    function saveProject() {
+      const name = document.getElementById("projectName").value.trim();
+      if (!name) {
+        alert("프로젝트 이름을 입력해 주세요.");
+        return;
+      }
+      const projects = getProjects();
+      projects[name] = collectProjectData();
+      setProjects(projects);
+      refreshSavedProjects();
+      document.getElementById("savedProjects").value = name;
+      log(`프로젝트 저장 완료: ${name}`);
+    }
+
+    function loadProject() {
+      const name = document.getElementById("savedProjects").value;
+      if (!name) return;
+      const projects = getProjects();
+      if (!projects[name]) return;
+      applyProjectData(projects[name]);
+      log(`프로젝트 불러오기 완료: ${name}`);
+    }
+
+    function deleteProject() {
+      const name = document.getElementById("savedProjects").value;
+      if (!name) return;
+      const projects = getProjects();
+      delete projects[name];
+      setProjects(projects);
+      refreshSavedProjects();
+      log(`프로젝트 삭제 완료: ${name}`);
+    }
+
     function startVoice() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -1417,6 +1714,7 @@ ${track.lyrics}`;
         document.getElementById("commandInput").value = text;
         log(`음성 입력 완료: ${text}`);
         updateListeningState(false);
+        updateAnalysis(text);
       };
 
       recognition.onerror = function(event) {
@@ -1430,11 +1728,19 @@ ${track.lyrics}`;
     }
 
     document.querySelectorAll("select, input").forEach(el => {
-      el.addEventListener("change", () => updateAnalysis(document.getElementById("commandInput").value.trim()));
-      el.addEventListener("input", () => updateAnalysis(document.getElementById("commandInput").value.trim()));
+      el.addEventListener("change", () => {
+        updateAnalysis(document.getElementById("commandInput").value.trim());
+        updateMp3Status();
+      });
+      el.addEventListener("input", () => {
+        updateAnalysis(document.getElementById("commandInput").value.trim());
+        updateMp3Status();
+      });
     });
 
+    refreshSavedProjects();
     updateAnalysis();
+    updateMp3Status();
   </script>
 </body>
 </html>
