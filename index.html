@@ -3,98 +3,176 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v19</title>
+  <title>AI Music Auto Studio v20</title>
   <style>
     * { box-sizing: border-box; }
+
+    :root {
+      --bg: #07111f;
+      --panel: rgba(15, 23, 42, 0.82);
+      --panel-2: rgba(17, 24, 39, 0.92);
+      --line: rgba(148, 163, 184, 0.16);
+      --line-strong: rgba(96, 165, 250, 0.24);
+      --text: #f8fafc;
+      --sub: #cbd5e1;
+      --muted: #94a3b8;
+      --blue: #3b82f6;
+      --blue-2: #60a5fa;
+      --cyan: #22d3ee;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --purple: #8b5cf6;
+      --shadow: 0 24px 60px rgba(0,0,0,0.35);
+      --radius: 22px;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #f8fafc;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(139,92,246,0.16), transparent 24%),
+        linear-gradient(180deg, #08111d 0%, #0b1220 45%, #08101a 100%);
+      min-height: 100vh;
     }
+
     .wrap {
-      max-width: 1400px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 28px;
     }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(30,41,59,0.88), rgba(15,23,42,0.9));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -80px auto;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(34,211,238,0.18), transparent 60%);
+      pointer-events: none;
+    }
+
     .topbar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      gap: 16px;
+      align-items: flex-start;
+      gap: 18px;
       flex-wrap: wrap;
     }
+
     .title h1 {
       margin: 0;
-      font-size: 32px;
+      font-size: 34px;
+      letter-spacing: -0.3px;
     }
+
     .title p {
-      margin: 8px 0 0;
-      color: #cbd5e1;
+      margin: 10px 0 0;
+      color: var(--sub);
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 760px;
     }
+
     .badge {
-      background: #1e293b;
-      color: #93c5fd;
-      padding: 8px 14px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.18), rgba(139,92,246,0.16));
+      color: #dbeafe;
+      padding: 10px 14px;
       border-radius: 999px;
-      font-size: 14px;
-      border: 1px solid #334155;
+      font-size: 13px;
+      border: 1px solid rgba(96,165,250,0.22);
+      white-space: nowrap;
+      backdrop-filter: blur(10px);
     }
+
     .menu-bar {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      margin: 20px 0 0;
     }
+
     .menu-btn {
-      padding: 10px 16px;
-      border-radius: 12px;
-      border: 1px solid #334155;
-      background: #111827;
-      color: #e2e8f0;
+      padding: 11px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(15,23,42,0.74);
+      color: #dbeafe;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.2s ease;
     }
+
+    .menu-btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--line-strong);
+    }
+
     .menu-btn.active {
-      background: #2563eb;
+      background: linear-gradient(135deg, rgba(37,99,235,0.92), rgba(124,58,237,0.88));
       color: white;
-      border-color: #2563eb;
+      border-color: transparent;
+      box-shadow: 0 14px 28px rgba(59,130,246,0.22);
     }
+
     .grid {
       display: grid;
-      grid-template-columns: 1.3fr 0.7fr;
-      gap: 20px;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 22px;
+      align-items: start;
     }
+
     .card {
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      background: linear-gradient(180deg, rgba(15,23,42,0.88), rgba(17,24,39,0.9));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
     }
+
     .card h2 {
       margin: 0 0 16px;
       font-size: 22px;
+      letter-spacing: -0.2px;
     }
+
     .section-title {
-      margin: 18px 0 10px;
-      font-size: 16px;
+      margin: 20px 0 12px;
+      font-size: 15px;
       color: #93c5fd;
+      font-weight: bold;
     }
+
     .row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
       margin-bottom: 14px;
     }
+
     .full { grid-column: 1 / -1; }
 
     label {
       display: block;
       margin-bottom: 8px;
-      font-size: 14px;
-      color: #cbd5e1;
+      font-size: 13px;
+      color: var(--sub);
+      font-weight: bold;
+      letter-spacing: 0.1px;
     }
 
     input[type="text"],
@@ -102,18 +180,28 @@
     select,
     textarea {
       width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid #334155;
-      background: #0b1220;
-      color: #f8fafc;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(8, 15, 28, 0.86);
+      color: var(--text);
       font-size: 14px;
       outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(96,165,250,0.42);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
     }
 
     textarea {
-      min-height: 120px;
+      min-height: 124px;
       resize: vertical;
+      line-height: 1.6;
     }
 
     .btns {
@@ -126,28 +214,36 @@
     button {
       border: none;
       padding: 12px 16px;
-      border-radius: 12px;
+      border-radius: 14px;
       cursor: pointer;
       font-size: 14px;
       font-weight: bold;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
     }
 
-    .primary { background: #2563eb; color: white; }
-    .secondary { background: #1e293b; color: #e2e8f0; border: 1px solid #334155; }
-    .success { background: #059669; color: white; }
-    .warning { background: #d97706; color: white; }
-    .danger { background: #dc2626; color: white; }
-    .purple { background: #7c3aed; color: white; }
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.98;
+    }
+
+    .primary { background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; }
+    .secondary { background: rgba(30,41,59,0.96); color: #e2e8f0; border: 1px solid var(--line); }
+    .success { background: linear-gradient(135deg, #059669, #10b981); color: white; }
+    .warning { background: linear-gradient(135deg, #d97706, #f59e0b); color: white; }
+    .danger { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; }
+    .purple { background: linear-gradient(135deg, #7c3aed, #8b5cf6); color: white; }
 
     .listen-box {
       margin-top: 12px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      background: #0b1220;
-      border: 1px solid #334155;
+      padding: 11px 14px;
+      border-radius: 14px;
+      background: rgba(8,15,28,0.86);
+      border: 1px solid var(--line);
       display: inline-block;
       font-size: 14px;
+      color: var(--sub);
     }
+
     .listening {
       color: #fca5a5;
       font-weight: bold;
@@ -163,13 +259,19 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #0b1220;
-      border: 1px solid #334155;
+      background: rgba(8,15,28,0.86);
+      border: 1px solid rgba(148,163,184,0.16);
       padding: 10px 14px;
-      border-radius: 12px;
+      border-radius: 14px;
       font-size: 14px;
       color: #e2e8f0;
       min-height: 44px;
+      transition: border-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .option:hover {
+      border-color: rgba(96,165,250,0.3);
+      transform: translateY(-1px);
     }
 
     .option input {
@@ -178,10 +280,10 @@
 
     details {
       margin-top: 14px;
-      background: #0b1220;
-      border: 1px solid #334155;
-      border-radius: 14px;
-      padding: 12px 14px;
+      background: rgba(8,15,28,0.8);
+      border: 1px solid rgba(148,163,184,0.16);
+      border-radius: 16px;
+      padding: 14px;
     }
 
     summary {
@@ -189,6 +291,22 @@
       font-weight: bold;
       color: #93c5fd;
       outline: none;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::before {
+      content: "▸";
+      display: inline-block;
+      margin-right: 8px;
+      transition: transform 0.2s ease;
+    }
+
+    details[open] summary::before {
+      transform: rotate(90deg);
     }
 
     .steps {
@@ -198,9 +316,9 @@
 
     .step {
       padding: 14px;
-      border-radius: 14px;
-      background: #0b1220;
-      border: 1px solid #334155;
+      border-radius: 16px;
+      background: rgba(8,15,28,0.84);
+      border: 1px solid rgba(148,163,184,0.15);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -209,11 +327,12 @@
 
     .status {
       font-size: 12px;
-      padding: 6px 10px;
+      padding: 7px 10px;
       border-radius: 999px;
-      background: #1e293b;
+      background: rgba(30,41,59,0.95);
       color: #93c5fd;
       white-space: nowrap;
+      border: 1px solid rgba(148,163,184,0.12);
     }
 
     .progress-wrap {
@@ -222,37 +341,37 @@
 
     .progress-bar {
       height: 12px;
-      background: #1e293b;
+      background: rgba(30,41,59,0.9);
       border-radius: 999px;
       overflow: hidden;
-      border: 1px solid #334155;
+      border: 1px solid rgba(148,163,184,0.12);
     }
 
     .progress {
       width: 8%;
       height: 100%;
-      background: linear-gradient(90deg, #2563eb, #06b6d4);
+      background: linear-gradient(90deg, #2563eb, #22d3ee, #8b5cf6);
     }
 
     .log {
       margin-top: 12px;
       padding: 14px;
-      background: #0b1220;
-      border: 1px solid #334155;
-      border-radius: 14px;
-      min-height: 220px;
+      background: rgba(8,15,28,0.84);
+      border: 1px solid rgba(148,163,184,0.15);
+      border-radius: 16px;
+      min-height: 260px;
       font-size: 13px;
-      color: #cbd5e1;
-      line-height: 1.6;
+      color: var(--sub);
+      line-height: 1.7;
       white-space: pre-line;
     }
 
     .output-box {
       margin-top: 14px;
-      padding: 14px;
-      border-radius: 14px;
-      background: #0b1220;
-      border: 1px solid #334155;
+      padding: 15px;
+      border-radius: 16px;
+      background: rgba(8,15,28,0.82);
+      border: 1px solid rgba(148,163,184,0.15);
     }
 
     .output-box h3 {
@@ -263,8 +382,8 @@
 
     .summary-line {
       font-size: 14px;
-      color: #cbd5e1;
-      line-height: 1.7;
+      color: var(--sub);
+      line-height: 1.75;
     }
 
     .track-list {
@@ -274,10 +393,11 @@
     }
 
     .track-item {
-      padding: 16px;
-      border-radius: 14px;
-      background: #0b1220;
-      border: 1px solid #334155;
+      padding: 18px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(8,15,28,0.9), rgba(12,18,32,0.92));
+      border: 1px solid rgba(148,163,184,0.14);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
     }
 
     .track-header {
@@ -290,21 +410,22 @@
     }
 
     .track-title {
-      font-size: 18px;
+      font-size: 19px;
       font-weight: bold;
+      letter-spacing: -0.2px;
     }
 
     .small {
       font-size: 12px;
-      color: #94a3b8;
+      color: var(--muted);
     }
 
     .mini-box {
       margin-top: 10px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #111827;
-      border: 1px solid #334155;
+      padding: 13px;
+      border-radius: 14px;
+      background: rgba(17,24,39,0.84);
+      border: 1px solid rgba(148,163,184,0.13);
     }
 
     .mini-box strong {
@@ -316,7 +437,7 @@
 
     .mini-text {
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.68;
       color: #e2e8f0;
       white-space: pre-wrap;
     }
@@ -330,10 +451,10 @@
 
     .quick-copy-box {
       margin-top: 14px;
-      padding: 14px;
-      border-radius: 14px;
-      background: #111827;
-      border: 1px solid #334155;
+      padding: 15px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(17,24,39,0.92), rgba(30,41,59,0.78));
+      border: 1px solid rgba(148,163,184,0.14);
     }
 
     .quick-copy-status {
@@ -345,37 +466,72 @@
 
     .folder-guide {
       margin-top: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #111827;
-      border: 1px solid #334155;
+      padding: 13px;
+      border-radius: 14px;
+      background: rgba(17,24,39,0.84);
+      border: 1px solid rgba(148,163,184,0.13);
       font-size: 13px;
-      color: #cbd5e1;
-      line-height: 1.7;
+      color: var(--sub);
+      line-height: 1.8;
+    }
+
+    .help-panel {
+      display: none;
+      margin-top: 12px;
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(8,15,28,0.88);
+      border: 1px solid rgba(96,165,250,0.18);
+      color: var(--sub);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .help-panel.show {
+      display: block;
+    }
+
+    .help-panel strong {
+      color: #dbeafe;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(30,41,59,0.9);
+      border: 1px solid rgba(148,163,184,0.16);
+      color: #dbeafe;
+      font-size: 12px;
+      margin: 3px 6px 3px 0;
     }
 
     @media (max-width: 980px) {
       .grid { grid-template-columns: 1fr; }
       .row { grid-template-columns: 1fr; }
+      .wrap { padding: 18px; }
+      .title h1 { font-size: 28px; }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="topbar">
-      <div class="title">
-        <h1>AI Music Auto Studio v19</h1>
-        <p>실행 버튼 단일화 + 곡 시간 선택 + 접힘 옵션 + Suno 작업 흐름 최적화</p>
+    <div class="hero">
+      <div class="topbar">
+        <div class="title">
+          <h1>AI Music Auto Studio v20</h1>
+          <p>엔터테인먼트 제작 스타일 UI · 한국어 옵션 구성 · Suno용 Title / Style / Lyrics 자동 생성 · 빠른 붙여넣기 작업 흐름</p>
+        </div>
+        <div class="badge">실행 → 자동분석 → 노래 제작 → Suno 제작 → 노래 편집 시작</div>
       </div>
-      <div class="badge">실행 → AI 자동분석 → 설정 반영</div>
-    </div>
 
-    <div class="menu-bar">
-      <button class="menu-btn active">음악 제작</button>
-      <button class="menu-btn">동화 제작</button>
-      <button class="menu-btn">소설 제작</button>
-      <button class="menu-btn">영상 관리</button>
-      <button class="menu-btn">업로드 관리</button>
+      <div class="menu-bar">
+        <button class="menu-btn active">음악 제작</button>
+        <button class="menu-btn">동화 제작</button>
+        <button class="menu-btn">소설 제작</button>
+        <button class="menu-btn">영상 관리</button>
+        <button class="menu-btn">업로드 관리</button>
+      </div>
     </div>
 
     <div class="grid">
@@ -385,16 +541,45 @@
         <div class="row">
           <div class="full">
             <label>음성 또는 텍스트 지시</label>
-            <textarea id="commandInput" placeholder="예: 비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘&#10;예: 랩이 중간에 들어가는 힙합 8곡 만들어줘&#10;예: 1번곡 조금 더 경쾌하게 만들어줘"></textarea>
+            <textarea id="commandInput" placeholder="예: 비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘&#10;예: 중간에 랩이 들어가는 힙합 8곡 만들어줘&#10;예: 1번곡 조금 더 경쾌하게 만들어줘"></textarea>
 
             <div class="btns">
               <button class="primary" id="voiceBtn" onclick="startVoice()">음성</button>
               <button class="success" onclick="runCommand()">실행</button>
-              <button class="secondary" onclick="applyDemoMainCommand()">예시 명령</button>
-              <button class="secondary" onclick="applyDemoEditCommand()">예시 수정</button>
+              <button class="secondary" onclick="toggleHelp()">설명</button>
             </div>
 
             <div class="listen-box" id="listenStatus">상태: 대기중</div>
+
+            <div class="help-panel" id="helpPanel">
+              <strong>사용 방법</strong><br>
+              1. <span class="pill">음성</span> 버튼을 누르고 말하거나, 텍스트 창에 직접 입력합니다.<br>
+              2. <span class="pill">실행</span> 버튼을 누르면 AI가 명령을 분석해 장르, 분위기, 보컬, 가사 언어 등을 자동 반영합니다.<br>
+              3. 필요하면 기본 설정을 손으로 수정한 뒤 <span class="pill">노래 제작</span> 버튼을 누릅니다.<br>
+              4. 생성된 <strong>Title / Style / Lyrics</strong>를 Suno에 붙여넣습니다.<br>
+              5. Suno에서 완성된 mp3를 지정 폴더에 넣고 <span class="pill">노래 편집 시작</span>을 누릅니다.<br><br>
+
+              <strong>입력 예시</strong><br>
+              - 비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘<br>
+              - 카페 음악 느낌의 가사 없는 연주곡 12곡 만들어줘<br>
+              - 중간에 랩이 들어가는 힙합 남성보컬 8곡 만들어줘<br>
+              - 영어 노래로 밝고 경쾌한 팝 6곡 만들어줘<br><br>
+
+              <strong>곡 수정 예시</strong><br>
+              - 1번곡 조금 더 경쾌하게 만들어줘<br>
+              - 2번곡 더 슬프게 바꿔줘<br>
+              - 3번곡 더 따뜻한 느낌으로 수정해줘<br>
+              - 4번곡 더 강렬하게 바꿔줘<br><br>
+
+              <strong>빠른 복사 기능</strong><br>
+              <span class="pill">Next Copy</span>는 순서대로<br>
+              1번곡 Title → 1번곡 Style → 1번곡 Lyrics → 2번곡 Title → 2번곡 Style → 2번곡 Lyrics<br>
+              순으로 복사합니다.<br><br>
+
+              <strong>참고</strong><br>
+              - 장르, 분위기, 보컬 타입은 모두 한국어로 표시되지만, 내부 Style은 Suno 인식을 위해 영어 형식으로 생성됩니다.<br>
+              - 현재는 UI와 생성 로직 중심 단계이며, 실제 mp3 편집 엔진은 별도 연결 단계가 필요합니다.
+            </div>
           </div>
         </div>
 
@@ -427,38 +612,38 @@
           <div>
             <label>장르</label>
             <select id="genreSelect">
-              <option selected>korean ballad</option>
-              <option>hip hop</option>
-              <option>trot</option>
-              <option>rock</option>
-              <option>heavy metal</option>
-              <option>cafe music</option>
-              <option>instrumental</option>
-              <option>korean pop</option>
-              <option>r&b</option>
-              <option>jazz</option>
-              <option>lofi chill</option>
-              <option>edm</option>
-              <option>classical crossover</option>
-              <option>ost style</option>
-              <option>children song</option>
+              <option selected>발라드</option>
+              <option>힙합</option>
+              <option>트로트</option>
+              <option>락</option>
+              <option>헤비메탈</option>
+              <option>카페음악</option>
+              <option>가사 없는 연주곡</option>
+              <option>팝</option>
+              <option>R&B</option>
+              <option>재즈</option>
+              <option>로파이</option>
+              <option>EDM</option>
+              <option>클래식 크로스오버</option>
+              <option>OST 스타일</option>
+              <option>동요</option>
             </select>
           </div>
           <div>
             <label>분위기</label>
             <select id="moodSelect">
-              <option selected>rainy mood</option>
-              <option>romantic mood</option>
-              <option>sad emotional</option>
-              <option>warm sentimental</option>
-              <option>bright cheerful</option>
-              <option>dreamy cinematic</option>
-              <option>dark intense</option>
-              <option>late night loneliness</option>
-              <option>study focus</option>
-              <option>sleep calm</option>
-              <option>drive energy</option>
-              <option>cafe relaxing</option>
+              <option selected>비 오는 날</option>
+              <option>로맨틱</option>
+              <option>슬픔 / 감성</option>
+              <option>따뜻함 / 위로</option>
+              <option>밝고 경쾌함</option>
+              <option>몽환적</option>
+              <option>어둡고 강렬함</option>
+              <option>새벽 감성</option>
+              <option>공부 집중</option>
+              <option>수면 / 편안함</option>
+              <option>드라이브</option>
+              <option>카페 휴식</option>
             </select>
           </div>
         </div>
@@ -467,22 +652,22 @@
           <div>
             <label>보컬 타입</label>
             <select id="vocalSelect">
-              <option selected>female vocal</option>
-              <option>male vocal</option>
-              <option>duet vocal</option>
-              <option>instrumental only</option>
-              <option>soft female vocal</option>
-              <option>husky male vocal</option>
-              <option>clear bright vocal</option>
-              <option>emotional chorus vocal</option>
+              <option selected>여성 보컬</option>
+              <option>남성 보컬</option>
+              <option>듀엣 보컬</option>
+              <option>연주곡 전용</option>
+              <option>부드러운 여성 보컬</option>
+              <option>허스키한 남성 보컬</option>
+              <option>맑고 밝은 보컬</option>
+              <option>감정적인 코러스 보컬</option>
             </select>
           </div>
           <div>
             <label>가사 언어</label>
             <select id="lyricsLang">
               <option value="korean" selected>한국어</option>
-              <option value="english">English</option>
-              <option value="japanese">日本語</option>
+              <option value="english">영어</option>
+              <option value="japanese">일본어</option>
             </select>
           </div>
         </div>
@@ -526,11 +711,11 @@
 주제: 사용자 명령 기반 음악 제작<br>
 곡 수: 10<br>
 곡 길이: 3분<br>
-장르: korean ballad<br>
-분위기: rainy mood<br>
-보컬: female vocal<br>
-가사 언어: korean<br>
-추천 작업: 실행 버튼으로 AI 분석 후 노래 제작 진행
+장르: 발라드<br>
+분위기: 비 오는 날<br>
+보컬: 여성 보컬<br>
+가사 언어: 한국어<br>
+추천 작업: 실행 → 노래 제작 → Suno 제작 → 노래 편집 시작
           </div>
         </div>
 
@@ -591,6 +776,10 @@
     let copySteps = [];
     let copySequenceIndex = 0;
 
+    function toggleHelp() {
+      document.getElementById("helpPanel").classList.toggle("show");
+    }
+
     function log(message) {
       const logBox = document.getElementById("logBox");
       const time = new Date().toLocaleTimeString("ko-KR");
@@ -623,37 +812,61 @@
       window.open("https://suno.com/create", "_blank");
     }
 
-    function applyDemoMainCommand() {
-      document.getElementById("commandInput").value =
-        "비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘";
+    function genreToStyle(genre) {
+      const map = {
+        "발라드": "korean ballad",
+        "힙합": "hip hop",
+        "트로트": "trot",
+        "락": "rock",
+        "헤비메탈": "heavy metal",
+        "카페음악": "cafe music",
+        "가사 없는 연주곡": "instrumental",
+        "팝": "korean pop",
+        "R&B": "r&b",
+        "재즈": "jazz",
+        "로파이": "lofi chill",
+        "EDM": "edm",
+        "클래식 크로스오버": "classical crossover",
+        "OST 스타일": "ost style",
+        "동요": "children song"
+      };
+      return map[genre] || genre;
     }
 
-    function applyDemoEditCommand() {
-      document.getElementById("commandInput").value =
-        "1번곡 조금 더 경쾌하게 만들어줘";
+    function moodToStyle(mood) {
+      const map = {
+        "비 오는 날": "rainy mood",
+        "로맨틱": "romantic mood",
+        "슬픔 / 감성": "sad emotional",
+        "따뜻함 / 위로": "warm sentimental",
+        "밝고 경쾌함": "bright cheerful",
+        "몽환적": "dreamy cinematic",
+        "어둡고 강렬함": "dark intense",
+        "새벽 감성": "late night loneliness",
+        "공부 집중": "study focus",
+        "수면 / 편안함": "sleep calm",
+        "드라이브": "drive energy",
+        "카페 휴식": "cafe relaxing"
+      };
+      return map[mood] || mood;
     }
 
-    function runCommand() {
-      const text = document.getElementById("commandInput").value.trim();
-      if (!text) {
-        alert("텍스트를 입력하거나 음성으로 지시해 주세요.");
-        return;
-      }
-      analyzeCommand(text);
+    function vocalToStyle(vocal) {
+      const map = {
+        "여성 보컬": "female vocal",
+        "남성 보컬": "male vocal",
+        "듀엣 보컬": "duet vocal",
+        "연주곡 전용": "instrumental only",
+        "부드러운 여성 보컬": "soft female vocal",
+        "허스키한 남성 보컬": "husky male vocal",
+        "맑고 밝은 보컬": "clear bright vocal",
+        "감정적인 코러스 보컬": "emotional chorus vocal"
+      };
+      return map[vocal] || vocal;
     }
 
-    function analyzeCommand(rawText) {
+    function applyCommandToSelections(rawText) {
       const text = rawText.toLowerCase();
-
-      setStatus("st1", "완료");
-      setProgress(18);
-      log(`실행 시작: ${rawText}`);
-
-      const editMatch = rawText.match(/(\d+)번곡/);
-      if (editMatch) {
-        handleTrackEdit(rawText, parseInt(editMatch[1], 10));
-        return;
-      }
 
       if (text.includes("20곡") || text.includes("20")) document.getElementById("trackCount").value = "20";
       else if (text.includes("15곡") || text.includes("15")) document.getElementById("trackCount").value = "15";
@@ -667,36 +880,40 @@
       if (text.includes("4분")) document.getElementById("songDuration").value = "4분";
       if (text.includes("5분")) document.getElementById("songDuration").value = "5분";
 
-      if (text.includes("발라드")) document.getElementById("genreSelect").value = "korean ballad";
-      if (text.includes("힙합")) document.getElementById("genreSelect").value = "hip hop";
-      if (text.includes("트로트")) document.getElementById("genreSelect").value = "trot";
-      if (text.includes("락")) document.getElementById("genreSelect").value = "rock";
-      if (text.includes("헤비메탈") || text.includes("메탈")) document.getElementById("genreSelect").value = "heavy metal";
-      if (text.includes("카페")) document.getElementById("genreSelect").value = "cafe music";
+      if (text.includes("발라드")) document.getElementById("genreSelect").value = "발라드";
+      if (text.includes("힙합")) document.getElementById("genreSelect").value = "힙합";
+      if (text.includes("트로트")) document.getElementById("genreSelect").value = "트로트";
+      if (text.includes("락")) document.getElementById("genreSelect").value = "락";
+      if (text.includes("헤비메탈") || text.includes("메탈")) document.getElementById("genreSelect").value = "헤비메탈";
+      if (text.includes("카페")) document.getElementById("genreSelect").value = "카페음악";
       if (text.includes("연주곡") || text.includes("가사 없는")) {
-        document.getElementById("genreSelect").value = "instrumental";
+        document.getElementById("genreSelect").value = "가사 없는 연주곡";
         document.getElementById("instrumentalOnly").checked = true;
-        document.getElementById("vocalSelect").value = "instrumental only";
+        document.getElementById("vocalSelect").value = "연주곡 전용";
       }
+      if (text.includes("팝")) document.getElementById("genreSelect").value = "팝";
+      if (text.includes("재즈")) document.getElementById("genreSelect").value = "재즈";
+      if (text.includes("로파이")) document.getElementById("genreSelect").value = "로파이";
+      if (text.includes("동요")) document.getElementById("genreSelect").value = "동요";
 
       if (text.includes("비 오는 날") || text.includes("비오는 날") || text.includes("비")) {
-        document.getElementById("moodSelect").value = "rainy mood";
+        document.getElementById("moodSelect").value = "비 오는 날";
       }
-      if (text.includes("로맨틱") || text.includes("설렘")) document.getElementById("moodSelect").value = "romantic mood";
-      if (text.includes("슬픈") || text.includes("이별")) document.getElementById("moodSelect").value = "sad emotional";
-      if (text.includes("따뜻")) document.getElementById("moodSelect").value = "warm sentimental";
-      if (text.includes("밝고") || text.includes("경쾌")) document.getElementById("moodSelect").value = "bright cheerful";
-      if (text.includes("몽환")) document.getElementById("moodSelect").value = "dreamy cinematic";
-      if (text.includes("어두운")) document.getElementById("moodSelect").value = "dark intense";
-      if (text.includes("새벽")) document.getElementById("moodSelect").value = "late night loneliness";
-      if (text.includes("공부")) document.getElementById("moodSelect").value = "study focus";
-      if (text.includes("수면") || text.includes("잠")) document.getElementById("moodSelect").value = "sleep calm";
-      if (text.includes("드라이브")) document.getElementById("moodSelect").value = "drive energy";
-      if (text.includes("카페")) document.getElementById("moodSelect").value = "cafe relaxing";
+      if (text.includes("로맨틱") || text.includes("설렘")) document.getElementById("moodSelect").value = "로맨틱";
+      if (text.includes("슬픈") || text.includes("이별")) document.getElementById("moodSelect").value = "슬픔 / 감성";
+      if (text.includes("따뜻")) document.getElementById("moodSelect").value = "따뜻함 / 위로";
+      if (text.includes("밝고") || text.includes("경쾌")) document.getElementById("moodSelect").value = "밝고 경쾌함";
+      if (text.includes("몽환")) document.getElementById("moodSelect").value = "몽환적";
+      if (text.includes("어두운")) document.getElementById("moodSelect").value = "어둡고 강렬함";
+      if (text.includes("새벽")) document.getElementById("moodSelect").value = "새벽 감성";
+      if (text.includes("공부")) document.getElementById("moodSelect").value = "공부 집중";
+      if (text.includes("수면") || text.includes("잠")) document.getElementById("moodSelect").value = "수면 / 편안함";
+      if (text.includes("드라이브")) document.getElementById("moodSelect").value = "드라이브";
+      if (text.includes("카페")) document.getElementById("moodSelect").value = "카페 휴식";
 
-      if (text.includes("여성보컬") || text.includes("여자보컬")) document.getElementById("vocalSelect").value = "female vocal";
-      if (text.includes("남성보컬") || text.includes("남자보컬")) document.getElementById("vocalSelect").value = "male vocal";
-      if (text.includes("듀엣")) document.getElementById("vocalSelect").value = "duet vocal";
+      if (text.includes("여성보컬") || text.includes("여자보컬")) document.getElementById("vocalSelect").value = "여성 보컬";
+      if (text.includes("남성보컬") || text.includes("남자보컬")) document.getElementById("vocalSelect").value = "남성 보컬";
+      if (text.includes("듀엣")) document.getElementById("vocalSelect").value = "듀엣 보컬";
 
       if (text.includes("영어 노래") || text.includes("english")) document.getElementById("lyricsLang").value = "english";
       if (text.includes("일본어")) document.getElementById("lyricsLang").value = "japanese";
@@ -723,8 +940,27 @@
       if (text.includes("국악기")) checkInstrument("korean traditional instruments");
       if (text.includes("오케스트라")) checkInstrument("orchestra");
       if (text.includes("비트")) checkInstrument("strong beat");
+    }
 
-      updateAnalysis(rawText);
+    function runCommand() {
+      const text = document.getElementById("commandInput").value.trim();
+      if (!text) {
+        alert("텍스트를 입력하거나 음성으로 지시해 주세요.");
+        return;
+      }
+
+      setStatus("st1", "완료");
+      setProgress(18);
+      log(`실행 시작: ${text}`);
+
+      const editMatch = text.match(/(\d+)번곡/);
+      if (editMatch) {
+        handleTrackEdit(text, parseInt(editMatch[1], 10));
+        return;
+      }
+
+      applyCommandToSelections(text);
+      updateAnalysis(text);
       log("AI 자동분석 완료: 설정값 반영");
     }
 
@@ -744,7 +980,8 @@
       const genre = document.getElementById("genreSelect").value;
       const mood = document.getElementById("moodSelect").value;
       const vocal = document.getElementById("vocalSelect").value;
-      const lang = document.getElementById("lyricsLang").value;
+      const langMap = { korean: "한국어", english: "영어", japanese: "일본어" };
+      const lang = langMap[document.getElementById("lyricsLang").value];
       const instruments = getSelectedInstruments();
       const extras = [];
 
@@ -766,10 +1003,11 @@
         `가사 언어: ${lang}<br>` +
         `악기: ${instruments.length ? instruments.join(", ") : "기본 구성"}<br>` +
         `추가 옵션: ${extras.length ? extras.join(", ") : "없음"}<br>` +
-        `추천 작업: 실행 → 노래 제작 → Suno 제작 → mp3 폴더 저장 → 노래 편집 시작`;
+        `추천 작업: 실행 → 노래 제작 → Suno 제작 → 노래 편집 시작`;
     }
 
-    function titlePoolByMood(mood) {
+    function titlePoolByMood(moodKr) {
+      const mood = moodToStyle(moodKr);
       const map = {
         "rainy mood": ["Rainy Window", "Midnight Rain", "Falling Rain", "Rainy Memory", "Silent Rain"],
         "romantic mood": ["Love in Bloom", "Soft Heart", "Starlight Kiss", "Warm Embrace", "You and Me"],
@@ -787,8 +1025,8 @@
       return map[mood] || ["Hidden Song", "Open Sky", "New Feeling", "Blue Song", "Quiet Light"];
     }
 
-    function randomTitle(mood, index) {
-      const pool = titlePoolByMood(mood);
+    function randomTitle(moodKr, index) {
+      const pool = titlePoolByMood(moodKr);
       return `${pool[Math.floor(Math.random() * pool.length)]} ${index}`;
     }
 
@@ -911,9 +1149,9 @@ ${chorus.replace("[Chorus]\n", "")}`;
     }
 
     function buildStyle() {
-      const genre = document.getElementById("genreSelect").value;
-      const mood = document.getElementById("moodSelect").value;
-      const vocal = document.getElementById("vocalSelect").value;
+      const genre = genreToStyle(document.getElementById("genreSelect").value);
+      const mood = moodToStyle(document.getElementById("moodSelect").value);
+      const vocal = vocalToStyle(document.getElementById("vocalSelect").value);
       const tone = "balanced expressive tone";
       const lang = document.getElementById("lyricsLang").value;
       const duration = document.getElementById("songDuration").value;
