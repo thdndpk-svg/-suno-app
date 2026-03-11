@@ -2,27 +2,25 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v22 Final</title>
+  <meta name="viewport" content="width=1400, initial-scale=0.25, maximum-scale=1, user-scalable=yes" />
+  <title>AI Music Auto Studio v23</title>
   <style>
     :root{
       --bg1:#f8f5ff;
       --bg2:#eef5ff;
-      --card:#ffffffcc;
-      --line:#e8eaf4;
       --text:#4a4f68;
       --title:#5a5fcf;
-      --pink:#f7b2e3;
-      --pink2:#ffd7ec;
-      --blue:#7ab8ff;
-      --mint:#79dfd1;
       --green:#35a853;
       --red:#d84b5b;
       --shadow:0 10px 30px rgba(114, 132, 181, 0.12);
-      --radius:22px;
     }
 
     *{box-sizing:border-box}
+
+    html,body{
+      min-width:1400px;
+    }
+
     body{
       margin:0;
       font-family:"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
@@ -33,10 +31,12 @@
         linear-gradient(135deg, var(--bg1), var(--bg2));
       min-height:100vh;
       padding:18px;
+      overflow-x:auto;
     }
 
     .app{
-      max-width:1450px;
+      width:1400px;
+      max-width:none;
       margin:0 auto;
     }
 
@@ -54,7 +54,6 @@
       justify-content:space-between;
       align-items:flex-start;
       gap:18px;
-      flex-wrap:wrap;
     }
 
     .brand{
@@ -94,7 +93,7 @@
       flex-direction:column;
       align-items:flex-end;
       gap:10px;
-      min-width:320px;
+      min-width:380px;
     }
 
     .flow-badge{
@@ -105,6 +104,15 @@
       font-size:13px;
       white-space:nowrap;
       box-shadow:var(--shadow);
+    }
+
+    .ai-top-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      width:100%;
     }
 
     .ai-badge{
@@ -141,13 +149,6 @@
       box-shadow:0 0 0 4px rgba(216,75,91,0.12);
     }
 
-    .server-tools{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      gap:8px;
-    }
-
     .mini-btn,.tab-btn,.action-btn,.soft-btn,.danger-btn,.primary-btn,.tiny-btn{
       border:none;
       cursor:pointer;
@@ -171,7 +172,7 @@
 
     .compact-status{
       width:100%;
-      max-width:380px;
+      max-width:420px;
       background:#f9fbff;
       border:1px solid #ebeff8;
       color:#67708c;
@@ -276,6 +277,14 @@
       margin:0 0 16px;
       color:#5a5f84;
       font-size:20px;
+    }
+
+    .right-tools{
+      margin-bottom:14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-start;
     }
 
     .label{
@@ -426,13 +435,29 @@
       transition:width .3s ease;
     }
 
+    .checklist{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
     .checklist label{
       display:flex;
       align-items:center;
-      gap:10px;
-      padding:7px 0;
+      gap:12px;
       font-weight:600;
       color:#5e6684;
+      line-height:1.2;
+      margin:0;
+    }
+
+    .checklist input[type="checkbox"]{
+      width:18px;
+      height:18px;
+      margin:0;
+      flex:0 0 18px;
+      accent-color:#7bc3ff;
+      border-radius:4px;
     }
 
     .log-box{
@@ -513,31 +538,6 @@
       color:#8a91aa;
       background:#fcfdff;
     }
-
-    @media (max-width: 1100px){
-      .page-grid{ grid-template-columns:1fr; }
-      .hero-right{ align-items:flex-start; }
-      .server-tools,.compact-status{
-        justify-content:flex-start;
-        text-align:left;
-      }
-    }
-
-    @media (max-width: 720px){
-      body{ padding:10px; }
-      h1{ font-size:23px; }
-      .row,.triple{ grid-template-columns:1fr; }
-      .hero{ padding:14px; }
-      .card{ padding:14px; }
-      .tab-btn,.mini-btn,.action-btn,.soft-btn,.danger-btn,.primary-btn{
-        font-size:14px;
-      }
-      .song-item{ grid-template-columns:28px 1fr; }
-      .song-right{
-        grid-column:1 / -1;
-        justify-content:flex-start;
-      }
-    }
   </style>
 </head>
 <body>
@@ -547,27 +547,21 @@
         <div class="brand">
           <div class="brand-icon">🎀</div>
           <div>
-            <h1>AI Music Auto Studio v22 Final</h1>
-            <div class="subtitle">귀여운 엔터테인먼트 제작툴 UI · 저장/불러오기 · 곡별 상태 · 메모 · 제목 후보 · 체크리스트</div>
+            <h1>AI Music Auto Studio v23</h1>
+            <div class="subtitle">귀여운 엔터테인먼트 제작툴 UI · AI 연결 · 빠른 복사 · 곡 관리 · 진행 상태</div>
           </div>
         </div>
 
         <div class="hero-right">
           <div class="flow-badge">실행 → 노래 제작 → Suno 제작 → mp3 저장 → 노래 편집 시작</div>
 
-          <div class="ai-badge offline" id="aiStatusBadge">
-            <span class="ai-dot"></span>
-            <span id="aiStatusText">AI OFFLINE</span>
-          </div>
+          <div class="ai-top-row">
+            <button class="primary-btn" id="connectAiBtn">AI 연결</button>
 
-          <div class="server-tools">
-            <button class="mini-btn" id="checkServerBtn">서버 상태 확인</button>
-            <button class="mini-btn" id="downloadTestBtn">다운로드 테스트</button>
-            <button class="mini-btn" id="mobileCheckBtn">모바일 연결 확인</button>
-          </div>
-
-          <div class="server-tools">
-            <button class="mini-btn" id="githubCleanBtn">GitHub: 파일 한 번에 지우기</button>
+            <div class="ai-badge offline" id="aiStatusBadge">
+              <span class="ai-dot"></span>
+              <span id="aiStatusText">AI OFFLINE</span>
+            </div>
           </div>
 
           <div class="compact-status" id="topMiniStatus">준비됨</div>
@@ -759,6 +753,12 @@
       </div>
 
       <div class="card">
+        <div class="right-tools">
+          <button class="mini-btn" id="checkServerBtn">서버 상태 확인</button>
+          <button class="mini-btn" id="downloadTestBtn">다운로드 테스트</button>
+          <button class="mini-btn" id="mobileCheckBtn">모바일 연결 확인</button>
+        </div>
+
         <h2>작업 진행 상태</h2>
 
         <div class="progress-list">
@@ -792,12 +792,12 @@
         <div class="section-box">
           <div class="section-title">최종 체크리스트</div>
           <div class="checklist">
-            <label><input type="checkbox" id="checkTitle"> Title 확인</label>
-            <label><input type="checkbox" id="checkStyle"> Style 확인</label>
-            <label><input type="checkbox" id="checkLyrics"> Lyrics 확인</label>
-            <label><input type="checkbox" id="checkSuno"> Suno 제작 완료</label>
-            <label><input type="checkbox" id="checkMp3"> mp3 저장 완료</label>
-            <label><input type="checkbox" id="checkEdit"> 노래 편집 시작 가능</label>
+            <label><input type="checkbox" id="checkTitle"><span>Title 확인</span></label>
+            <label><input type="checkbox" id="checkStyle"><span>Style 확인</span></label>
+            <label><input type="checkbox" id="checkLyrics"><span>Lyrics 확인</span></label>
+            <label><input type="checkbox" id="checkSuno"><span>Suno 제작 완료</span></label>
+            <label><input type="checkbox" id="checkMp3"><span>mp3 저장 완료</span></label>
+            <label><input type="checkbox" id="checkEdit"><span>노래 편집 시작 가능</span></label>
           </div>
         </div>
 
@@ -1110,6 +1110,14 @@ ${genre}, ${mood}, ${vocalType}, ${lang}, ${songLength}, ${styleStrength}`,
       setMiniStatus(topMiniStatus, '블로그 패널 열기/닫기');
     });
 
+    document.getElementById('connectAiBtn').addEventListener('click', async () => {
+      setMiniStatus(topMiniStatus, 'AI 연결 확인 중...');
+      appendLog('AI 연결 버튼을 눌렀습니다.');
+      const ok = await refreshAiStatus();
+      setMiniStatus(topMiniStatus, ok ? 'AI 연결 완료' : 'AI 연결 실패');
+      appendLog(ok ? 'AI 연결이 확인되었습니다.' : 'AI 연결이 되지 않았습니다.');
+    });
+
     document.getElementById('connectBlogAiBtn').addEventListener('click', async () => {
       setMiniStatus(blogMiniStatus, 'AI 연결 확인 중...');
       const ok = await refreshAiStatus();
@@ -1139,18 +1147,6 @@ ${genre}, ${mood}, ${vocalType}, ${lang}, ${songLength}, ${styleStrength}`,
     document.getElementById('mobileCheckBtn').addEventListener('click', () => {
       setMiniStatus(topMiniStatus, '모바일 연결 확인');
       appendLog('모바일 연결 확인을 실행했습니다.');
-    });
-
-    document.getElementById('githubCleanBtn').addEventListener('click', async () => {
-      const text = 'git rm -r --cached . && git add . && git commit -m "clean"';
-      try {
-        await navigator.clipboard.writeText(text);
-        setMiniStatus(topMiniStatus, 'GitHub 명령 복사 완료');
-        appendLog('GitHub 파일 정리 명령이 클립보드에 복사되었습니다.');
-      } catch {
-        setMiniStatus(topMiniStatus, '명령 복사 실패');
-        appendLog('클립보드 복사에 실패했습니다.');
-      }
     });
 
     document.getElementById('voiceBtn').addEventListener('click', () => {
