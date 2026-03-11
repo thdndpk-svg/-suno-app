@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Music Auto Studio v22 Final</title>
   <style>
+    /* ... 기존 스타일 그대로 (생략하지 않고 전체 포함) ... */
+    /* (원래 스타일 블록은 그대로 유지됩니다) */
     * {
       box-sizing: border-box;
       min-width: 0;
@@ -816,6 +818,48 @@
       </div>
     </div>
 
+    <!-- ====== 여기에 모바일 연결 / 안전 다운로드 카드 추가됨 ====== -->
+    <div class="card" style="margin-bottom:18px;">
+      <h2>모바일 연결 / 안전 다운로드 (초등학생용 단계별)</h2>
+
+      <div class="summary-line" style="margin-bottom:10px;">
+        아래 3단계만 따라하세요. (1) API 주소 확인 → (2) 토큰 붙여넣기 → (3) 다운로드 테스트
+      </div>
+
+      <div class="row">
+        <div>
+          <label>1) API 서버 주소</label>
+          <input type="text" id="mobileApiBase" value="https://tricky-bats-start.loca.lt" />
+          <small class="small">※ 서버(프록시)가 다른 주소라면 여기에 붙여넣어 주세요. 예: https://tricky-bats-start.loca.lt</small>
+        </div>
+        <div>
+          <label>2) 다운로드 토큰 (서버에서 발급된 값)</label>
+          <input type="text" id="mobileDownloadToken" placeholder="서버에서 받은 DOWNLOAD_TOKEN 값을 여기에 붙여넣기" />
+          <small class="small">토큰은 노출되지 않도록 주의하세요. 테스트 후 페이지에서 지워도 됩니다.</small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>3) 다운로드할 파일 키 (예: presign으로 생성된 파일명)</label>
+          <input type="text" id="mobileFileKey" value="1773206138312_test-presign.txt" />
+        </div>
+        <div>
+          <label>빠른 동작</label>
+          <div class="btns">
+            <button class="primary" onclick="saveMobileSettings()">설정 저장</button>
+            <button class="success" onclick="testMobileDownload()">다운로드 테스트</button>
+            <button class="secondary" onclick="copyMobileLink()">다운로드 링크 복사</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="mobileMsg" class="mini-box" style="margin-top:12px; color:#334155;">
+        안내: 위의 API 주소를 확인하고, 서버에서 발급된 토큰을 붙여넣은 뒤 "다운로드 테스트"를 누르세요. 성공하면 파일이 바로 내려옵니다.
+      </div>
+    </div>
+    <!-- ======================================================== -->
+
     <div class="grid">
       <div class="card">
         <h2>프로젝트 설정</h2>
@@ -851,6 +895,7 @@
           </div>
         </div>
 
+        <!-- ... 나머지 기존 내용 그대로 ... (생략하지 않고 유지) -->
         <div class="save-load-box">
           <h3>프로젝트 저장 / 불러오기</h3>
           <div class="row">
@@ -1128,6 +1173,7 @@
   </div>
 
   <script>
+    /***** 기존 스크립트(원본) - 그대로 유지됩니다 *****/
     let tracks = [];
     let copySteps = [];
     let copySequenceIndex = 0;
@@ -1988,6 +2034,91 @@ ${track.lyrics}`;
     updateAnalysis();
     updateMp3Status();
     updateAIStatus("online");
+
+    /***** 여기에 모바일 다운로드 관련 간단 스크립트 추가 (아래) *****/
+
+    // 모바일 설정을 로컬스토리지에 저장/불러오기 (초등학생도 사용 가능하게 단순화)
+    function saveMobileSettings() {
+      const base = (document.getElementById('mobileApiBase') || {}).value || '';
+      const token = (document.getElementById('mobileDownloadToken') || {}).value || '';
+      const key = (document.getElementById('mobileFileKey') || {}).value || '';
+      localStorage.setItem('mobile_api_base', base.trim());
+      localStorage.setItem('mobile_download_token', token.trim());
+      localStorage.setItem('mobile_file_key', key.trim());
+      showMobileMsg('설정이 저장되었습니다. 다운로드 테스트 버튼을 눌러 확인하세요.', 'green');
+    }
+
+    function loadMobileSettingsToUI() {
+      const base = localStorage.getItem('mobile_api_base') || document.getElementById('mobileApiBase').value;
+      const token = localStorage.getItem('mobile_download_token') || '';
+      const key = localStorage.getItem('mobile_file_key') || document.getElementById('mobileFileKey').value;
+      if (document.getElementById('mobileApiBase')) document.getElementById('mobileApiBase').value = base;
+      if (document.getElementById('mobileDownloadToken')) document.getElementById('mobileDownloadToken').value = token;
+      if (document.getElementById('mobileFileKey')) document.getElementById('mobileFileKey').value = key;
+    }
+
+    function showMobileMsg(text, color) {
+      const el = document.getElementById('mobileMsg');
+      if (!el) return;
+      el.style.color = color || '#334155';
+      el.textContent = text;
+    }
+
+    // 다운로드 테스트: API_BASE + /api/download?key=... 로 요청 (헤더 x-download-token 사용)
+    async function testMobileDownload() {
+      const base = (document.getElementById('mobileApiBase') || {}).value || '';
+      const token = (document.getElementById('mobileDownloadToken') || {}).value || '';
+      const key = (document.getElementById('mobileFileKey') || {}).value || '';
+
+      if (!base) { showMobileMsg('API 주소를 입력하세요.', 'crimson'); return; }
+      if (!key) { showMobileMsg('다운로드할 파일 키를 입력하세요.', 'crimson'); return; }
+
+      const url = base.replace(/\/$/,'') + '/api/download?key=' + encodeURIComponent(key);
+      showMobileMsg('다운로드 시도 중... (잠시만요)', '#334155');
+
+      try {
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: token ? { 'x-download-token': token } : {}
+        });
+
+        if (!res.ok) {
+          const txt = await res.text().catch(()=>'');
+          showMobileMsg(`다운로드 실패: HTTP ${res.status} — ${txt ? txt.slice(0,200) : ''}`, 'crimson');
+          return;
+        }
+        const blob = await res.blob();
+        const filename = key.split('/').pop() || 'download.bin';
+        // 브라우저에서 파일로 저장
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        showMobileMsg('다운로드 성공 — 파일을 저장했습니다.', 'green');
+      } catch (err) {
+        console.error(err);
+        showMobileMsg('다운로드 중 오류 발생: ' + (err.message || err), 'crimson');
+      }
+    }
+
+    // 다운로드 링크 복사 (토큰 포함 X, 링크만)
+    function copyMobileLink() {
+      const base = (document.getElementById('mobileApiBase') || {}).value || '';
+      const key = (document.getElementById('mobileFileKey') || {}).value || '';
+      if (!base || !key) { showMobileMsg('주소와 키를 입력한 뒤 시도하세요.', 'crimson'); return; }
+      const url = base.replace(/\/$/,'') + '/api/download?key=' + encodeURIComponent(key);
+      navigator.clipboard.writeText(url).then(() => {
+        showMobileMsg('다운로드 링크가 클립보드에 복사되었습니다. 모바일에 붙여넣어 열면 됩니다.', 'green');
+      }).catch(()=> {
+        showMobileMsg('링크 복사 실패 — 수동으로 복사해 주세요: ' + url, 'crimson');
+      });
+    }
+
+    // 초기 로드 시 UI에 저장값 반영
+    loadMobileSettingsToUI();
+
   </script>
 </body>
 </html>
