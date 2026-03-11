@@ -8,11 +8,17 @@
     :root{
       --bg1:#f8f5ff;
       --bg2:#eef5ff;
+      --card:#ffffffcc;
+      --line:#e8eaf4;
       --text:#4a4f68;
       --title:#5a5fcf;
+      --pink:#f7b2e3;
+      --blue:#7ab8ff;
+      --mint:#79dfd1;
       --green:#35a853;
       --red:#d84b5b;
       --shadow:0 10px 30px rgba(114,132,181,.12);
+      --radius:22px;
     }
 
     *{box-sizing:border-box}
@@ -28,10 +34,7 @@
       padding:18px;
     }
 
-    .app{
-      max-width:1450px;
-      margin:0 auto;
-    }
+    .app{max-width:1450px;margin:0 auto}
 
     .hero{
       background:rgba(255,255,255,.66);
@@ -57,30 +60,14 @@
     }
 
     .brand-icon{
-      width:62px;
-      height:62px;
-      border-radius:18px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      width:62px;height:62px;border-radius:18px;
+      display:flex;align-items:center;justify-content:center;
       background:linear-gradient(135deg,#ffd5eb,#dff3ff);
-      font-size:30px;
-      box-shadow:var(--shadow);
-      flex-shrink:0;
+      font-size:30px;box-shadow:var(--shadow);flex-shrink:0;
     }
 
-    h1{
-      margin:0;
-      color:var(--title);
-      font-size:28px;
-      line-height:1.2;
-    }
-
-    .subtitle{
-      margin-top:8px;
-      font-size:14px;
-      color:#6d728a;
-    }
+    h1{margin:0;color:var(--title);font-size:28px;line-height:1.2}
+    .subtitle{margin-top:8px;font-size:14px;color:#6d728a}
 
     .hero-right{
       display:flex;
@@ -92,152 +79,94 @@
 
     .flow-badge{
       background:linear-gradient(90deg,#ffe6f1,#f7dff8);
-      color:#8a6b8d;
-      padding:10px 16px;
-      border-radius:999px;
-      font-size:13px;
-      white-space:nowrap;
-      box-shadow:var(--shadow);
+      color:#8a6b8d;padding:10px 16px;border-radius:999px;
+      font-size:13px;white-space:nowrap;box-shadow:var(--shadow);
     }
 
     .ai-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:12px 16px;
-      border-radius:16px;
-      background:#fffefb;
-      border:1px solid #edf0f8;
-      box-shadow:var(--shadow);
-      font-weight:700;
-      min-width:170px;
-      justify-content:center;
+      display:inline-flex;align-items:center;gap:8px;
+      padding:12px 16px;border-radius:16px;
+      background:#fffefb;border:1px solid #edf0f8;
+      box-shadow:var(--shadow);font-weight:700;min-width:170px;justify-content:center;
     }
 
     .ai-dot{
-      width:12px;
-      height:12px;
-      border-radius:50%;
-      background:#b8bcc8;
-      box-shadow:0 0 0 4px rgba(184,188,200,.15);
+      width:12px;height:12px;border-radius:50%;
+      background:#b8bcc8;box-shadow:0 0 0 4px rgba(184,188,200,.15);
     }
 
-    .ai-badge.online{ color:var(--green); }
-    .ai-badge.online .ai-dot{
-      background:var(--green);
-      box-shadow:0 0 0 4px rgba(53,168,83,.12);
+    .ai-badge.online{color:var(--green)}
+    .ai-badge.online .ai-dot{background:var(--green);box-shadow:0 0 0 4px rgba(53,168,83,.12)}
+    .ai-badge.offline{color:var(--red)}
+    .ai-badge.offline .ai-dot{background:var(--red);box-shadow:0 0 0 4px rgba(216,75,91,.12)}
+
+    .server-tools{
+      display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;
     }
 
-    .ai-badge.offline{ color:var(--red); }
-    .ai-badge.offline .ai-dot{
-      background:var(--red);
-      box-shadow:0 0 0 4px rgba(216,75,91,.12);
+    .mini-btn,.tab-btn,.action-btn,.soft-btn,.danger-btn,.primary-btn,.tiny-btn{
+      border:none;cursor:pointer;transition:.18s ease;font-weight:700;border-radius:14px;
     }
 
-    .compact-status{
-      width:100%;
-      max-width:380px;
-      background:#f9fbff;
-      border:1px solid #ebeff8;
-      color:#67708c;
-      border-radius:14px;
-      padding:10px 12px;
-      font-size:13px;
-      text-align:right;
-      min-height:40px;
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
+    .mini-btn{
+      padding:12px 14px;background:#fff;color:#5f6580;
+      border:1px solid #edf0f7;box-shadow:var(--shadow);font-size:14px;
     }
 
-    .tabs{
-      margin-top:18px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-    }
-
-    .tab-btn,.action-btn,.mini-btn,.soft-btn,.danger-btn,.primary-btn,.tiny-btn,.copy-btn{
-      border:none;
-      cursor:pointer;
-      transition:.18s ease;
-      font-weight:700;
-      border-radius:14px;
-    }
-
-    .tab-btn{
-      padding:14px 18px;
-      background:#fff;
-      border:1px solid #eef1f7;
-      color:#6b7090;
-      box-shadow:var(--shadow);
-      font-size:15px;
-    }
-
-    .tab-btn:hover,.action-btn:hover,.mini-btn:hover,.soft-btn:hover,.danger-btn:hover,.primary-btn:hover,.tiny-btn:hover,.copy-btn:hover{
+    .mini-btn:hover,.tab-btn:hover,.action-btn:hover,.soft-btn:hover,.danger-btn:hover,.primary-btn:hover,.tiny-btn:hover{
       transform:translateY(-1px);
     }
 
-    .tab-btn.active{
-      background:linear-gradient(135deg,#f6b2e1,#c899ff);
-      color:#fff;
+    .compact-status{
+      width:100%;max-width:380px;background:#f9fbff;border:1px solid #ebeff8;
+      color:#67708c;border-radius:14px;padding:10px 12px;font-size:13px;
+      text-align:right;min-height:40px;display:flex;align-items:center;justify-content:flex-end;
     }
 
-    .tab-btn.blog{
-      background:linear-gradient(135deg,#e8f3ff,#dff8f4);
-      color:#4670c7;
+    .tabs{
+      margin-top:18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
     }
+
+    .tab-btn{
+      padding:14px 18px;background:#fff;border:1px solid #eef1f7;
+      color:#6b7090;box-shadow:var(--shadow);font-size:15px;
+    }
+
+    .tab-btn.active{background:linear-gradient(135deg,#f6b2e1,#c899ff);color:#fff}
+    .tab-btn.blog{background:linear-gradient(135deg,#e8f3ff,#dff8f4);color:#4670c7}
 
     .blog-panel{
-      margin-top:14px;
-      display:none;
-      background:rgba(255,255,255,.82);
-      border:1px solid #edf0f7;
-      border-radius:20px;
-      box-shadow:var(--shadow);
-      padding:16px;
+      margin-top:14px;display:none;background:rgba(255,255,255,.82);
+      border:1px solid #edf0f7;border-radius:20px;box-shadow:var(--shadow);padding:16px;
+    }
+    .blog-panel.show{display:block}
+
+    .panel-title{font-size:18px;font-weight:800;color:#5570c5}
+    .panel-desc{margin-top:6px;font-size:14px;color:#6c728b}
+
+    .blog-actions,.toolbar,.quick-actions{
+      margin-top:12px;display:flex;flex-wrap:wrap;gap:10px;
     }
 
-    .blog-panel.show{ display:block; }
-
-    .panel-title{
-      font-size:18px;
-      font-weight:800;
-      color:#5570c5;
-    }
-
-    .panel-desc{
-      margin-top:6px;
-      font-size:14px;
-      color:#6c728b;
-    }
-
-    .blog-actions{
-      margin-top:12px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
-    .action-btn{
+    .action-btn,.soft-btn,.primary-btn,.danger-btn{
       padding:12px 16px;
-      background:#eef4ff;
-      color:#4d63b7;
-      border:1px solid #dfe8fb;
     }
 
-    .action-btn.primary{
+    .action-btn,.soft-btn{
+      background:#eef4ff;color:#4d63b7;border:1px solid #dfe8fb;
+    }
+
+    .action-btn.primary,.primary-btn{
       background:linear-gradient(135deg,#86c5ff,#79dfd1);
-      color:#fff;
+      color:#fff;border:1px solid transparent;
+    }
+
+    .danger-btn{
+      background:#fff1f4;color:#cb5164;border:1px solid #ffd9e0;
     }
 
     .page-grid{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns:1.4fr 1fr;
-      gap:18px;
-      align-items:start;
+      margin-top:18px;display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start;
     }
 
     .card{
@@ -249,390 +178,121 @@
       padding:18px;
     }
 
-    .card h2{
-      margin:0 0 16px;
-      color:#5a5f84;
-      font-size:20px;
-    }
-
-    .label{
-      display:block;
-      margin-bottom:8px;
-      font-size:15px;
-      font-weight:700;
-      color:#666c88;
-    }
+    .card h2{margin:0 0 16px;color:#5a5f84;font-size:20px}
+    .label{display:block;margin-bottom:8px;font-size:15px;font-weight:700;color:#666c88}
 
     textarea,input,select{
-      width:100%;
-      border:1px solid #e4e8f2;
-      border-radius:16px;
-      background:#fff;
-      color:#535975;
-      padding:14px;
-      font-size:15px;
-      outline:none;
+      width:100%;border:1px solid #e4e8f2;border-radius:16px;background:#fff;
+      color:#535975;padding:14px 14px;font-size:15px;outline:none;
     }
 
-    textarea{
-      min-height:110px;
-      resize:vertical;
-    }
+    textarea{min-height:110px;resize:vertical}
 
-    .row{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:14px;
-    }
-
-    .triple{
-      display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      gap:14px;
-    }
-
-    .toolbar{
-      margin:14px 0 10px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-    }
-
-    .soft-btn{
-      padding:12px 16px;
-      background:#edf5ff;
-      color:#4b69c6;
-      border:1px solid #dfeafc;
-    }
-
-    .primary-btn{
-      padding:12px 18px;
-      background:linear-gradient(135deg,#7bc3ff,#7be0c9);
-      color:#fff;
-    }
-
-    .danger-btn{
-      padding:12px 16px;
-      background:#fff1f4;
-      color:#cb5164;
-      border:1px solid #ffd9e0;
-    }
-
-    .mini-btn{
-      padding:11px 14px;
-      background:#fff;
-      color:#5f6580;
-      border:1px solid #edf0f7;
-      box-shadow:var(--shadow);
-      font-size:14px;
-    }
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .triple{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 
     .chip-status{
-      display:inline-flex;
-      align-items:center;
-      padding:10px 14px;
-      border-radius:999px;
-      background:#f8fbff;
-      border:1px solid #e6ecf7;
-      color:#69718d;
-      font-size:14px;
-      min-height:42px;
+      display:inline-flex;align-items:center;padding:10px 14px;border-radius:999px;
+      background:#f8fbff;border:1px solid #e6ecf7;color:#69718d;font-size:14px;min-height:42px;
     }
 
     .section-box{
-      margin-top:14px;
-      padding:14px;
-      border:1px solid #ebeff6;
-      border-radius:20px;
-      background:rgba(250,252,255,.85);
+      margin-top:14px;padding:14px;border:1px solid #ebeff6;border-radius:20px;background:rgba(250,252,255,.85);
     }
 
-    .section-title{
-      font-size:17px;
-      font-weight:800;
-      color:#6980c1;
-      margin-bottom:12px;
+    .section-title{font-size:17px;font-weight:800;color:#6980c1;margin-bottom:12px}
+
+    .quick-copy-wrap{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:12px;
+      align-items:start;
     }
 
-    .right-top-tools{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-bottom:16px;
-    }
-
-    .tool-button-wrap{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-
-    .short-status{
-      background:#f9fbff;
-      border:1px solid #ebeff8;
-      color:#67708c;
-      border-radius:14px;
-      padding:10px 12px;
-      font-size:13px;
-      min-height:40px;
-      display:flex;
-      align-items:center;
-    }
-
-    .progress-list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .progress-item{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
+    .copy-box{
+      min-height:140px;
       background:#fff;
-      border:1px solid #edf1f8;
-      border-radius:18px;
-      padding:14px;
-    }
-
-    .progress-name{
-      font-size:15px;
-      color:#59607d;
-      font-weight:700;
-    }
-
-    .badge-wait{
-      background:#f8fbff;
-      border:1px solid #e8edf7;
-      color:#7d88a3;
-      padding:7px 11px;
-      border-radius:999px;
-      font-size:12px;
-      white-space:nowrap;
-      min-width:58px;
-      text-align:center;
-    }
-
-    .meter-label{
-      margin:14px 0 6px;
-      font-size:14px;
-      font-weight:700;
-      color:#67708c;
-    }
-
-    .meter{
-      width:100%;
-      height:12px;
-      border-radius:999px;
-      background:#eff3fa;
-      overflow:hidden;
-      border:1px solid #e7ebf5;
-    }
-
-    .meter-fill{
-      width:0%;
-      height:100%;
-      background:linear-gradient(90deg,#79c2ff,#f3a7d8,#7fe2cb);
-      transition:width .3s ease;
-    }
-
-    .checklist-simple{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      padding-top:4px;
-    }
-
-    .check-item{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-height:26px;
-      color:#5e6684;
-      font-weight:600;
-      line-height:1.3;
-    }
-
-    .check-item input[type="checkbox"]{
-      width:18px;
-      height:18px;
-      margin:0;
-      flex:0 0 18px;
-      accent-color:#7baeff;
-      border-radius:4px;
-    }
-
-    .check-item span{
-      display:inline-block;
-      transform:translateY(-1px);
-    }
-
-    .log-box{
-      margin-top:12px;
-      min-height:110px;
-      background:#fff;
-      border:1px solid #edf1f8;
+      border:1px solid #e8edf8;
       border-radius:18px;
       padding:12px;
+      color:#5d6687;
       font-size:14px;
-      color:#6b7391;
       line-height:1.6;
       white-space:pre-line;
     }
 
-    .song-list{
+    .copy-list{
       display:flex;
       flex-direction:column;
-      gap:10px;
-      margin-top:12px;
-    }
-
-    .song-item{
-      display:grid;
-      grid-template-columns:32px 1fr auto;
-      align-items:center;
-      gap:12px;
-      background:#fff;
-      border:1px solid #edf1f8;
-      border-radius:18px;
-      padding:12px 14px;
-    }
-
-    .song-main{ min-width:0; }
-
-    .song-title{
-      font-weight:800;
-      color:#555d82;
-      font-size:15px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .song-meta{
-      font-size:13px;
-      color:#838aa3;
-      margin-top:4px;
-    }
-
-    .song-right{
-      display:flex;
-      align-items:center;
       gap:8px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
     }
 
-    .tiny-btn{
-      padding:8px 12px;
-      background:#eef4ff;
-      color:#5b6fbb;
+    .copy-item{
+      background:#fff;border:1px solid #edf1f8;border-radius:14px;padding:10px 12px;
+      font-size:14px;color:#647090;
     }
 
-    .tiny-btn.delete{
-      background:#fff1f4;
-      color:#ca5767;
+    .progress-list{display:flex;flex-direction:column;gap:10px}
+    .progress-item{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      background:#fff;border:1px solid #edf1f8;border-radius:18px;padding:14px;
     }
+    .progress-name{font-size:15px;color:#59607d;font-weight:700}
+    .badge-wait{
+      background:#f8fbff;border:1px solid #e8edf7;color:#7d88a3;
+      padding:7px 11px;border-radius:999px;font-size:12px;white-space:nowrap;
+    }
+
+    .meter-label{margin:14px 0 6px;font-size:14px;font-weight:700;color:#67708c}
+    .meter{
+      width:100%;height:12px;border-radius:999px;background:#eff3fa;overflow:hidden;border:1px solid #e7ebf5;
+    }
+    .meter-fill{
+      width:0%;height:100%;background:linear-gradient(90deg,#79c2ff,#f3a7d8,#7fe2cb);transition:width .3s ease;
+    }
+
+    .checklist label{
+      display:flex;align-items:center;gap:10px;padding:7px 0;font-weight:600;color:#5e6684;
+    }
+
+    .log-box{
+      margin-top:12px;min-height:110px;background:#fff;border:1px solid #edf1f8;border-radius:18px;
+      padding:12px;font-size:14px;color:#6b7391;line-height:1.6;white-space:pre-line;
+    }
+
+    .song-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .song-item{
+      display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:12px;
+      background:#fff;border:1px solid #edf1f8;border-radius:18px;padding:12px 14px;
+    }
+    .song-main{min-width:0}
+    .song-title{
+      font-weight:800;color:#555d82;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .song-meta{font-size:13px;color:#838aa3;margin-top:4px}
+    .song-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .tiny-btn{padding:8px 12px;background:#eef4ff;color:#5b6fbb}
+    .tiny-btn.delete{background:#fff1f4;color:#ca5767}
 
     .empty-box{
-      border:1px dashed #dfe5f0;
-      border-radius:18px;
-      padding:18px;
-      text-align:center;
-      color:#8a91aa;
-      background:#fcfdff;
-    }
-
-    .quick-copy-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .copy-card{
-      background:#fff;
-      border:1px solid #edf1f8;
-      border-radius:16px;
-      padding:12px;
-    }
-
-    .copy-title{
-      font-size:14px;
-      font-weight:800;
-      color:#5f6a91;
-      margin-bottom:8px;
-    }
-
-    .copy-text{
-      min-height:74px;
-      background:#f8fbff;
-      border:1px solid #e8eef8;
-      border-radius:12px;
-      padding:10px;
-      font-size:13px;
-      color:#6d7391;
-      line-height:1.5;
-      white-space:pre-line;
-    }
-
-    .copy-btn{
-      margin-top:10px;
-      padding:10px 12px;
-      background:#eef4ff;
-      color:#5570c8;
-      width:100%;
-    }
-
-    .file-progress-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .mini-info-card{
-      background:#fff;
-      border:1px solid #edf1f8;
-      border-radius:16px;
-      padding:12px;
-    }
-
-    .mini-info-label{
-      font-size:13px;
-      color:#8390aa;
-      margin-bottom:6px;
-    }
-
-    .mini-info-value{
-      font-size:14px;
-      font-weight:800;
-      color:#55607f;
-      word-break:break-word;
+      border:1px dashed #dfe5f0;border-radius:18px;padding:18px;text-align:center;color:#8a91aa;background:#fcfdff;
     }
 
     @media (max-width:1100px){
-      .page-grid{ grid-template-columns:1fr; }
-      .hero-right{ align-items:flex-start; }
-      .compact-status{
-        justify-content:flex-start;
-        text-align:left;
-      }
+      .page-grid{grid-template-columns:1fr}
+      .hero-right{align-items:flex-start}
+      .server-tools,.compact-status{justify-content:flex-start;text-align:left}
+      .quick-copy-wrap{grid-template-columns:1fr}
     }
 
     @media (max-width:720px){
-      body{ padding:10px; }
-      h1{ font-size:23px; }
-      .row,.triple,.quick-copy-grid,.file-progress-grid{
-        grid-template-columns:1fr;
-      }
-      .hero{ padding:14px; }
-      .card{ padding:14px; }
-      .song-item{ grid-template-columns:28px 1fr; }
-      .song-right{
-        grid-column:1 / -1;
-        justify-content:flex-start;
-      }
+      body{padding:10px}
+      h1{font-size:23px}
+      .row,.triple{grid-template-columns:1fr}
+      .hero{padding:14px}
+      .card{padding:14px}
+      .song-item{grid-template-columns:28px 1fr}
+      .song-right{grid-column:1 / -1;justify-content:flex-start}
     }
   </style>
 </head>
@@ -654,6 +314,16 @@
           <div class="ai-badge offline" id="aiStatusBadge">
             <span class="ai-dot"></span>
             <span id="aiStatusText">AI OFFLINE</span>
+          </div>
+
+          <div class="server-tools">
+            <button class="mini-btn" id="checkServerBtn">서버 상태 확인</button>
+            <button class="mini-btn" id="downloadTestBtn">다운로드 테스트</button>
+            <button class="mini-btn" id="mobileCheckBtn">모바일 연결 확인</button>
+          </div>
+
+          <div class="server-tools">
+            <button class="mini-btn" id="githubCleanBtn">GitHub: 파일 한 번에 지우기</button>
           </div>
 
           <div class="compact-status" id="topMiniStatus">준비됨</div>
@@ -692,6 +362,35 @@
           <button class="primary-btn" id="runBtn">실행</button>
           <button class="soft-btn" id="helpBtn">설명</button>
           <span class="chip-status" id="mainStatusChip">상태: 대기중</span>
+        </div>
+
+        <div class="section-box">
+          <div class="section-title">빠르게 붙여넣기 복사창</div>
+
+          <div class="quick-copy-wrap">
+            <div>
+              <label class="label" for="quickCopyArea">복사용 문구</label>
+              <div class="copy-box" id="quickCopyArea">여기에 제목, 가사 요약, 태그, 설명 같은 복사용 문구가 차례대로 표시됩니다.</div>
+
+              <div class="quick-actions">
+                <button class="soft-btn" id="nextCopyBtn">넥스트카피</button>
+                <button class="danger-btn" id="resetCopyBtn">복사초기화</button>
+                <button class="soft-btn" id="copyNowBtn">지금 복사</button>
+              </div>
+            </div>
+
+            <div>
+              <label class="label">복사 대기 목록</label>
+              <div class="copy-list" id="copyQueueList"></div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button class="soft-btn" id="openSunoBtn">수노열기</button>
+            <button class="primary-btn" id="makeSongBtn">노래제작</button>
+            <button class="soft-btn" id="startEditBtn">노래편집시작</button>
+            <button class="soft-btn" id="makeVideoBtn">영상만들기</button>
+          </div>
         </div>
 
         <div class="section-box">
@@ -815,13 +514,11 @@
 
         <div class="section-box">
           <div class="section-title">생성된 곡 관리</div>
-
           <div class="toolbar">
             <button class="soft-btn" id="refreshSongsBtn">목록 새로고침</button>
             <button class="danger-btn" id="deleteSelectedSongsBtn">선택 곡 삭제</button>
             <button class="danger-btn" id="deleteAllSongsBtn">전체 곡 삭제</button>
           </div>
-
           <div id="songList" class="song-list">
             <div class="empty-box">아직 생성된 곡이 없습니다.</div>
           </div>
@@ -829,93 +526,28 @@
       </div>
 
       <div class="card">
-        <div class="right-top-tools">
-          <div class="tool-button-wrap">
-            <button class="mini-btn" id="connectAiBtn">AI 연결</button>
-            <button class="mini-btn" id="checkServerBtn">서버 상태 확인</button>
-            <button class="mini-btn" id="downloadTestBtn">다운로드 테스트</button>
-            <button class="mini-btn" id="mobileCheckBtn">모바일 연결 확인</button>
-          </div>
-          <div class="short-status" id="rightShortStatus">준비됨</div>
-        </div>
-
         <h2>작업 진행 상태</h2>
 
         <div class="progress-list">
-          <div class="progress-item">
-            <div class="progress-name">명령 분석 및 설정 반영</div>
-            <div class="badge-wait" id="step1">대기중</div>
-          </div>
-          <div class="progress-item">
-            <div class="progress-name">Suno용 노래 자료 생성</div>
-            <div class="badge-wait" id="step2">대기중</div>
-          </div>
-          <div class="progress-item">
-            <div class="progress-name">개별 곡 수정 반영</div>
-            <div class="badge-wait" id="step3">대기중</div>
-          </div>
-          <div class="progress-item">
-            <div class="progress-name">mp3 편집 시작</div>
-            <div class="badge-wait" id="step4">대기중</div>
-          </div>
-          <div class="progress-item">
-            <div class="progress-name">긴 영상 제작 준비</div>
-            <div class="badge-wait" id="step5">대기중</div>
-          </div>
+          <div class="progress-item"><div class="progress-name">명령 분석 및 설정 반영</div><div class="badge-wait" id="step1">대기중</div></div>
+          <div class="progress-item"><div class="progress-name">Suno용 노래 자료 생성</div><div class="badge-wait" id="step2">대기중</div></div>
+          <div class="progress-item"><div class="progress-name">개별 곡 수정 반영</div><div class="badge-wait" id="step3">대기중</div></div>
+          <div class="progress-item"><div class="progress-name">mp3 편집 시작</div><div class="badge-wait" id="step4">대기중</div></div>
+          <div class="progress-item"><div class="progress-name">긴 영상 제작 준비</div><div class="badge-wait" id="step5">대기중</div></div>
         </div>
 
         <div class="meter-label">전체 진행률</div>
-        <div class="meter">
-          <div class="meter-fill" id="meterFill"></div>
-        </div>
+        <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
 
         <div class="section-box">
           <div class="section-title">최종 체크리스트</div>
-          <div class="checklist-simple">
-            <label class="check-item"><input type="checkbox" id="checkTitle"><span>Title 확인</span></label>
-            <label class="check-item"><input type="checkbox" id="checkStyle"><span>Style 확인</span></label>
-            <label class="check-item"><input type="checkbox" id="checkLyrics"><span>Lyrics 확인</span></label>
-            <label class="check-item"><input type="checkbox" id="checkSuno"><span>Suno 제작 완료</span></label>
-            <label class="check-item"><input type="checkbox" id="checkMp3"><span>mp3 저장 완료</span></label>
-            <label class="check-item"><input type="checkbox" id="checkEdit"><span>노래 편집 시작 가능</span></label>
-          </div>
-        </div>
-
-        <div class="section-box">
-          <div class="section-title">파일 / 진행관리</div>
-          <div class="file-progress-grid">
-            <div class="mini-info-card">
-              <div class="mini-info-label">현재 파일명</div>
-              <div class="mini-info-value" id="fileNameInfo">없음</div>
-            </div>
-            <div class="mini-info-card">
-              <div class="mini-info-label">현재 진행 상태</div>
-              <div class="mini-info-value" id="progressInfo">대기중</div>
-            </div>
-            <div class="mini-info-card">
-              <div class="mini-info-label">생성 곡 수</div>
-              <div class="mini-info-value" id="songCountInfo">0곡</div>
-            </div>
-            <div class="mini-info-card">
-              <div class="mini-info-label">가사 언어</div>
-              <div class="mini-info-value" id="langInfo">한국어</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-box">
-          <div class="section-title">빠른 붙여넣기 복사</div>
-          <div class="quick-copy-grid">
-            <div class="copy-card">
-              <div class="copy-title">제목</div>
-              <div class="copy-text" id="copyTitleText">아직 생성된 제목이 없습니다.</div>
-              <button class="copy-btn" data-copy-target="copyTitleText">제목 복사</button>
-            </div>
-            <div class="copy-card">
-              <div class="copy-title">가사/지시문</div>
-              <div class="copy-text" id="copyPromptText">아직 입력된 지시문이 없습니다.</div>
-              <button class="copy-btn" data-copy-target="copyPromptText">지시문 복사</button>
-            </div>
+          <div class="checklist">
+            <label><input type="checkbox" id="checkTitle"> Title 확인</label>
+            <label><input type="checkbox" id="checkStyle"> Style 확인</label>
+            <label><input type="checkbox" id="checkLyrics"> Lyrics 확인</label>
+            <label><input type="checkbox" id="checkSuno"> Suno 제작 완료</label>
+            <label><input type="checkbox" id="checkMp3"> mp3 저장 완료</label>
+            <label><input type="checkbox" id="checkEdit"> 노래 편집 시작 가능</label>
           </div>
         </div>
 
@@ -926,115 +558,71 @@
 
   <script>
     const state = {
-      generatedSongs: []
+      generatedSongs: [],
+      copyQueue: [],
+      currentCopyIndex: 0
     };
 
     const songListEl = document.getElementById('songList');
     const logBox = document.getElementById('logBox');
     const topMiniStatus = document.getElementById('topMiniStatus');
     const blogMiniStatus = document.getElementById('blogMiniStatus');
-    const rightShortStatus = document.getElementById('rightShortStatus');
     const mainStatusChip = document.getElementById('mainStatusChip');
     const meterFill = document.getElementById('meterFill');
-    const fileNameInfo = document.getElementById('fileNameInfo');
-    const progressInfo = document.getElementById('progressInfo');
-    const songCountInfo = document.getElementById('songCountInfo');
-    const langInfo = document.getElementById('langInfo');
-    const copyTitleText = document.getElementById('copyTitleText');
-    const copyPromptText = document.getElementById('copyPromptText');
+    const quickCopyArea = document.getElementById('quickCopyArea');
+    const copyQueueList = document.getElementById('copyQueueList');
 
-    function setMiniStatus(target, message) {
-      if (target) target.textContent = message;
+    function setMiniStatus(target, message){
+      if(target) target.textContent = message;
     }
 
-    function appendLog(message) {
+    function appendLog(message){
       const now = new Date();
-      const time = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      const baseText = '여기에 분석 로그와 작업 로그가 표시됩니다.';
-      const prev = logBox.textContent.trim() === baseText ? '' : logBox.textContent + '\n';
-      logBox.textContent = `${prev}[${time}] ${message}`;
+      const time = now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      const base = logBox.textContent.trim() === '여기에 분석 로그와 작업 로그가 표시됩니다.' ? '' : logBox.textContent + '\n';
+      logBox.textContent = `${base}[${time}] ${message}`;
       logBox.scrollTop = logBox.scrollHeight;
     }
 
-    function appendSimpleLog(message) {
-      const now = new Date();
-      const time = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
-      logBox.textContent = `[${time}] ${message}`;
-    }
-
-    function setStep(id, text) {
+    function setStep(id,text){
       const el = document.getElementById(id);
-      if (el) el.textContent = text;
+      if(el) el.textContent = text;
     }
 
-    function updateProgress(percent) {
+    function updateProgress(percent){
       meterFill.style.width = percent + '%';
     }
 
-    function updateFileProgressBox() {
-      const projectName = document.getElementById('projectName').value.trim();
-      const lang = document.getElementById('lyricsLanguage').value;
-      fileNameInfo.textContent = projectName || '없음';
-      progressInfo.textContent = mainStatusChip.textContent.replace('상태: ','');
-      songCountInfo.textContent = `${state.generatedSongs.length}곡`;
-      langInfo.textContent = lang || '한국어';
-    }
-
-    function updateQuickCopyBox() {
-      const prompt = document.getElementById('promptInput').value.trim();
-      const firstTitle = state.generatedSongs[0]?.title || '아직 생성된 제목이 없습니다.';
-      copyTitleText.textContent = firstTitle;
-      copyPromptText.textContent = prompt || '아직 입력된 지시문이 없습니다.';
-    }
-
-    function resetProgressUI() {
-      setStep('step1', '대기중');
-      setStep('step2', '대기중');
-      setStep('step3', '대기중');
-      setStep('step4', '대기중');
-      setStep('step5', '대기중');
+    function resetProgressUI(){
+      ['step1','step2','step3','step4','step5'].forEach(id => setStep(id,'대기중'));
       updateProgress(0);
-      document.getElementById('checkTitle').checked = false;
-      document.getElementById('checkStyle').checked = false;
-      document.getElementById('checkLyrics').checked = false;
-      document.getElementById('checkSuno').checked = false;
-      document.getElementById('checkMp3').checked = false;
-      document.getElementById('checkEdit').checked = false;
-      updateFileProgressBox();
     }
 
-    function getLyricsLanguage() {
+    function getLyricsLanguage(){
       return document.getElementById('lyricsLanguage').value;
     }
 
-    function detectTitleLanguage() {
+    function detectTitleLanguage(){
       return getLyricsLanguage() === '한국어' ? 'ko' : 'en';
     }
 
-    function pickRandom(arr) {
+    function pickRandom(arr){
       return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    function sanitizeKeyword(text) {
-      if (!text) return '';
-      return text
-        .replace(/[^\w가-힣\s]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .split(' ')
-        .filter(Boolean)
-        .slice(0, 2)
-        .join(' ');
+    function sanitizeKeyword(text){
+      if(!text) return '';
+      return text.replace(/[^\w가-힣\s]/g,' ').replace(/\s+/g,' ').trim().split(' ').filter(Boolean).slice(0,2).join(' ');
     }
 
-    function makeSongTitle(index) {
+    function makeSongTitle(index){
       const genre = document.getElementById('genre').value;
       const mood = document.getElementById('mood').value;
       const prompt = document.getElementById('promptInput').value.trim();
       const keyword = sanitizeKeyword(prompt) || mood;
       const lang = detectTitleLanguage();
 
-      if (lang === 'ko') {
+      if(lang === 'ko'){
         const patterns = [
           `${keyword}의 밤 ${index}`,
           `${mood} ${genre} ${index}`,
@@ -1054,17 +642,12 @@
       };
 
       const genreEnMap = {
-        '발라드':'Ballad',
-        '힙합':'Hip Hop',
-        '댄스':'Dance',
-        '재즈':'Jazz',
-        '클래식':'Classic',
-        '록':'Rock'
+        '발라드':'Ballad','힙합':'Hip Hop','댄스':'Dance','재즈':'Jazz','클래식':'Classic','록':'Rock'
       };
 
       const moodEn = moodEnMap[mood] || mood;
       const genreEn = genreEnMap[genre] || genre;
-      const keywordEn = keyword.replace(/[가-힣]/g, '').trim() || moodEn;
+      const keywordEn = keyword.replace(/[가-힣]/g,'').trim() || moodEn;
 
       const patterns = [
         `${keywordEn} ${index}`,
@@ -1076,20 +659,18 @@
       return pickRandom(patterns);
     }
 
-    function escapeHtml(str) {
+    function escapeHtml(str){
       return String(str)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;');
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#39;");
     }
 
-    function renderSongs() {
-      if (!state.generatedSongs.length) {
+    function renderSongs(){
+      if(!state.generatedSongs.length){
         songListEl.innerHTML = '<div class="empty-box">아직 생성된 곡이 없습니다.</div>';
-        updateFileProgressBox();
-        updateQuickCopyBox();
         return;
       }
 
@@ -1106,12 +687,64 @@
           </div>
         </div>
       `).join('');
-
-      updateFileProgressBox();
-      updateQuickCopyBox();
     }
 
-    function createSongs(count) {
+    function buildCopyQueue(){
+      const prompt = document.getElementById('promptInput').value.trim() || '감성적인 발라드 곡';
+      const genre = document.getElementById('genre').value;
+      const mood = document.getElementById('mood').value;
+      const vocalType = document.getElementById('vocalType').value;
+      const lang = document.getElementById('lyricsLanguage').value;
+
+      const firstTitle = state.generatedSongs[0]?.title || makeSongTitle(1);
+
+      state.copyQueue = [
+        `제목\n${firstTitle}`,
+        `설명\n${mood} 분위기의 ${genre} 장르, ${vocalType}, ${lang} 가사 기반 곡입니다.`,
+        `태그\n#${genre} #${mood.replace(/\s+/g,'')} #${lang} #AI음악 #Suno`,
+        `가사요약\n${prompt} 느낌으로 자연스럽고 몰입감 있는 노래를 제작합니다.`,
+        `썸네일문구\n${firstTitle}\n${genre} ${mood}`
+      ];
+
+      state.currentCopyIndex = 0;
+      renderCopyQueue();
+      updateQuickCopyDisplay();
+    }
+
+    function renderCopyQueue(){
+      if(!state.copyQueue.length){
+        copyQueueList.innerHTML = '<div class="copy-item">복사 대기 문구가 없습니다.</div>';
+        return;
+      }
+
+      copyQueueList.innerHTML = state.copyQueue.map((item, idx) => {
+        const head = item.split('\n')[0];
+        return `<div class="copy-item">${idx === state.currentCopyIndex ? '▶ ' : ''}${escapeHtml(head)}</div>`;
+      }).join('');
+    }
+
+    function updateQuickCopyDisplay(){
+      if(!state.copyQueue.length){
+        quickCopyArea.textContent = '여기에 제목, 가사 요약, 태그, 설명 같은 복사용 문구가 차례대로 표시됩니다.';
+        return;
+      }
+      quickCopyArea.textContent = state.copyQueue[state.currentCopyIndex];
+      renderCopyQueue();
+    }
+
+    async function copyCurrentText(){
+      const text = quickCopyArea.textContent || '';
+      try{
+        await navigator.clipboard.writeText(text);
+        setMiniStatus(topMiniStatus,'현재 문구 복사 완료');
+        appendLog('빠르게 붙여넣기 문구를 복사했습니다.');
+      }catch{
+        setMiniStatus(topMiniStatus,'복사 실패');
+        appendLog('클립보드 복사에 실패했습니다.');
+      }
+    }
+
+    function createSongs(count){
       const genre = document.getElementById('genre').value;
       const mood = document.getElementById('mood').value;
       const vocalType = document.getElementById('vocalType').value;
@@ -1119,218 +752,236 @@
       const lang = getLyricsLanguage();
 
       const newSongs = [];
-      for (let i = 1; i <= count; i++) {
+      for(let i=1;i<=count;i++){
         newSongs.push({
-          id: 'song_' + Date.now() + '_' + i + '_' + Math.random().toString(36).slice(2, 7),
-          title: makeSongTitle(i),
-          meta: `${genre} · ${mood} · ${vocalType} · ${songLength} · ${lang}`
+          id:'song_' + Date.now() + '_' + i + '_' + Math.random().toString(36).slice(2,7),
+          title:makeSongTitle(i),
+          meta:`${genre} · ${mood} · ${vocalType} · ${songLength} · ${lang}`
         });
       }
       state.generatedSongs = newSongs;
       renderSongs();
+      buildCopyQueue();
     }
 
-    window.deleteSong = function(id) {
+    window.deleteSong = function(id){
       state.generatedSongs = state.generatedSongs.filter(song => song.id !== id);
       renderSongs();
+      buildCopyQueue();
       appendLog('생성된 곡 1개를 삭제했습니다.');
-      setMiniStatus(topMiniStatus, '곡 1개 삭제됨');
+      setMiniStatus(topMiniStatus,'곡 1개 삭제됨');
     };
 
-    window.renameSong = function(id) {
+    window.renameSong = function(id){
       const index = state.generatedSongs.findIndex(song => song.id === id);
-      if (index === -1) return;
+      if(index === -1) return;
       state.generatedSongs[index].title = makeSongTitle(index + 1);
       renderSongs();
+      buildCopyQueue();
       appendLog('선택한 곡 제목을 다시 만들었습니다.');
-      setMiniStatus(topMiniStatus, '제목 다시 생성 완료');
+      setMiniStatus(topMiniStatus,'제목 다시 생성 완료');
     };
 
     document.getElementById('deleteSelectedSongsBtn').addEventListener('click', () => {
       const checked = [...document.querySelectorAll('.song-check:checked')].map(el => el.dataset.id);
-      if (!checked.length) {
-        setMiniStatus(topMiniStatus, '선택된 곡이 없습니다');
+      if(!checked.length){
+        setMiniStatus(topMiniStatus,'선택된 곡이 없습니다');
         appendLog('선택 삭제를 눌렀지만 선택된 곡이 없습니다.');
         return;
       }
       state.generatedSongs = state.generatedSongs.filter(song => !checked.includes(song.id));
       renderSongs();
-      setMiniStatus(topMiniStatus, `선택 곡 ${checked.length}개 삭제`);
+      buildCopyQueue();
+      setMiniStatus(topMiniStatus,`선택 곡 ${checked.length}개 삭제`);
       appendLog(`선택한 곡 ${checked.length}개를 삭제했습니다.`);
     });
 
     document.getElementById('deleteAllSongsBtn').addEventListener('click', () => {
-      if (!state.generatedSongs.length) {
-        setMiniStatus(topMiniStatus, '삭제할 곡이 없습니다');
+      if(!state.generatedSongs.length){
+        setMiniStatus(topMiniStatus,'삭제할 곡이 없습니다');
         appendLog('전체 삭제를 눌렀지만 삭제할 곡이 없습니다.');
         return;
       }
       const count = state.generatedSongs.length;
       state.generatedSongs = [];
       renderSongs();
-      setMiniStatus(topMiniStatus, `전체 곡 ${count}개 삭제`);
+      buildCopyQueue();
+      setMiniStatus(topMiniStatus,`전체 곡 ${count}개 삭제`);
       appendLog(`생성된 곡 ${count}개를 모두 삭제했습니다.`);
     });
 
     document.getElementById('refreshSongsBtn').addEventListener('click', () => {
       renderSongs();
-      setMiniStatus(topMiniStatus, '곡 목록 새로고침');
+      setMiniStatus(topMiniStatus,'곡 목록 새로고침');
       appendLog('곡 목록을 새로고침했습니다.');
+    });
+
+    document.getElementById('nextCopyBtn').addEventListener('click', async () => {
+      if(!state.copyQueue.length){
+        buildCopyQueue();
+      } else {
+        state.currentCopyIndex = (state.currentCopyIndex + 1) % state.copyQueue.length;
+        updateQuickCopyDisplay();
+      }
+      await copyCurrentText();
+    });
+
+    document.getElementById('resetCopyBtn').addEventListener('click', () => {
+      state.currentCopyIndex = 0;
+      buildCopyQueue();
+      setMiniStatus(topMiniStatus,'복사창 초기화');
+      appendLog('빠르게 붙여넣기 복사창을 초기화했습니다.');
+    });
+
+    document.getElementById('copyNowBtn').addEventListener('click', copyCurrentText);
+
+    document.getElementById('openSunoBtn').addEventListener('click', () => {
+      window.open('https://suno.com', '_blank');
+      setMiniStatus(topMiniStatus,'수노 열기');
+      appendLog('Suno 페이지를 새 창으로 열었습니다.');
+    });
+
+    document.getElementById('makeSongBtn').addEventListener('click', async () => {
+      await runGenerateFlow();
+      setMiniStatus(topMiniStatus,'노래 제작 완료');
+    });
+
+    document.getElementById('startEditBtn').addEventListener('click', () => {
+      document.getElementById('checkEdit').checked = true;
+      setStep('step4','완료');
+      setMiniStatus(topMiniStatus,'노래 편집 시작');
+      appendLog('노래 편집 시작 버튼을 눌렀습니다.');
+    });
+
+    document.getElementById('makeVideoBtn').addEventListener('click', () => {
+      setStep('step5','진행중');
+      setMiniStatus(topMiniStatus,'영상 만들기 시작');
+      appendLog('영상 만들기 버튼을 눌렀습니다.');
+      setTimeout(() => {
+        setStep('step5','완료');
+        appendLog('영상 만들기 준비가 완료되었습니다.');
+      }, 700);
     });
 
     document.getElementById('openBlogPanelBtn').addEventListener('click', () => {
       document.getElementById('blogPanel').classList.toggle('show');
-      setMiniStatus(topMiniStatus, '블로그 패널 열기/닫기');
+      setMiniStatus(topMiniStatus,'블로그 패널 열기/닫기');
     });
 
     document.getElementById('connectBlogAiBtn').addEventListener('click', async () => {
-      setMiniStatus(blogMiniStatus, 'AI 연결 확인 중...');
-      const ok = await connectOrCheckAi();
+      setMiniStatus(blogMiniStatus,'AI 연결 확인 중...');
+      const ok = await refreshAiStatus();
       setMiniStatus(blogMiniStatus, ok ? 'AI 연결됨' : 'AI 연결 안됨');
+      appendLog(ok ? '블로그용 AI 연결을 확인했습니다.' : '블로그용 AI 연결 실패 상태입니다.');
     });
 
     document.getElementById('makeBlogDraftBtn').addEventListener('click', async () => {
-      setMiniStatus(blogMiniStatus, '블로그 초안 생성 중...');
+      setMiniStatus(blogMiniStatus,'블로그 초안 생성 중...');
       await wait(700);
-      setMiniStatus(blogMiniStatus, '블로그 초안 생성 완료');
+      setMiniStatus(blogMiniStatus,'블로그 초안 생성 완료');
       appendLog('블로그 초안 생성을 완료했습니다.');
     });
 
-    document.getElementById('connectAiBtn').addEventListener('click', async () => {
-      setMiniStatus(rightShortStatus, 'AI 연결 시도 중...');
-      const ok = await connectOrCheckAi();
-      setMiniStatus(rightShortStatus, ok ? 'AI 연결됨' : 'AI 연결 실패');
-      setMiniStatus(topMiniStatus, ok ? 'AI 연결 완료' : 'AI 연결 실패');
-    });
-
     document.getElementById('checkServerBtn').addEventListener('click', async () => {
-      setMiniStatus(rightShortStatus, '서버 확인 중...');
+      setMiniStatus(topMiniStatus,'서버 확인 중...');
       const ok = await refreshAiStatus();
-      setMiniStatus(rightShortStatus, ok ? '서버 정상' : '서버 연결 안됨');
-      appendSimpleLog(ok ? '서버 정상' : '서버 연결 안됨');
+      setMiniStatus(topMiniStatus, ok ? '서버 정상' : '서버 연결 안됨');
+      appendLog(ok ? '서버 상태를 확인했습니다. 정상입니다.' : '서버 상태를 확인했습니다. 연결되지 않았습니다.');
     });
 
     document.getElementById('downloadTestBtn').addEventListener('click', () => {
-      setMiniStatus(rightShortStatus, '다운로드 테스트 실행');
-      appendSimpleLog('다운로드 테스트 실행');
+      setMiniStatus(topMiniStatus,'다운로드 테스트 실행');
+      appendLog('다운로드 테스트 버튼을 눌렀습니다.');
     });
 
     document.getElementById('mobileCheckBtn').addEventListener('click', () => {
-      setMiniStatus(rightShortStatus, '모바일 연결 확인');
-      appendSimpleLog('모바일 연결 확인');
+      setMiniStatus(topMiniStatus,'모바일 연결 확인');
+      appendLog('모바일 연결 확인을 실행했습니다.');
+    });
+
+    document.getElementById('githubCleanBtn').addEventListener('click', async () => {
+      const text = 'git rm -r --cached . && git add . && git commit -m "clean"';
+      try{
+        await navigator.clipboard.writeText(text);
+        setMiniStatus(topMiniStatus,'GitHub 명령 복사 완료');
+        appendLog('GitHub 파일 정리 명령이 클립보드에 복사되었습니다.');
+      }catch{
+        setMiniStatus(topMiniStatus,'명령 복사 실패');
+        appendLog('클립보드 복사에 실패했습니다.');
+      }
     });
 
     document.getElementById('voiceBtn').addEventListener('click', () => {
-      setMiniStatus(topMiniStatus, '음성 입력 준비');
+      setMiniStatus(topMiniStatus,'음성 입력 준비');
       appendLog('음성 입력 버튼을 눌렀습니다.');
     });
 
     document.getElementById('helpBtn').addEventListener('click', () => {
-      setMiniStatus(topMiniStatus, '간단 설명 표시');
-      appendSimpleLog('설명: 실행을 누르면 설정에 맞춰 곡 제목과 생성 목록이 만들어집니다.');
+      setMiniStatus(topMiniStatus,'간단 설명 표시');
+      appendLog('설명: 실행을 누르면 설정에 맞춰 곡 제목과 생성 목록이 만들어집니다.');
     });
-
-    document.getElementById('saveProjectBtn').addEventListener('click', () => {
-      setMiniStatus(topMiniStatus, '프로젝트 저장');
-      updateFileProgressBox();
-      appendLog('프로젝트 저장 버튼을 눌렀습니다.');
-    });
-
-    document.getElementById('loadProjectBtn').addEventListener('click', () => {
-      setMiniStatus(topMiniStatus, '프로젝트 불러오기');
-      updateFileProgressBox();
-      appendLog('프로젝트 불러오기 버튼을 눌렀습니다.');
-    });
-
-    document.getElementById('deleteProjectBtn').addEventListener('click', () => {
-      setMiniStatus(topMiniStatus, '프로젝트 삭제');
-      document.getElementById('projectName').value = '';
-      updateFileProgressBox();
-      appendLog('프로젝트 삭제 버튼을 눌렀습니다.');
-    });
-
-    document.getElementById('promptInput').addEventListener('input', updateQuickCopyBox);
-    document.getElementById('projectName').addEventListener('input', updateFileProgressBox);
-    document.getElementById('lyricsLanguage').addEventListener('change', () => {
-      updateFileProgressBox();
-      updateQuickCopyBox();
-    });
-
-    document.querySelectorAll('.copy-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const targetId = btn.getAttribute('data-copy-target');
-        const text = document.getElementById(targetId)?.textContent || '';
-        try {
-          await navigator.clipboard.writeText(text);
-          setMiniStatus(topMiniStatus, '복사 완료');
-          appendSimpleLog('복사 완료');
-        } catch (e) {
-          setMiniStatus(topMiniStatus, '복사 실패');
-          appendSimpleLog('복사 실패');
-        }
-      });
-    });
-
-    async function runGenerateFlow() {
-      const count = Number(document.getElementById('songCount').value || 1);
-      const lang = getLyricsLanguage();
-
-      resetProgressUI();
-      mainStatusChip.textContent = '상태: 작업 시작';
-      updateFileProgressBox();
-      appendLog(`곡 생성 작업을 시작했습니다. 언어: ${lang}, 곡 수: ${count}`);
-
-      setStep('step1', '진행중');
-      updateProgress(18);
-      await wait(450);
-
-      setStep('step1', '완료');
-      setStep('step2', '진행중');
-      updateProgress(42);
-      await wait(550);
-
-      createSongs(count);
-      document.getElementById('checkTitle').checked = true;
-      document.getElementById('checkStyle').checked = true;
-      appendLog(`${count}곡 제목을 생성했습니다.`);
-      setMiniStatus(topMiniStatus, `${count}곡 생성 완료`);
-
-      setStep('step2', '완료');
-      setStep('step3', '진행중');
-      updateProgress(63);
-      await wait(450);
-
-      document.getElementById('checkLyrics').checked = true;
-      setStep('step3', '완료');
-      setStep('step4', '진행중');
-      updateProgress(82);
-      await wait(450);
-
-      document.getElementById('checkSuno').checked = true;
-      document.getElementById('checkMp3').checked = true;
-      setStep('step4', '완료');
-      setStep('step5', '진행중');
-      updateProgress(95);
-      await wait(420);
-
-      document.getElementById('checkEdit').checked = true;
-      setStep('step5', '완료');
-      updateProgress(100);
-      mainStatusChip.textContent = '상태: 생성 완료';
-      updateFileProgressBox();
-      updateQuickCopyBox();
-      appendLog('노래 생성 흐름이 완료되었습니다.');
-    }
 
     document.getElementById('runBtn').addEventListener('click', async () => {
       await runGenerateFlow();
     });
 
-    function wait(ms) {
+    document.getElementById('saveProjectBtn').addEventListener('click', () => {
+      setMiniStatus(topMiniStatus,'프로젝트 저장');
+      appendLog('프로젝트 저장 버튼을 눌렀습니다.');
+    });
+
+    document.getElementById('loadProjectBtn').addEventListener('click', () => {
+      setMiniStatus(topMiniStatus,'프로젝트 불러오기');
+      appendLog('프로젝트 불러오기 버튼을 눌렀습니다.');
+    });
+
+    document.getElementById('deleteProjectBtn').addEventListener('click', () => {
+      setMiniStatus(topMiniStatus,'프로젝트 삭제');
+      appendLog('프로젝트 삭제 버튼을 눌렀습니다.');
+    });
+
+    async function runGenerateFlow(){
+      const count = Number(document.getElementById('songCount').value || 1);
+      const lang = getLyricsLanguage();
+
+      resetProgressUI();
+      mainStatusChip.textContent = '상태: 작업 시작';
+      appendLog(`곡 생성 작업을 시작했습니다. 언어: ${lang}, 곡 수: ${count}`);
+
+      setStep('step1','진행중'); updateProgress(18); await wait(450);
+      setStep('step1','완료');
+      setStep('step2','진행중'); updateProgress(42); await wait(550);
+
+      createSongs(count);
+      document.getElementById('checkTitle').checked = true;
+      document.getElementById('checkStyle').checked = true;
+      appendLog(`${count}곡 제목을 생성했습니다.`);
+      setMiniStatus(topMiniStatus,`${count}곡 생성 완료`);
+
+      setStep('step2','완료');
+      setStep('step3','진행중'); updateProgress(63); await wait(450);
+
+      document.getElementById('checkLyrics').checked = true;
+      setStep('step3','완료');
+      setStep('step4','진행중'); updateProgress(82); await wait(450);
+
+      document.getElementById('checkSuno').checked = true;
+      document.getElementById('checkMp3').checked = true;
+      setStep('step4','완료');
+      setStep('step5','진행중'); updateProgress(95); await wait(420);
+
+      document.getElementById('checkEdit').checked = true;
+      setStep('step5','완료');
+      updateProgress(100);
+      mainStatusChip.textContent = '상태: 생성 완료';
+      appendLog('노래 생성 흐름이 완료되었습니다.');
+    }
+
+    function wait(ms){
       return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function refreshAiStatus() {
+    async function refreshAiStatus(){
       const badge = document.getElementById('aiStatusBadge');
       const text = document.getElementById('aiStatusText');
 
@@ -1338,24 +989,21 @@
       badge.classList.add('offline');
       text.textContent = 'AI OFFLINE';
 
-      try {
-        const res = await fetch('/api/health', { cache: 'no-store' });
-        if (!res.ok) throw new Error('health fail');
-
+      try{
+        const res = await fetch('/api/health', { cache:'no-store' });
+        if(!res.ok) throw new Error('health fail');
         const data = await res.json();
         const isOnline = !!(data && (data.ok === true || data.status === 'ok' || data.healthy === true));
 
-        if (isOnline) {
+        if(isOnline){
           badge.classList.remove('offline');
           badge.classList.add('online');
           text.textContent = 'AI ONLINE';
           return true;
         }
-        badge.classList.remove('online');
-        badge.classList.add('offline');
         text.textContent = 'AI OFFLINE';
         return false;
-      } catch (err) {
+      }catch{
         badge.classList.remove('online');
         badge.classList.add('offline');
         text.textContent = 'AI OFFLINE';
@@ -1363,36 +1011,10 @@
       }
     }
 
-    async function tryAiConnectRequest() {
-      try {
-        const res = await fetch('/api/connect-ai', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ connect: true })
-        });
-        return res.ok;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    async function connectOrCheckAi() {
-      let ok = await refreshAiStatus();
-      if (ok) return true;
-
-      const tried = await tryAiConnectRequest();
-      if (!tried) return false;
-
-      await wait(700);
-      ok = await refreshAiStatus();
-      return ok;
-    }
-
-    async function init() {
+    async function init(){
       renderSongs();
+      buildCopyQueue();
       resetProgressUI();
-      updateFileProgressBox();
-      updateQuickCopyBox();
       await refreshAiStatus();
       setInterval(refreshAiStatus, 10000);
     }
