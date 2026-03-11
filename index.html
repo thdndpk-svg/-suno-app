@@ -5,777 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Music Auto Studio v22 Final</title>
   <style>
-    /* ... 기존 스타일 그대로 (생략하지 않고 전체 포함) ... */
-    /* (원래 스타일 블록은 그대로 유지됩니다) */
-    * {
-      box-sizing: border-box;
-      min-width: 0;
+    /* (기존 스타일 그대로 유지) */
+    * { box-sizing: border-box; min-width: 0; }
+    :root{ --bg1:#f7f4ff; --bg2:#eef4ff; --bg3:#eaf7ff; --card:rgba(255,255,255,0.92); --card-strong:rgba(255,255,255,0.97); --line:rgba(148,163,184,0.28); --text:#334155; --sub:#64748b; --muted:#94a3b8; --shadow:0 18px 40px rgba(99,102,241,0.12); --shadow-strong:0 18px 50px rgba(71,85,105,0.16); --radius:18px; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+    body{ margin:0; font-family:Arial,sans-serif; color:var(--text);
+      background: radial-gradient(circle at top left, rgba(255,182,214,0.25), transparent 24%),
+                  radial-gradient(circle at top right, rgba(142,203,255,0.22), transparent 22%),
+                  linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3));
+      min-height:100vh; position:relative;
     }
-
-    :root{
-      --bg1:#f7f4ff;
-      --bg2:#eef4ff;
-      --bg3:#eaf7ff;
-
-      --card:rgba(255,255,255,0.92);
-      --card-strong:rgba(255,255,255,0.97);
-
-      --line:rgba(148,163,184,0.28);
-      --text:#334155;
-      --sub:#64748b;
-      --muted:#94a3b8;
-
-      --shadow:0 18px 40px rgba(99,102,241,0.12);
-      --shadow-strong:0 18px 50px rgba(71,85,105,0.16);
-
-      --radius:18px;
-    }
-
-    html, body {
-      width: 100%;
-      max-width: 100%;
-      overflow-x: hidden;
-    }
-
-    body{
-      margin:0;
-      font-family:Arial,sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(255,182,214,0.25), transparent 24%),
-        radial-gradient(circle at top right, rgba(142,203,255,0.22), transparent 22%),
-        linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3));
-      min-height:100vh;
-      position:relative;
-    }
-
-    .bg-wrap{
-      position:fixed;
-      inset:0;
-      overflow:hidden;
-      pointer-events:none;
-      z-index:0;
-    }
-
-    .bubble{
-      position:absolute;
-      border-radius:50%;
-      opacity:.38;
-      filter:blur(1px);
-      animation:floatUp linear infinite;
-    }
+    .bg-wrap{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+    .bubble{ position:absolute; border-radius:50%; opacity:.38; filter:blur(1px); animation:floatUp linear infinite; }
     .bubble.b1{ width:120px;height:120px; left:5%; bottom:-140px; background:radial-gradient(circle,#ffd7e6,transparent 70%); animation-duration:16s; }
     .bubble.b2{ width:180px;height:180px; left:18%; bottom:-180px; background:radial-gradient(circle,#d9e8ff,transparent 70%); animation-duration:22s; animation-delay:2s; }
     .bubble.b3{ width:100px;height:100px; left:36%; bottom:-130px; background:radial-gradient(circle,#d8fff5,transparent 70%); animation-duration:18s; animation-delay:1s; }
     .bubble.b4{ width:210px;height:210px; left:55%; bottom:-220px; background:radial-gradient(circle,#f1ddff,transparent 70%); animation-duration:24s; animation-delay:3s; }
     .bubble.b5{ width:130px;height:130px; left:73%; bottom:-150px; background:radial-gradient(circle,#ffe8b5,transparent 70%); animation-duration:17s; animation-delay:4s; }
     .bubble.b6{ width:170px;height:170px; left:88%; bottom:-190px; background:radial-gradient(circle,#d7f1ff,transparent 70%); animation-duration:20s; animation-delay:1.5s; }
-
-    .star{
-      position:absolute;
-      width:18px;
-      height:18px;
-      background:linear-gradient(135deg,#fff,#ffe3f0);
-      clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
-      opacity:.6;
-      animation:twinkle 3s ease-in-out infinite;
-    }
-    .star.s1{ top:8%; left:10%; animation-delay:0s; }
-    .star.s2{ top:18%; left:84%; animation-delay:1s; }
-    .star.s3{ top:40%; left:6%; animation-delay:2s; }
-    .star.s4{ top:62%; left:92%; animation-delay:1.4s; }
-    .star.s5{ top:78%; left:20%; animation-delay:.7s; }
-
-    @keyframes floatUp{
-      0%{ transform:translateY(0) translateX(0) scale(1); opacity:0; }
-      10%{ opacity:.38; }
-      50%{ transform:translateY(-50vh) translateX(20px) scale(1.05); }
-      100%{ transform:translateY(-120vh) translateX(-20px) scale(1.1); opacity:0; }
-    }
-
-    @keyframes twinkle{
-      0%,100%{ transform:scale(1) rotate(0deg); opacity:.4; }
-      50%{ transform:scale(1.2) rotate(12deg); opacity:.9; }
-    }
-
-    .wrap{
-      width:100%;
-      max-width:1500px;
-      margin:0 auto;
-      padding:16px;
-      position:relative;
-      z-index:1;
-    }
-
-    .hero{
-      background:linear-gradient(135deg, rgba(255,255,255,.88), rgba(248,250,255,.82));
-      border:1px solid rgba(148,163,184,0.24);
-      border-radius:24px;
-      padding:18px;
-      box-shadow:var(--shadow-strong);
-      margin-bottom:18px;
-      position:relative;
-      overflow:hidden;
-      backdrop-filter:blur(16px);
-      max-width:100%;
-    }
-
-    .hero::after{
-      content:"";
-      position:absolute;
-      right:-30px;
-      top:-20px;
-      width:160px;
-      height:160px;
-      background:radial-gradient(circle, rgba(255,193,212,.45), transparent 65%);
-      pointer-events:none;
-    }
-
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:14px;
-      flex-wrap:wrap;
-      min-width:0;
-    }
-
-    .title-wrap{
-      display:flex;
-      align-items:flex-start;
-      gap:12px;
-      min-width:0;
-      flex:1;
-    }
-
-    .mascot{
-      width:68px;
-      height:68px;
-      border-radius:20px;
-      background:linear-gradient(135deg,#ffd1e2,#b9e4ff);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:30px;
-      box-shadow:0 14px 26px rgba(255, 182, 214, 0.25);
-      border:1px solid rgba(255,255,255,.95);
-      flex-shrink:0;
-    }
-
-    .title{
-      min-width:0;
-    }
-
-    .title h1{
-      margin:0;
-      font-size:30px;
-      color:#5b5bd6;
-      letter-spacing:-0.4px;
-      line-height:1.2;
-      word-break:break-word;
-    }
-
-    .title p{
-      margin:8px 0 0;
-      color:var(--sub);
-      line-height:1.6;
-      font-size:14px;
-      max-width:760px;
-      word-break:break-word;
-    }
-
-    .hero-right{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      align-items:flex-end;
-      min-width:220px;
-      max-width:100%;
-    }
-
-    .badge{
-      background:linear-gradient(135deg,#ffd9e8,#dff4ff);
-      color:#6b5ca5;
-      padding:10px 12px;
-      border-radius:999px;
-      font-size:12px;
-      border:1px solid rgba(255,255,255,0.9);
-      box-shadow:0 8px 22px rgba(255, 182, 214, 0.16);
-      word-break:break-word;
-      text-align:center;
-    }
-
-    .ai-status{
-      padding:10px 12px;
-      border-radius:14px;
-      font-size:12px;
-      font-weight:bold;
-      border:1px solid rgba(148,163,184,.18);
-      background:rgba(255,255,255,.92);
-      box-shadow:0 6px 14px rgba(148,163,184,.08);
-      text-align:center;
-      min-width:180px;
-      max-width:100%;
-    }
-
-    .ai-offline{ color:#dc2626; }
-    .ai-online{ color:#059669; }
-    .ai-working{ color:#d97706; }
-
-    .menu-bar{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin:16px 0 0;
-      min-width:0;
-    }
-
-    .menu-btn{
-      padding:10px 14px;
-      border-radius:12px;
-      border:1px solid rgba(148,163,184,.20);
-      background:rgba(255,255,255,.88);
-      color:#6d6db8;
-      font-weight:bold;
-      cursor:pointer;
-      transition:.2s ease;
-      box-shadow:0 6px 14px rgba(148,163,184,0.08);
-      font-size:14px;
-    }
-
-    .menu-btn:hover{
-      transform:translateY(-2px);
-    }
-
-    .menu-btn.active{
-      background:linear-gradient(135deg,#ff9fbe,#bda4ff);
-      color:white;
-      border-color:transparent;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns:minmax(0, 1.15fr) minmax(320px, 0.85fr);
-      gap:18px;
-      align-items:start;
-      min-width:0;
-    }
-
-    .card{
-      background:var(--card);
-      border:1px solid rgba(148,163,184,0.26);
-      border-radius:18px;
-      padding:16px;
-      box-shadow:var(--shadow-strong);
-      backdrop-filter:blur(12px);
-      max-width:100%;
-      overflow-wrap:break-word;
-      word-break:break-word;
-    }
-
-    .card h2{
-      margin:0 0 12px;
-      font-size:18px;
-      color:#6b5ca5;
-    }
-
-    .section-title{
-      margin:14px 0 8px;
-      font-size:14px;
-      color:#5f84d8;
-      font-weight:bold;
-    }
-
-    .row{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-      margin-bottom:12px;
-      min-width:0;
-    }
-
-    .triple{
-      display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      gap:12px;
-      margin-bottom:12px;
-      min-width:0;
-    }
-
-    .full{ grid-column:1 / -1; }
-
-    label{
-      display:block;
-      margin-bottom:8px;
-      font-size:13px;
-      color:#64748b;
-      font-weight:bold;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select,
-    textarea{
-      width:100%;
-      max-width:100%;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(148,163,184,.28);
-      background:rgba(255,255,255,.96);
-      color:var(--text);
-      font-size:14px;
-      outline:none;
-      transition:.2s ease;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.75);
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus{
-      border-color:#b3c8ff;
-      box-shadow:0 0 0 4px rgba(179,200,255,.28);
-    }
-
-    textarea{
-      min-height:84px;
-      resize:vertical;
-      line-height:1.5;
-    }
-
-    .btns{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:10px;
-      min-width:0;
-    }
-
-    button{
-      border:none;
-      padding:10px 14px;
-      border-radius:12px;
-      cursor:pointer;
-      font-size:13px;
-      font-weight:bold;
-      transition:.16s ease;
-      box-shadow:0 8px 18px rgba(157, 178, 255, 0.16);
-    }
-
-    button:hover{
-      transform:translateY(-2px) scale(1.01);
-    }
-
-    .primary{ background:linear-gradient(135deg,#8ecbff,#7aa8ff); color:white; }
-    .secondary{ background:linear-gradient(135deg,#fff,#eef4ff); color:#617399; border:1px solid rgba(255,255,255,.95); }
-    .success{ background:linear-gradient(135deg,#8be8d4,#65d8c0); color:white; }
-    .warning{ background:linear-gradient(135deg,#ffd37a,#ffb86c); color:white; }
-    .danger{ background:linear-gradient(135deg,#ff9db5,#ff7f9d); color:white; }
-    .purple{ background:linear-gradient(135deg,#b99cff,#8f8dff); color:white; }
-
-    .listen-box{
-      margin-top:12px;
-      padding:11px 14px;
-      border-radius:16px;
-      background:rgba(255,255,255,.86);
-      border:1px solid rgba(148,163,184,.22);
-      display:inline-block;
-      font-size:14px;
-      color:#64748b;
-      max-width:100%;
-    }
-
-    .listening{
-      color:#ff6a95;
-      font-weight:bold;
-    }
-
-    .check-group{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      min-width:0;
-    }
-
-    .option{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      background:rgba(255,255,255,.88);
-      border:1px solid rgba(148,163,184,.20);
-      padding:10px 12px;
-      border-radius:14px;
-      font-size:13px;
-      color:#50627e;
-      min-height:42px;
-      max-width:100%;
-    }
-
-    .option input{
-      accent-color:#7aa8ff;
-      flex-shrink:0;
-    }
-
-    details{
-      margin-top:12px;
-      background:rgba(250,252,255,.96);
-      border:1px solid rgba(148,163,184,.22);
-      border-radius:16px;
-      padding:12px;
-      max-width:100%;
-    }
-
-    summary{
-      cursor:pointer;
-      font-weight:bold;
-      color:#6b7fd1;
-      outline:none;
-      list-style:none;
-    }
-
-    summary::-webkit-details-marker{ display:none; }
-
-    summary::before{
-      content:"▸";
-      display:inline-block;
-      margin-right:8px;
-      transition:transform .2s ease;
-    }
-
-    details[open] summary::before{
-      transform:rotate(90deg);
-    }
-
-    .steps{
-      display:grid;
-      gap:8px;
-    }
-
-    .step{
-      padding:10px 12px;
-      border-radius:12px;
-      background:rgba(250,252,255,.96);
-      border:1px solid rgba(148,163,184,.22);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      max-width:100%;
-    }
-
-    .status{
-      font-size:11px;
-      padding:6px 9px;
-      border-radius:999px;
-      background:linear-gradient(135deg,#eef4ff,#fff);
-      color:#5f84d8;
-      border:1px solid rgba(148,163,184,.18);
-      flex-shrink:0;
-    }
-
-    .progress-wrap{ margin-top:12px; }
-
-    .progress-bar{
-      height:12px;
-      background:rgba(255,255,255,.88);
-      border-radius:999px;
-      overflow:hidden;
-      border:1px solid rgba(148,163,184,.18);
-    }
-
-    .progress{
-      width:8%;
-      height:100%;
-      background:linear-gradient(90deg,#8ecbff,#8be8d4,#b99cff,#ff9db5);
-    }
-
-    .log{
-      margin-top:10px;
-      padding:12px;
-      background:rgba(255,255,255,.88);
-      border:1px solid rgba(148,163,184,.20);
-      border-radius:14px;
-      min-height:170px;
-      font-size:12px;
-      color:#64748b;
-      line-height:1.6;
-      white-space:pre-line;
-      max-width:100%;
-      overflow-wrap:break-word;
-      word-break:break-word;
-    }
-
-    .output-box,
-    .quick-copy-box,
-    .folder-guide,
-    .help-panel,
-    .save-load-box{
-      margin-top:12px;
-      padding:12px;
-      border-radius:14px;
-      background:rgba(250,252,255,.96);
-      border:1px solid rgba(148,163,184,.24);
-      box-shadow:0 6px 16px rgba(148,163,184,0.06);
-      max-width:100%;
-      overflow-wrap:break-word;
-      word-break:break-word;
-    }
-
-    .output-box h3,
-    .save-load-box h3{
-      margin:0 0 10px;
-      font-size:15px;
-      color:#5f84d8;
-    }
-
-    .summary-line{
-      font-size:13px;
-      color:#64748b;
-      line-height:1.7;
-      overflow-wrap:break-word;
-      word-break:break-word;
-    }
-
-    .track-list{
-      display:grid;
-      gap:12px;
-      margin-top:12px;
-    }
-
-    .track-item{
-      padding:14px;
-      border-radius:16px;
-      background:var(--card-strong);
-      border:1px solid rgba(148,163,184,.24);
-      box-shadow:0 10px 22px rgba(99,102,241,0.08);
-      max-width:100%;
-      overflow-wrap:break-word;
-      word-break:break-word;
-    }
-
-    .track-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-bottom:10px;
-      min-width:0;
-    }
-
-    .track-title{
-      font-size:17px;
-      font-weight:bold;
-      color:#6b5ca5;
-    }
-
-    .small{
-      font-size:12px;
-      color:#94a3b8;
-      word-break:break-word;
-    }
-
-    .mini-box{
-      margin-top:8px;
-      padding:10px;
-      border-radius:12px;
-      background:rgba(248,250,255,.98);
-      border:1px solid rgba(148,163,184,.22);
-      max-width:100%;
-    }
-
-    .mini-box strong{
-      display:block;
-      margin-bottom:6px;
-      color:#5f84d8;
-      font-size:13px;
-    }
-
-    .mini-text{
-      font-size:13px;
-      line-height:1.55;
-      color:#4b5563;
-      white-space:pre-wrap;
-      overflow-wrap:break-word;
-      word-break:break-word;
-    }
-
-    .copy-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:12px;
-      min-width:0;
-    }
-
-    .quick-copy-status,
-    .folder-guide,
-    .status-chip,
-    .badge{
-      white-space:normal;
-      overflow-wrap:break-word;
-      word-break:break-word;
-    }
-
-    .help-panel{
-      display:none;
-      color:#5b6575;
-      line-height:1.7;
-      font-size:13px;
-    }
-
-    .help-panel.show{
-      display:block;
-    }
-
-    .help-panel strong{
-      color:#5668b4;
-    }
-
-    .pill{
-      display:inline-block;
-      padding:5px 9px;
-      border-radius:999px;
-      background:linear-gradient(135deg,#fff,#f4f8ff);
-      border:1px solid rgba(148,163,184,.14);
-      color:#6b5ca5;
-      font-size:12px;
-      margin:3px 6px 3px 0;
-    }
-
-    .status-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-      min-width:0;
-    }
-
-    .status-chip{
-      padding:10px 12px;
-      border-radius:14px;
-      background:rgba(255,255,255,.92);
-      border:1px solid rgba(148,163,184,.20);
-      font-size:13px;
-      color:#5b6575;
-    }
-
-    .candidate-list{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:8px;
-      min-width:0;
-    }
-
-    .candidate-btn{
-      padding:8px 12px;
-      border-radius:999px;
-      background:linear-gradient(135deg,#fff,#eef4ff);
-      border:1px solid rgba(148,163,184,.18);
-      color:#617399;
-      font-size:12px;
-      cursor:pointer;
-      max-width:100%;
-    }
-
-    .memo-area{
-      width:100%;
-      margin-top:10px;
-      min-height:72px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(148,163,184,.20);
-      background:rgba(255,255,255,.94);
-      color:#4b5563;
-      resize:vertical;
-      max-width:100%;
-    }
-
-    .checklist{
-      display:grid;
-      gap:6px;
-      margin-top:8px;
-    }
-
-    .check-item{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 10px;
-      border-radius:12px;
-      background:rgba(255,255,255,.92);
-      border:1px solid rgba(148,163,184,.18);
-      font-size:12px;
-      color:#5b6575;
-    }
-
-    @media (max-width:1100px){
-      .grid{
-        grid-template-columns:1fr;
-      }
-    }
-
-    @media (max-width:768px){
-      .wrap{
-        padding:12px;
-      }
-
-      .hero,
-      .card,
-      .track-item{
-        padding:14px;
-        border-radius:16px;
-      }
-
-      .topbar,
-      .title-wrap,
-      .menu-bar,
-      .btns,
-      .copy-row,
-      .check-group,
-      .track-header,
-      .status-grid,
-      .candidate-list,
-      .hero-right{
-        flex-direction:column;
-        align-items:stretch;
-      }
-
-      .row,
-      .triple{
-        grid-template-columns:1fr !important;
-      }
-
-      .menu-btn,
-      .btns button,
-      .copy-row button,
-      .candidate-btn{
-        width:100%;
-      }
-
-      .mascot{
-        width:56px;
-        height:56px;
-        font-size:24px;
-      }
-
-      .title h1{
-        font-size:24px;
-      }
-
-      .title p{
-        font-size:13px;
-      }
-
-      .status{
-        align-self:flex-start;
-      }
-
-      .ai-status{
-        width:100%;
-        min-width:0;
-      }
-    }
+    .star{ position:absolute; width:18px; height:18px; background:linear-gradient(135deg,#fff,#ffe3f0); clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); opacity:.6; animation:twinkle 3s ease-in-out infinite; }
+    .star.s1{ top:8%; left:10%; animation-delay:0s; } .star.s2{ top:18%; left:84%; animation-delay:1s; } .star.s3{ top:40%; left:6%; animation-delay:2s; } .star.s4{ top:62%; left:92%; animation-delay:1.4s; } .star.s5{ top:78%; left:20%; animation-delay:.7s; }
+    @keyframes floatUp{ 0%{ transform:translateY(0) translateX(0) scale(1); opacity:0; } 10%{ opacity:.38; } 50%{ transform:translateY(-50vh) translateX(20px) scale(1.05); } 100%{ transform:translateY(-120vh) translateX(-20px) scale(1.1); opacity:0; } }
+    @keyframes twinkle{ 0%,100%{ transform:scale(1) rotate(0deg); opacity:.4; } 50%{ transform:scale(1.2) rotate(12deg); opacity:.9; } }
+    .wrap{ width:100%; max-width:1500px; margin:0 auto; padding:16px; position:relative; z-index:1; }
+    .hero{ background:linear-gradient(135deg, rgba(255,255,255,.88), rgba(248,250,255,.82)); border:1px solid rgba(148,163,184,0.24); border-radius:24px; padding:18px; box-shadow:var(--shadow-strong); margin-bottom:18px; position:relative; overflow:hidden; backdrop-filter:blur(16px); max-width:100%; }
+    .hero::after{ content:""; position:absolute; right:-30px; top:-20px; width:160px; height:160px; background:radial-gradient(circle, rgba(255,193,212,.45), transparent 65%); pointer-events:none; }
+    .topbar{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; min-width:0; }
+    .title-wrap{ display:flex; align-items:flex-start; gap:12px; min-width:0; flex:1; }
+    .mascot{ width:68px; height:68px; border-radius:20px; background:linear-gradient(135deg,#ffd1e2,#b9e4ff); display:flex; align-items:center; justify-content:center; font-size:30px; box-shadow:0 14px 26px rgba(255, 182, 214, 0.25); border:1px solid rgba(255,255,255,.95); flex-shrink:0; }
+    .title{ min-width:0; } .title h1{ margin:0; font-size:30px; color:#5b5bd6; letter-spacing:-0.4px; line-height:1.2; word-break:break-word; } .title p{ margin:8px 0 0; color:var(--sub); line-height:1.6; font-size:14px; max-width:760px; word-break:break-word; }
+    .hero-right{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; min-width:220px; max-width:100%; }
+    .badge{ background:linear-gradient(135deg,#ffd9e8,#dff4ff); color:#6b5ca5; padding:10px 12px; border-radius:999px; font-size:12px; border:1px solid rgba(255,255,255,0.9); box-shadow:0 8px 22px rgba(255, 182, 214, 0.16); word-break:break-word; text-align:center;}
+    .ai-status{ padding:10px 12px; border-radius:14px; font-size:12px; font-weight:bold; border:1px solid rgba(148,163,184,.18); background:rgba(255,255,255,.92); box-shadow:0 6px 14px rgba(148,163,184,.08); text-align:center; min-width:180px; max-width:100%; }
+    .ai-offline{ color:#dc2626; } .ai-online{ color:#059669; } .ai-working{ color:#d97706; }
+    .menu-bar{ display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 0; min-width:0; } .menu-btn{ padding:10px 14px; border-radius:12px; border:1px solid rgba(148,163,184,.20); background:rgba(255,255,255,.88); color:#6d6db8; font-weight:bold; cursor:pointer; transition:.2s ease; box-shadow:0 6px 14px rgba(148,163,184,0.08); font-size:14px; } .menu-btn:hover{ transform:translateY(-2px); } .menu-btn.active{ background:linear-gradient(135deg,#ff9fbe,#bda4ff); color:white; border-color:transparent; }
+    .grid{ display:grid; grid-template-columns:minmax(0, 1.15fr) minmax(320px, 0.85fr); gap:18px; align-items:start; min-width:0; }
+    .card{ background:var(--card); border:1px solid rgba(148,163,184,0.26); border-radius:18px; padding:16px; box-shadow:var(--shadow-strong); backdrop-filter:blur(12px); max-width:100%; overflow-wrap:break-word; word-break:break-word; }
+    .card h2{ margin:0 0 12px; font-size:18px; color:#6b5ca5; }
+    .section-title{ margin:14px 0 8px; font-size:14px; color:#5f84d8; font-weight:bold; }
+    .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; min-width:0; } .triple{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px; min-width:0; } .full{ grid-column:1 / -1; }
+    label{ display:block; margin-bottom:8px; font-size:13px; color:#64748b; font-weight:bold; }
+    input[type="text"], input[type="number"], select, textarea{ width:100%; max-width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(148,163,184,.28); background:rgba(255,255,255,.96); color:var(--text); font-size:14px; outline:none; transition:.2s ease; box-shadow: inset 0 1px 0 rgba(255,255,255,.75); }
+    input:focus, select:focus, textarea:focus{ border-color:#b3c8ff; box-shadow:0 0 0 4px rgba(179,200,255,.28); } textarea{ min-height:84px; resize:vertical; line-height:1.5; }
+    .btns{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; min-width:0; } button{ border:none; padding:10px 14px; border-radius:12px; cursor:pointer; font-size:13px; font-weight:bold; transition:.16s ease; box-shadow:0 8px 18px rgba(157, 178, 255, 0.16); } button:hover{ transform:translateY(-2px) scale(1.01); }
+    .primary{ background:linear-gradient(135deg,#8ecbff,#7aa8ff); color:white; } .secondary{ background:linear-gradient(135deg,#fff,#eef4ff); color:#617399; border:1px solid rgba(255,255,255,.95); } .success{ background:linear-gradient(135deg,#8be8d4,#65d8c0); color:white; } .warning{ background:linear-gradient(135deg,#ffd37a,#ffb86c); color:white; } .danger{ background:linear-gradient(135deg,#ff9db5,#ff7f9d); color:white; } .purple{ background:linear-gradient(135deg,#b99cff,#8f8dff); color:white; }
+    .listen-box{ margin-top:12px; padding:11px 14px; border-radius:16px; background:rgba(255,255,255,.86); border:1px solid rgba(148,163,184,.22); display:inline-block; font-size:14px; color:#64748b; max-width:100%; }
+    .listening{ color:#ff6a95; font-weight:bold; } .check-group{ display:flex; flex-wrap:wrap; gap:10px; min-width:0; } .option{ display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.88); border:1px solid rgba(148,163,184,.20); padding:10px 12px; border-radius:14px; font-size:13px; color:#50627e; min-height:42px; max-width:100%; } .option input{ accent-color:#7aa8ff; flex-shrink:0; }
+    details{ margin-top:12px; background:rgba(250,252,255,.96); border:1px solid rgba(148,163,184,.22); border-radius:16px; padding:12px; max-width:100%; } summary{ cursor:pointer; font-weight:bold; color:#6b7fd1; outline:none; list-style:none; } summary::-webkit-details-marker{ display:none; } summary::before{ content:"▸"; display:inline-block; margin-right:8px; transition:transform .2s ease; } details[open] summary::before{ transform:rotate(90deg); }
+    .steps{ display:grid; gap:8px; } .step{ padding:10px 12px; border-radius:12px; background:rgba(250,252,255,.96); border:1px solid rgba(148,163,184,.22); display:flex; justify-content:space-between; align-items:center; gap:10px; max-width:100%; } .status{ font-size:11px; padding:6px 9px; border-radius:999px; background:linear-gradient(135deg,#eef4ff,#fff); color:#5f84d8; border:1px solid rgba(148,163,184,.18); flex-shrink:0; }
+    .progress-wrap{ margin-top:12px; } .progress-bar{ height:12px; background:rgba(255,255,255,.88); border-radius:999px; overflow:hidden; border:1px solid rgba(148,163,184,.18); } .progress{ width:8%; height:100%; background:linear-gradient(90deg,#8ecbff,#8be8d4,#b99cff,#ff9db5); }
+    .log{ margin-top:10px; padding:12px; background:rgba(255,255,255,.88); border:1px solid rgba(148,163,184,.20); border-radius:14px; min-height:170px; font-size:12px; color:#64748b; line-height:1.6; white-space:pre-line; max-width:100%; overflow-wrap:break-word; word-break:break-word; }
+    .output-box, .quick-copy-box, .folder-guide, .help-panel, .save-load-box{ margin-top:12px; padding:12px; border-radius:14px; background:rgba(250,252,255,.96); border:1px solid rgba(148,163,184,.24); box-shadow:0 6px 16px rgba(148,163,184,0.06); max-width:100%; overflow-wrap:break-word; word-break:break-word; }
+    .output-box h3, .save-load-box h3{ margin:0 0 10px; font-size:15px; color:#5f84d8; } .summary-line{ font-size:13px; color:#64748b; line-height:1.7; overflow-wrap:break-word; word-break:break-word; }
+    .track-list{ display:grid; gap:12px; margin-top:12px; } .track-item{ padding:14px; border-radius:16px; background:var(--card-strong); border:1px solid rgba(148,163,184,.24); box-shadow:0 10px 22px rgba(99,102,241,0.08); max-width:100%; overflow-wrap:break-word; word-break:break-word; } .track-header{ display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; min-width:0; } .track-title{ font-size:17px; font-weight:bold; color:#6b5ca5; } .small{ font-size:12px; color:#94a3b8; word-break:break-word; } .mini-box{ margin-top:8px; padding:10px; border-radius:12px; background:rgba(248,250,255,.98); border:1px solid rgba(148,163,184,.22); max-width:100%; } .mini-box strong{ display:block; margin-bottom:6px; color:#5f84d8; font-size:13px; } .mini-text{ font-size:13px; line-height:1.55; color:#4b5563; white-space:pre-wrap; overflow-wrap:break-word; word-break:break-word; } .copy-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; min-width:0; } .quick-copy-status, .folder-guide, .status-chip, .badge{ white-space:normal; overflow-wrap:break-word; word-break:break-word; } .help-panel{ display:none; color:#5b6575; line-height:1.7; font-size:13px; } .help-panel.show{ display:block; } .help-panel strong{ color:#5668b4; } .pill{ display:inline-block; padding:5px 9px; border-radius:999px; background:linear-gradient(135deg,#fff,#f4f8ff); border:1px solid rgba(148,163,184,.14); color:#6b5ca5; font-size:12px; margin:3px 6px 3px 0; }
+    .status-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; min-width:0; } .status-chip{ padding:10px 12px; border-radius:14px; background:rgba(255,255,255,.92); border:1px solid rgba(148,163,184,.20); font-size:13px; color:#5b6575; } .candidate-list{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; min-width:0; } .candidate-btn{ padding:8px 12px; border-radius:999px; background:linear-gradient(135deg,#fff,#eef4ff); border:1px solid rgba(148,163,184,.18); color:#617399; font-size:12px; cursor:pointer; max-width:100%; } .memo-area{ width:100%; margin-top:10px; min-height:72px; padding:10px 12px; border-radius:14px; border:1px solid rgba(148,163,184,.20); background:rgba(255,255,255,.94); color:#4b5563; resize:vertical; max-width:100%; } .checklist{ display:grid; gap:6px; margin-top:8px; } .check-item{ display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:12px; background:rgba(255,255,255,.92); border:1px solid rgba(148,163,184,.18); font-size:12px; color:#5b6575; }
+    @media (max-width:1100px){ .grid{ grid-template-columns:1fr; } }
+    @media (max-width:768px){ .wrap{ padding:12px; } .hero, .card, .track-item{ padding:14px; border-radius:16px; } .topbar, .title-wrap, .menu-bar, .btns, .copy-row, .check-group, .track-header, .status-grid, .candidate-list, .hero-right{ flex-direction:column; align-items:stretch; } .row, .triple{ grid-template-columns:1fr !important; } .menu-btn, .btns button, .copy-row button, .candidate-btn{ width:100%; } .mascot{ width:56px; height:56px; font-size:24px; } .title h1{ font-size:24px; } .title p{ font-size:13px; } .status{ align-self:flex-start; } .ai-status{ width:100%; min-width:0; } }
   </style>
 </head>
 <body>
@@ -818,48 +103,6 @@
       </div>
     </div>
 
-    <!-- ====== 여기에 모바일 연결 / 안전 다운로드 카드 추가됨 ====== -->
-    <div class="card" style="margin-bottom:18px;">
-      <h2>모바일 연결 / 안전 다운로드 (초등학생용 단계별)</h2>
-
-      <div class="summary-line" style="margin-bottom:10px;">
-        아래 3단계만 따라하세요. (1) API 주소 확인 → (2) 토큰 붙여넣기 → (3) 다운로드 테스트
-      </div>
-
-      <div class="row">
-        <div>
-          <label>1) API 서버 주소</label>
-          <input type="text" id="mobileApiBase" value="https://tricky-bats-start.loca.lt" />
-          <small class="small">※ 서버(프록시)가 다른 주소라면 여기에 붙여넣어 주세요. 예: https://tricky-bats-start.loca.lt</small>
-        </div>
-        <div>
-          <label>2) 다운로드 토큰 (서버에서 발급된 값)</label>
-          <input type="text" id="mobileDownloadToken" placeholder="서버에서 받은 DOWNLOAD_TOKEN 값을 여기에 붙여넣기" />
-          <small class="small">토큰은 노출되지 않도록 주의하세요. 테스트 후 페이지에서 지워도 됩니다.</small>
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>3) 다운로드할 파일 키 (예: presign으로 생성된 파일명)</label>
-          <input type="text" id="mobileFileKey" value="1773206138312_test-presign.txt" />
-        </div>
-        <div>
-          <label>빠른 동작</label>
-          <div class="btns">
-            <button class="primary" onclick="saveMobileSettings()">설정 저장</button>
-            <button class="success" onclick="testMobileDownload()">다운로드 테스트</button>
-            <button class="secondary" onclick="copyMobileLink()">다운로드 링크 복사</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="mobileMsg" class="mini-box" style="margin-top:12px; color:#334155;">
-        안내: 위의 API 주소를 확인하고, 서버에서 발급된 토큰을 붙여넣은 뒤 "다운로드 테스트"를 누르세요. 성공하면 파일이 바로 내려옵니다.
-      </div>
-    </div>
-    <!-- ======================================================== -->
-
     <div class="grid">
       <div class="card">
         <h2>프로젝트 설정</h2>
@@ -895,7 +138,6 @@
           </div>
         </div>
 
-        <!-- ... 나머지 기존 내용 그대로 ... (생략하지 않고 유지) -->
         <div class="save-load-box">
           <h3>프로젝트 저장 / 불러오기</h3>
           <div class="row">
@@ -1113,6 +355,53 @@
           </div>
         </div>
 
+        <!-- === 여기에 다운로드 테스트 UI (사용자가 쉽게 값 확인, 복사, 열기) === -->
+        <div class="output-box" id="downloadTestBox" style="margin-top:12px;">
+          <h3>다운로드 테스트 (초등학생도 쉽게)</h3>
+          <div class="summary-line" style="margin-bottom:8px;">
+            아래 값들은 자동으로 채워져 있습니다. 필요하면 직접 수정 후 버튼을 눌러주세요.
+          </div>
+
+          <div class="row">
+            <div>
+              <label>API 서버 주소 (base)</label>
+              <input type="text" id="inputApiBase" value="https://tricky-bats-start.loca.lt" />
+            </div>
+            <div>
+              <label>파일 키 (key)</label>
+              <input type="text" id="inputFileKey" value="1773206138312_test-presign.txt" />
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:8px;">
+            <div>
+              <label>다운로드 토큰 (token)</label>
+              <input type="text" id="inputDownloadToken" value="1586b87c02d0cdac8345192b8845dfb920b879adb8107916" />
+            </div>
+            <div>
+              <label>생성된 다운로드 URL</label>
+              <input type="text" id="generatedUrl" readonly />
+            </div>
+          </div>
+
+          <div class="btns" style="margin-top:10px;">
+            <button class="primary" onclick="buildDownloadUrl()">URL 생성</button>
+            <button class="secondary" onclick="copyDownloadUrl()">URL 복사</button>
+            <button class="success" onclick="openDownload()">새탭에서 열기 (권장)</button>
+            <button class="warning" onclick="testFetchDownload()">브라우저 fetch로 시도 (상세 에러 확인)</button>
+          </div>
+
+          <div id="downloadResult" class="log" style="min-height:80px; margin-top:10px; font-size:13px;">
+            실행 결과가 여기에 표시됩니다.
+          </div>
+
+          <div style="margin-top:8px; color:#64748b; font-size:13px;">
+            사용 설명(간단): ① URL 생성 → ② 새탭에서 열기(모바일에서 주소창 붙여넣기 가능) 또는 ② URL 복사를 눌러 주소창에 붙여넣으세요.
+            <br>Tip: 브라우저 버튼의 'failed to fetch'는 CORS 문제일 가능성이 높습니다. 이 경우 '새탭에서 열기'로 시도하세요.
+          </div>
+        </div>
+        <!-- === 다운로드 테스트 UI 끝 === -->
+
         <div class="quick-copy-box">
           <h3 style="margin:0 0 10px; color:#5f84d8;">빠른 붙여넣기 복사</h3>
           <div class="btns">
@@ -1173,11 +462,18 @@
   </div>
 
   <script>
-    /***** 기존 스크립트(원본) - 그대로 유지됩니다 *****/
+    // 기존 스크립트 (원래 기능들)
     let tracks = [];
     let copySteps = [];
     let copySequenceIndex = 0;
     let aiConnectionState = "online";
+
+    // ====== 여기에 기본값(대화에서 확인한 값들)을 넣었습니다 ======
+    // 필요하면 이 값을 입력칸에서 바꾸세요 (UI에서 쉽게 수정 가능)
+    const DEFAULT_API_BASE = "https://tricky-bats-start.loca.lt";
+    const DEFAULT_DOWNLOAD_TOKEN = "1586b87c02d0cdac8345192b8845dfb920b879adb8107916";
+    const DEFAULT_FILE_KEY = "1773206138312_test-presign.txt";
+    // ===========================================================
 
     function updateAIStatus(state) {
       aiConnectionState = state;
@@ -1227,6 +523,68 @@
     function openSuno() {
       window.open("https://suno.com/create", "_blank");
     }
+
+    /* ---------------------------
+       다운로드 URL 관련 함수들
+       - URL 생성 (쿼리스트링에 token 포함)
+       - 새 탭 열기 (CORS 이슈를 피하기 위해 권장)
+       - URL 복사
+       - fetch 테스트 (CORS/에러 메시지 확인용)
+    --------------------------- */
+    function buildDownloadUrl() {
+      const base = (document.getElementById("inputApiBase").value || DEFAULT_API_BASE).replace(/\/+$/, '');
+      const key = document.getElementById("inputFileKey").value || DEFAULT_FILE_KEY;
+      const token = document.getElementById("inputDownloadToken").value || DEFAULT_DOWNLOAD_TOKEN;
+
+      // 안전하게 인코딩
+      const url = `${base}/api/download?key=${encodeURIComponent(key)}&token=${encodeURIComponent(token)}`;
+      document.getElementById("generatedUrl").value = url;
+      document.getElementById("downloadResult").textContent = "URL 생성됨. '새탭에서 열기' 또는 'URL 복사'를 사용하세요.";
+      return url;
+    }
+
+    function copyDownloadUrl() {
+      const url = document.getElementById("generatedUrl").value || buildDownloadUrl();
+      navigator.clipboard.writeText(url).then(() => {
+        document.getElementById("downloadResult").textContent = "URL이 클립보드에 복사되었습니다. (붙여넣기: 주소창 또는 메시지창)";
+      }).catch(() => {
+        document.getElementById("downloadResult").textContent = "복사에 실패했습니다. 수동으로 복사해 주세요.";
+      });
+    }
+
+    function openDownload() {
+      const url = document.getElementById("generatedUrl").value || buildDownloadUrl();
+      // 새 탭에서 열면 CORS에 걸리지 않고 브라우저가 직접 다운로드를 시도합니다.
+      window.open(url, "_blank");
+      document.getElementById("downloadResult").textContent = "새 탭에서 열기 시도... (브라우저가 다운로드 또는 파일 미리보기를 처리합니다)";
+    }
+
+    async function testFetchDownload() {
+      const resultBox = document.getElementById("downloadResult");
+      const url = document.getElementById("generatedUrl").value || buildDownloadUrl();
+      resultBox.textContent = "fetch 시도중... (CORS 문제일 경우 실패 메시지가 나옵니다)";
+      try {
+        const res = await fetch(url, { method: "GET" });
+        if (!res.ok) {
+          // 가능한 경우 서버의 오류 메시지(예: XML AccessDenied)를 텍스트로 출력
+          const text = await res.text();
+          resultBox.textContent = `다운로드 실패 (HTTP ${res.status})\n\n서버 응답:\n${text}`;
+          return;
+        }
+        // 응답이 성공이면 간단히 첫 바이트 보여주기
+        const blob = await res.blob();
+        const size = blob.size;
+        resultBox.textContent = `fetch 성공 — 파일 크기 ${size} 바이트. (브라우저의 CORS 정책 등으로 직접 다운로드가 불가할 수 있습니다)\n권장: '새탭에서 열기' 버튼을 사용하세요.`;
+      } catch (err) {
+        // fetch 자체 실패(네트워크, CORS preflight 차단 등)
+        resultBox.textContent = `fetch 에러: ${err && err.message ? err.message : String(err)}\n\n해결책: '새탭에서 열기' 버튼을 눌러 브라우저 주소창으로 열어보세요.`;
+      }
+    }
+
+    /* ---------------------------
+       기존 UI/기능 스크립트 계속 (노래 생성/복사 등)
+       (원래 있던 함수들을 그대로 사용하도록 아래에 유지)
+    --------------------------- */
 
     function genreToStyle(genre) {
       const map = {
@@ -2019,6 +1377,7 @@ ${track.lyrics}`;
       };
     }
 
+    // 이벤트: 입력 칸들 처리
     document.querySelectorAll("select, input").forEach(el => {
       el.addEventListener("change", () => {
         updateAnalysis(document.getElementById("commandInput").value.trim());
@@ -2030,95 +1389,23 @@ ${track.lyrics}`;
       });
     });
 
+    // 초기화: 다운로드 입력란 기본값 채우기 (사용자가 바로 테스트할 수 있게)
+    (function initDownloadUiDefaults(){
+      const apiBaseEl = document.getElementById("inputApiBase");
+      const tokenEl = document.getElementById("inputDownloadToken");
+      const keyEl = document.getElementById("inputFileKey");
+      const genEl = document.getElementById("generatedUrl");
+
+      if (apiBaseEl && !apiBaseEl.value) apiBaseEl.value = DEFAULT_API_BASE;
+      if (tokenEl && !tokenEl.value) tokenEl.value = DEFAULT_DOWNLOAD_TOKEN;
+      if (keyEl && !keyEl.value) keyEl.value = DEFAULT_FILE_KEY;
+      genEl.value = `${(apiBaseEl.value||DEFAULT_API_BASE).replace(/\/+$/, '')}/api/download?key=${encodeURIComponent(keyEl.value||DEFAULT_FILE_KEY)}&token=${encodeURIComponent(tokenEl.value||DEFAULT_DOWNLOAD_TOKEN)}`;
+    })();
+
     refreshSavedProjects();
     updateAnalysis();
     updateMp3Status();
     updateAIStatus("online");
-
-    /***** 여기에 모바일 다운로드 관련 간단 스크립트 추가 (아래) *****/
-
-    // 모바일 설정을 로컬스토리지에 저장/불러오기 (초등학생도 사용 가능하게 단순화)
-    function saveMobileSettings() {
-      const base = (document.getElementById('mobileApiBase') || {}).value || '';
-      const token = (document.getElementById('mobileDownloadToken') || {}).value || '';
-      const key = (document.getElementById('mobileFileKey') || {}).value || '';
-      localStorage.setItem('mobile_api_base', base.trim());
-      localStorage.setItem('mobile_download_token', token.trim());
-      localStorage.setItem('mobile_file_key', key.trim());
-      showMobileMsg('설정이 저장되었습니다. 다운로드 테스트 버튼을 눌러 확인하세요.', 'green');
-    }
-
-    function loadMobileSettingsToUI() {
-      const base = localStorage.getItem('mobile_api_base') || document.getElementById('mobileApiBase').value;
-      const token = localStorage.getItem('mobile_download_token') || '';
-      const key = localStorage.getItem('mobile_file_key') || document.getElementById('mobileFileKey').value;
-      if (document.getElementById('mobileApiBase')) document.getElementById('mobileApiBase').value = base;
-      if (document.getElementById('mobileDownloadToken')) document.getElementById('mobileDownloadToken').value = token;
-      if (document.getElementById('mobileFileKey')) document.getElementById('mobileFileKey').value = key;
-    }
-
-    function showMobileMsg(text, color) {
-      const el = document.getElementById('mobileMsg');
-      if (!el) return;
-      el.style.color = color || '#334155';
-      el.textContent = text;
-    }
-
-    // 다운로드 테스트: API_BASE + /api/download?key=... 로 요청 (헤더 x-download-token 사용)
-    async function testMobileDownload() {
-      const base = (document.getElementById('mobileApiBase') || {}).value || '';
-      const token = (document.getElementById('mobileDownloadToken') || {}).value || '';
-      const key = (document.getElementById('mobileFileKey') || {}).value || '';
-
-      if (!base) { showMobileMsg('API 주소를 입력하세요.', 'crimson'); return; }
-      if (!key) { showMobileMsg('다운로드할 파일 키를 입력하세요.', 'crimson'); return; }
-
-      const url = base.replace(/\/$/,'') + '/api/download?key=' + encodeURIComponent(key);
-      showMobileMsg('다운로드 시도 중... (잠시만요)', '#334155');
-
-      try {
-        const res = await fetch(url, {
-          method: 'GET',
-          headers: token ? { 'x-download-token': token } : {}
-        });
-
-        if (!res.ok) {
-          const txt = await res.text().catch(()=>'');
-          showMobileMsg(`다운로드 실패: HTTP ${res.status} — ${txt ? txt.slice(0,200) : ''}`, 'crimson');
-          return;
-        }
-        const blob = await res.blob();
-        const filename = key.split('/').pop() || 'download.bin';
-        // 브라우저에서 파일로 저장
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        showMobileMsg('다운로드 성공 — 파일을 저장했습니다.', 'green');
-      } catch (err) {
-        console.error(err);
-        showMobileMsg('다운로드 중 오류 발생: ' + (err.message || err), 'crimson');
-      }
-    }
-
-    // 다운로드 링크 복사 (토큰 포함 X, 링크만)
-    function copyMobileLink() {
-      const base = (document.getElementById('mobileApiBase') || {}).value || '';
-      const key = (document.getElementById('mobileFileKey') || {}).value || '';
-      if (!base || !key) { showMobileMsg('주소와 키를 입력한 뒤 시도하세요.', 'crimson'); return; }
-      const url = base.replace(/\/$/,'') + '/api/download?key=' + encodeURIComponent(key);
-      navigator.clipboard.writeText(url).then(() => {
-        showMobileMsg('다운로드 링크가 클립보드에 복사되었습니다. 모바일에 붙여넣어 열면 됩니다.', 'green');
-      }).catch(()=> {
-        showMobileMsg('링크 복사 실패 — 수동으로 복사해 주세요: ' + url, 'crimson');
-      });
-    }
-
-    // 초기 로드 시 UI에 저장값 반영
-    loadMobileSettingsToUI();
-
   </script>
 </body>
 </html>
