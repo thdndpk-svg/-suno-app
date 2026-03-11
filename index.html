@@ -25,7 +25,7 @@
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      font-family:"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
       color:var(--text);
       background:
         radial-gradient(circle at top left, #ffe8f4 0%, transparent 32%),
@@ -145,34 +145,6 @@
       box-shadow:0 0 0 4px rgba(216,75,91,0.12);
     }
 
-    .server-tools{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      gap:8px;
-    }
-
-    .mini-btn,.tab-btn,.action-btn,.soft-btn,.danger-btn,.primary-btn{
-      border:none;
-      cursor:pointer;
-      transition:.18s ease;
-      font-weight:700;
-      border-radius:14px;
-    }
-
-    .mini-btn{
-      padding:12px 14px;
-      background:#fff;
-      color:#5f6580;
-      border:1px solid #edf0f7;
-      box-shadow:var(--shadow);
-      font-size:14px;
-    }
-
-    .mini-btn:hover,.tab-btn:hover,.action-btn:hover,.soft-btn:hover,.danger-btn:hover,.primary-btn:hover{
-      transform:translateY(-1px);
-    }
-
     .compact-status{
       width:100%;
       max-width:380px;
@@ -204,6 +176,15 @@
       color:#6b7090;
       box-shadow:var(--shadow);
       font-size:15px;
+      border:none;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .tab-btn:hover{
+      transform:translateY(-1px);
     }
 
     .tab-btn.active{
@@ -247,6 +228,18 @@
       display:flex;
       flex-wrap:wrap;
       gap:10px;
+    }
+
+    .action-btn,.mini-btn,.soft-btn,.danger-btn,.primary-btn,.tiny-btn{
+      border:none;
+      cursor:pointer;
+      transition:.18s ease;
+      font-weight:700;
+      border-radius:14px;
+    }
+
+    .action-btn:hover,.mini-btn:hover,.soft-btn:hover,.danger-btn:hover,.primary-btn:hover,.tiny-btn:hover{
+      transform:translateY(-1px);
     }
 
     .action-btn{
@@ -349,6 +342,15 @@
       border:1px solid #ffd9e0;
     }
 
+    .mini-btn{
+      padding:11px 14px;
+      background:#fff;
+      color:#5f6580;
+      border:1px solid #edf0f7;
+      box-shadow:var(--shadow);
+      font-size:14px;
+    }
+
     .chip-status{
       display:inline-flex;
       align-items:center;
@@ -374,6 +376,31 @@
       font-weight:800;
       color:#6980c1;
       margin-bottom:12px;
+    }
+
+    .right-top-tools{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-bottom:16px;
+    }
+
+    .tool-button-wrap{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .short-status{
+      background:#f9fbff;
+      border:1px solid #ebeff8;
+      color:#67708c;
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:13px;
+      min-height:40px;
+      display:flex;
+      align-items:center;
     }
 
     .progress-list{
@@ -432,11 +459,17 @@
       transition:width .3s ease;
     }
 
-    .checklist label{
+    .checklist-simple{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding-top:2px;
+    }
+
+    .checklist-simple label{
       display:flex;
       align-items:center;
       gap:10px;
-      padding:7px 0;
       font-weight:600;
       color:#5e6684;
     }
@@ -463,7 +496,7 @@
 
     .song-item{
       display:grid;
-      grid-template-columns: 32px 1fr auto;
+      grid-template-columns:32px 1fr auto;
       align-items:center;
       gap:12px;
       background:#fff;
@@ -500,11 +533,7 @@
     }
 
     .tiny-btn{
-      border:none;
       padding:8px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:700;
       background:#eef4ff;
       color:#5b6fbb;
     }
@@ -523,20 +552,20 @@
       background:#fcfdff;
     }
 
-    @media (max-width: 1100px){
+    @media (max-width:1100px){
       .page-grid{
         grid-template-columns:1fr;
       }
       .hero-right{
         align-items:flex-start;
       }
-      .server-tools,.compact-status{
+      .compact-status{
         justify-content:flex-start;
         text-align:left;
       }
     }
 
-    @media (max-width: 720px){
+    @media (max-width:720px){
       body{padding:10px}
       h1{font-size:23px}
       .row,.triple{
@@ -547,9 +576,6 @@
       }
       .card{
         padding:14px;
-      }
-      .tab-btn,.mini-btn,.action-btn,.soft-btn,.danger-btn,.primary-btn{
-        font-size:14px;
       }
       .song-item{
         grid-template-columns:28px 1fr;
@@ -581,16 +607,6 @@
             <span id="aiStatusText">AI OFFLINE</span>
           </div>
 
-          <div class="server-tools">
-            <button class="mini-btn" id="checkServerBtn">서버 상태 확인</button>
-            <button class="mini-btn" id="downloadTestBtn">다운로드 테스트</button>
-            <button class="mini-btn" id="mobileCheckBtn">모바일 연결 확인</button>
-          </div>
-
-          <div class="server-tools">
-            <button class="mini-btn" id="githubCleanBtn">GitHub: 파일 한 번에 지우기</button>
-          </div>
-
           <div class="compact-status" id="topMiniStatus">준비됨</div>
         </div>
       </div>
@@ -611,7 +627,7 @@
           <button class="action-btn" id="connectBlogAiBtn">블로그 AI 연결</button>
           <button class="action-btn primary" id="makeBlogDraftBtn">블로그 초안 제작</button>
         </div>
-        <div class="compact-status" id="blogMiniStatus" style="margin-top:12px; max-width:none; justify-content:flex-start; text-align:left;">대기중</div>
+        <div class="compact-status" id="blogMiniStatus" style="margin-top:12px;max-width:none;justify-content:flex-start;text-align:left;">대기중</div>
       </div>
     </section>
 
@@ -764,6 +780,16 @@
       </div>
 
       <div class="card">
+        <div class="right-top-tools">
+          <div class="tool-button-wrap">
+            <button class="mini-btn" id="connectAiBtn">AI 연결</button>
+            <button class="mini-btn" id="checkServerBtn">서버 상태 확인</button>
+            <button class="mini-btn" id="downloadTestBtn">다운로드 테스트</button>
+            <button class="mini-btn" id="mobileCheckBtn">모바일 연결 확인</button>
+          </div>
+          <div class="short-status" id="rightShortStatus">준비됨</div>
+        </div>
+
         <h2>작업 진행 상태</h2>
 
         <div class="progress-list">
@@ -796,7 +822,7 @@
 
         <div class="section-box">
           <div class="section-title">최종 체크리스트</div>
-          <div class="checklist">
+          <div class="checklist-simple">
             <label><input type="checkbox" id="checkTitle"> Title 확인</label>
             <label><input type="checkbox" id="checkStyle"> Style 확인</label>
             <label><input type="checkbox" id="checkLyrics"> Lyrics 확인</label>
@@ -820,6 +846,7 @@
     const logBox = document.getElementById('logBox');
     const topMiniStatus = document.getElementById('topMiniStatus');
     const blogMiniStatus = document.getElementById('blogMiniStatus');
+    const rightShortStatus = document.getElementById('rightShortStatus');
     const mainStatusChip = document.getElementById('mainStatusChip');
     const meterFill = document.getElementById('meterFill');
 
@@ -830,9 +857,16 @@
     function appendLog(message) {
       const now = new Date();
       const time = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      const prev = logBox.textContent.trim() === '여기에 분석 로그와 작업 로그가 표시됩니다.' ? '' : logBox.textContent + '\n';
+      const baseText = '여기에 분석 로그와 작업 로그가 표시됩니다.';
+      const prev = logBox.textContent.trim() === baseText ? '' : logBox.textContent + '\n';
       logBox.textContent = `${prev}[${time}] ${message}`;
       logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function appendSimpleLog(message) {
+      const now = new Date();
+      const time = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+      logBox.textContent = `[${time}] ${message}`;
     }
 
     function setStep(id, text) {
@@ -851,6 +885,12 @@
       setStep('step4', '대기중');
       setStep('step5', '대기중');
       updateProgress(0);
+      document.getElementById('checkTitle').checked = false;
+      document.getElementById('checkStyle').checked = false;
+      document.getElementById('checkLyrics').checked = false;
+      document.getElementById('checkSuno').checked = false;
+      document.getElementById('checkMp3').checked = false;
+      document.getElementById('checkEdit').checked = false;
     }
 
     function getLyricsLanguage() {
@@ -926,6 +966,15 @@
       return pickRandom(patterns);
     }
 
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
     function renderSongs() {
       if (!state.generatedSongs.length) {
         songListEl.innerHTML = '<div class="empty-box">아직 생성된 곡이 없습니다.</div>';
@@ -945,15 +994,6 @@
           </div>
         </div>
       `).join('');
-    }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;');
     }
 
     function createSongs(count) {
@@ -1031,9 +1071,8 @@
 
     document.getElementById('connectBlogAiBtn').addEventListener('click', async () => {
       setMiniStatus(blogMiniStatus, 'AI 연결 확인 중...');
-      const ok = await refreshAiStatus();
+      const ok = await connectOrCheckAi();
       setMiniStatus(blogMiniStatus, ok ? 'AI 연결됨' : 'AI 연결 안됨');
-      appendLog(ok ? '블로그용 AI 연결을 확인했습니다.' : '블로그용 AI 연결 실패 상태입니다.');
     });
 
     document.getElementById('makeBlogDraftBtn').addEventListener('click', async () => {
@@ -1043,33 +1082,28 @@
       appendLog('블로그 초안 생성을 완료했습니다.');
     });
 
+    document.getElementById('connectAiBtn').addEventListener('click', async () => {
+      setMiniStatus(rightShortStatus, 'AI 연결 시도 중...');
+      const ok = await connectOrCheckAi();
+      setMiniStatus(rightShortStatus, ok ? 'AI 연결됨' : 'AI 연결 실패');
+      setMiniStatus(topMiniStatus, ok ? 'AI 연결 완료' : 'AI 연결 실패');
+    });
+
     document.getElementById('checkServerBtn').addEventListener('click', async () => {
-      setMiniStatus(topMiniStatus, '서버 확인 중...');
+      setMiniStatus(rightShortStatus, '서버 확인 중...');
       const ok = await refreshAiStatus();
-      setMiniStatus(topMiniStatus, ok ? '서버 정상' : '서버 연결 안됨');
-      appendLog(ok ? '서버 상태를 확인했습니다. 정상입니다.' : '서버 상태를 확인했습니다. 연결되지 않았습니다.');
+      setMiniStatus(rightShortStatus, ok ? '서버 정상' : '서버 연결 안됨');
+      appendSimpleLog(ok ? '서버 정상' : '서버 연결 안됨');
     });
 
     document.getElementById('downloadTestBtn').addEventListener('click', () => {
-      setMiniStatus(topMiniStatus, '다운로드 테스트 실행');
-      appendLog('다운로드 테스트 버튼을 눌렀습니다.');
+      setMiniStatus(rightShortStatus, '다운로드 테스트 실행');
+      appendSimpleLog('다운로드 테스트 실행');
     });
 
     document.getElementById('mobileCheckBtn').addEventListener('click', () => {
-      setMiniStatus(topMiniStatus, '모바일 연결 확인');
-      appendLog('모바일 연결 확인을 실행했습니다.');
-    });
-
-    document.getElementById('githubCleanBtn').addEventListener('click', async () => {
-      const text = 'git rm -r --cached . && git add . && git commit -m "clean"';
-      try {
-        await navigator.clipboard.writeText(text);
-        setMiniStatus(topMiniStatus, 'GitHub 명령 복사 완료');
-        appendLog('GitHub 파일 정리 명령이 클립보드에 복사되었습니다.');
-      } catch {
-        setMiniStatus(topMiniStatus, '명령 복사 실패');
-        appendLog('클립보드 복사에 실패했습니다.');
-      }
+      setMiniStatus(rightShortStatus, '모바일 연결 확인');
+      appendSimpleLog('모바일 연결 확인');
     });
 
     document.getElementById('voiceBtn').addEventListener('click', () => {
@@ -1079,7 +1113,7 @@
 
     document.getElementById('helpBtn').addEventListener('click', () => {
       setMiniStatus(topMiniStatus, '간단 설명 표시');
-      appendLog('설명: 실행을 누르면 설정에 맞춰 곡 제목과 생성 목록이 만들어집니다.');
+      appendSimpleLog('설명: 실행을 누르면 설정에 맞춰 곡 제목과 생성 목록이 만들어집니다.');
     });
 
     document.getElementById('saveProjectBtn').addEventListener('click', () => {
@@ -1185,6 +1219,31 @@
         text.textContent = 'AI OFFLINE';
         return false;
       }
+    }
+
+    async function tryAiConnectRequest() {
+      try {
+        const res = await fetch('/api/connect-ai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ connect: true })
+        });
+        return res.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async function connectOrCheckAi() {
+      let ok = await refreshAiStatus();
+      if (ok) return true;
+
+      const tried = await tryAiConnectRequest();
+      if (!tried) return false;
+
+      await wait(700);
+      ok = await refreshAiStatus();
+      return ok;
     }
 
     async function init() {
