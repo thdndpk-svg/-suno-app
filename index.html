@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v24 Optimized</title>
+  <title>AI Music Auto Studio v25 Final</title>
   <style>
     :root{
       --bg1:#f8f5ff;
@@ -14,8 +14,6 @@
       --red:#d84b5b;
       --shadow:0 10px 30px rgba(114, 132, 181, 0.12);
       --line:#e7ebf5;
-      --soft:#edf5ff;
-      --card:#ffffffcc;
     }
 
     *{box-sizing:border-box}
@@ -177,6 +175,7 @@
       transition:.18s ease;
       font-weight:700;
       border-radius:14px;
+      font-family:inherit;
     }
 
     .mini-btn:hover,.tab-btn:hover,.action-btn:hover,.soft-btn:hover,.danger-btn:hover,.primary-btn:hover,.tiny-btn:hover{
@@ -260,6 +259,7 @@
       border-radius:26px;
       box-shadow:var(--shadow);
       padding:18px;
+      min-width:0;
     }
 
     .card h2{
@@ -302,6 +302,7 @@
       padding:14px 14px;
       font-size:15px;
       outline:none;
+      font-family:inherit;
     }
 
     textarea{
@@ -382,6 +383,13 @@
       font-weight:800;
       color:#6980c1;
       margin-bottom:12px;
+    }
+
+    .section-desc{
+      margin:-4px 0 12px;
+      color:#75809d;
+      font-size:13px;
+      line-height:1.5;
     }
 
     .progress-list{
@@ -544,6 +552,31 @@
       background:#fcfdff;
     }
 
+    .auto-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .full-row{
+      grid-column:1 / -1;
+    }
+
+    .mode-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid #e6ecf7;
+      background:#f8fbff;
+      color:#69718d;
+      font-size:13px;
+      min-height:42px;
+      width:100%;
+      text-align:center;
+    }
+
     .mobile-only{ display:none; }
 
     @media (max-width: 1100px){
@@ -607,7 +640,7 @@
         font-size:14px;
       }
 
-      .row,.triple{
+      .row,.triple,.auto-grid{
         grid-template-columns:1fr;
       }
 
@@ -684,15 +717,15 @@
         <div class="brand">
           <div class="brand-icon">🎀</div>
           <div>
-            <h1>AI Music Auto Studio v24 Optimized</h1>
-            <div class="subtitle">AI 연결 · 빠른 복사 · 곡 관리 · 모바일 최적화 · 작업 흐름 관리</div>
+            <h1>AI Music Auto Studio v25 Final</h1>
+            <div class="subtitle">AI 연결 · 수노 자동/수동 듀얼모드 · 빠른 복사 · 곡 관리 · 모바일 최적화</div>
           </div>
         </div>
 
         <div class="hero-right">
           <div class="flow-badge">
-            <span class="desktop-flow">실행 → 노래 제작 → Suno 제작 → mp3 저장 → 노래 편집 시작</span>
-            <span class="mobile-only">실행 → 노래 제작 → Suno → mp3 → 편집</span>
+            <span class="desktop-flow">실행 → 노래 제작 → 수노 자동입력/수동입력 → mp3 저장 → 노래 편집 시작</span>
+            <span class="mobile-only">실행 → 노래 제작 → 수노 → mp3 → 편집</span>
           </div>
 
           <div class="ai-top-row">
@@ -737,7 +770,6 @@
           <textarea id="promptInput" placeholder="예: 비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘&#10;예: 중간에 랩이 들어가는 힙합 8곡 만들어줘&#10;예: 1번곡 조금 더 경쾌하게 만들어줘"></textarea>
         </div>
 
-        <!-- 요청하신 위치: 텍스트 지시창 바로 밑 -->
         <div class="toolbar">
           <button class="soft-btn" id="voiceBtn">음성</button>
           <button class="primary-btn" id="runBtn">실행</button>
@@ -761,24 +793,40 @@
           </div>
         </div>
 
+        <!-- 프로젝트 불러오기 대신 자동/수동 수노 제어창 -->
         <div class="section-box">
-          <div class="section-title">프로젝트 저장 / 불러오기</div>
+          <div class="section-title">수노 자동 / 수동 제어</div>
+          <div class="section-desc">프로젝트 불러오기 대신 수노 자동입력, 생성, 다운로드, 수동 백업 기능을 넣었습니다.</div>
+
           <div class="row">
             <div>
-              <label class="label" for="projectName">프로젝트 이름</label>
-              <input id="projectName" type="text" placeholder="예: 비오는날_발라드_10곡" />
+              <label class="label" for="sunoTitleInput">수노 제목</label>
+              <input id="sunoTitleInput" type="text" placeholder="자동 생성 제목 또는 직접 입력" />
             </div>
             <div>
-              <label class="label" for="projectSelect">저장된 프로젝트</label>
-              <select id="projectSelect">
-                <option>저장된 프로젝트 없음</option>
-              </select>
+              <label class="label" for="sunoStyleInput">수노 스타일</label>
+              <input id="sunoStyleInput" type="text" placeholder="예: emotional korean ballad, female vocal" />
             </div>
           </div>
-          <div class="toolbar" style="margin-bottom:0;">
-            <button class="soft-btn" id="saveProjectBtn">저장</button>
-            <button class="soft-btn" id="loadProjectBtn">불러오기</button>
-            <button class="danger-btn" id="deleteProjectBtn">삭제</button>
+
+          <label class="label" for="sunoLyricsInput" style="margin-top:12px;">수노 가사</label>
+          <textarea id="sunoLyricsInput" placeholder="수노 Custom mode용 가사 입력칸입니다. 빠른 복사창 내용 또는 직접 작성한 가사가 들어갑니다."></textarea>
+
+          <div class="toolbar" style="margin-bottom:10px;">
+            <button class="soft-btn" id="prepareSunoDataBtn">수노 데이터 준비</button>
+            <span class="mode-badge" id="sunoModeStatus">모드: 자동 + 수동 백업 준비</span>
+          </div>
+
+          <div class="auto-grid">
+            <button class="primary-btn" id="autoFillBtn">자동입력</button>
+            <button class="primary-btn" id="autoGenerateBtn">자동입력 + 생성</button>
+            <button class="soft-btn" id="autoDownloadBtn">다운로드 클릭</button>
+            <button class="soft-btn" id="manualOpenBtn">수노 열기</button>
+            <button class="soft-btn" id="manualCopyBtn">수동 복사</button>
+            <button class="soft-btn" id="manualNextCopyBtn">다음 복사</button>
+            <button class="soft-btn" id="manualGenerateGuideBtn">수동 생성 안내</button>
+            <button class="soft-btn" id="manualDownloadGuideBtn">수동 다운로드 안내</button>
+            <button class="danger-btn full-row" id="switchManualModeBtn">자동 실패시 수동 모드 전환</button>
           </div>
         </div>
 
@@ -953,7 +1001,9 @@
     const state = {
       generatedSongs: [],
       copyIndex: 0,
-      copyItems: []
+      copyItems: [],
+      sunoMode: 'auto',
+      sunoPayload: null
     };
 
     const songListEl = document.getElementById('songList');
@@ -962,6 +1012,7 @@
     const blogMiniStatus = document.getElementById('blogMiniStatus');
     const mainStatusChip = document.getElementById('mainStatusChip');
     const meterFill = document.getElementById('meterFill');
+    const sunoModeStatus = document.getElementById('sunoModeStatus');
 
     function setMiniStatus(target, message) {
       if (target) target.textContent = message;
@@ -1191,6 +1242,58 @@ ${genre}, ${mood}, ${vocalType}, ${lang}, ${songLength}, ${styleStrength}`,
       }
     }
 
+    function buildSunoPayload() {
+      const firstSong = state.generatedSongs[0] || {};
+      const genre = document.getElementById('genre').value;
+      const mood = document.getElementById('mood').value;
+      const vocalType = document.getElementById('vocalType').value;
+      const lang = document.getElementById('lyricsLanguage').value;
+      const promptText = document.getElementById('promptInput').value.trim();
+      const quickText = document.getElementById('quickCopyInput').value.trim();
+      const songTitle = firstSong.title || makeSongTitle(1);
+      const style = `${genre}, ${mood}, ${vocalType}, ${lang}`.replace(/\s+/g, ' ').trim();
+      const lyrics = quickText || promptText || '여기에 수노 가사가 들어갑니다.';
+
+      const payload = {
+        title: songTitle,
+        style,
+        lyrics
+      };
+
+      state.sunoPayload = payload;
+      return payload;
+    }
+
+    function fillSunoFields(payload) {
+      document.getElementById('sunoTitleInput').value = payload.title || '';
+      document.getElementById('sunoStyleInput').value = payload.style || '';
+      document.getElementById('sunoLyricsInput').value = payload.lyrics || '';
+    }
+
+    function saveSunoPayloadLocal(payload) {
+      try {
+        localStorage.setItem('SUNO_PAYLOAD', JSON.stringify(payload));
+      } catch {}
+    }
+
+    function setSunoMode(mode) {
+      state.sunoMode = mode;
+      if (mode === 'manual') {
+        sunoModeStatus.textContent = '모드: 수동 백업 사용중';
+      } else {
+        sunoModeStatus.textContent = '모드: 자동 + 수동 백업 준비';
+      }
+    }
+
+    async function prepareSunoData() {
+      const payload = buildSunoPayload();
+      fillSunoFields(payload);
+      saveSunoPayloadLocal(payload);
+      setMiniStatus(topMiniStatus, '수노 데이터 준비 완료');
+      appendLog('수노 자동입력용 제목, 스타일, 가사 데이터를 준비했습니다.');
+      return payload;
+    }
+
     window.deleteSong = function(id) {
       state.generatedSongs = state.generatedSongs.filter(song => song.id !== id);
       renderSongs();
@@ -1238,6 +1341,9 @@ ${genre}, ${mood}, ${vocalType}, ${lang}, ${songLength}, ${styleStrength}`,
       renderSongs();
       buildCopyItems();
       showCopyItem(0);
+      document.getElementById('sunoTitleInput').value = '';
+      document.getElementById('sunoStyleInput').value = '';
+      document.getElementById('sunoLyricsInput').value = '';
       setMiniStatus(topMiniStatus, `전체 곡 ${count}개 삭제`);
       appendLog(`생성된 곡 ${count}개를 모두 삭제했습니다.`);
     });
@@ -1299,22 +1405,7 @@ ${genre}, ${mood}, ${vocalType}, ${lang}, ${songLength}, ${styleStrength}`,
 
     document.getElementById('helpBtn').addEventListener('click', () => {
       setMiniStatus(topMiniStatus, '간단 설명 표시');
-      appendLog('설명: 실행을 누르면 설정에 맞춰 곡 제목과 생성 목록이 만들어집니다.');
-    });
-
-    document.getElementById('saveProjectBtn').addEventListener('click', () => {
-      setMiniStatus(topMiniStatus, '프로젝트 저장');
-      appendLog('프로젝트 저장 버튼을 눌렀습니다.');
-    });
-
-    document.getElementById('loadProjectBtn').addEventListener('click', () => {
-      setMiniStatus(topMiniStatus, '프로젝트 불러오기');
-      appendLog('프로젝트 불러오기 버튼을 눌렀습니다.');
-    });
-
-    document.getElementById('deleteProjectBtn').addEventListener('click', () => {
-      setMiniStatus(topMiniStatus, '프로젝트 삭제');
-      appendLog('프로젝트 삭제 버튼을 눌렀습니다.');
+      appendLog('설명: 실행 후 수노 데이터 준비를 누르면 제목, 스타일, 가사가 자동으로 채워집니다. 자동 실패 시 수동 모드 버튼을 사용하세요.');
     });
 
     document.getElementById('nextCopyBtn').addEventListener('click', async () => {
@@ -1360,6 +1451,92 @@ ${genre}, ${mood}, ${vocalType}, ${lang}, ${songLength}, ${styleStrength}`,
       appendLog('영상 제작 버튼을 눌렀습니다.');
     });
 
+    document.getElementById('prepareSunoDataBtn').addEventListener('click', async () => {
+      await prepareSunoData();
+    });
+
+    document.getElementById('autoFillBtn').addEventListener('click', async () => {
+      const payload = await prepareSunoData();
+      setSunoMode('auto');
+      appendLog(`자동입력 준비 완료: Title="${payload.title}" / Style="${payload.style}"`);
+      setMiniStatus(topMiniStatus, '자동입력 준비 완료');
+    });
+
+    document.getElementById('autoGenerateBtn').addEventListener('click', async () => {
+      const payload = await prepareSunoData();
+      setSunoMode('auto');
+      window.open('https://suno.com/create', '_blank');
+      document.getElementById('checkTitle').checked = true;
+      document.getElementById('checkStyle').checked = true;
+      document.getElementById('checkLyrics').checked = true;
+      document.getElementById('checkSuno').checked = true;
+      appendLog(`자동입력 + 생성 시작: "${payload.title}" 데이터를 기준으로 수노 자동 생성 흐름을 준비했습니다.`);
+      setMiniStatus(topMiniStatus, '자동입력 + 생성 준비');
+    });
+
+    document.getElementById('autoDownloadBtn').addEventListener('click', () => {
+      document.getElementById('checkMp3').checked = true;
+      appendLog('다운로드 클릭 보조 단계를 실행했습니다. 확장프로그램 연동 시 다운로드 클릭 단계에 사용합니다.');
+      setMiniStatus(topMiniStatus, '다운로드 단계 준비');
+    });
+
+    document.getElementById('manualOpenBtn').addEventListener('click', () => {
+      setSunoMode('manual');
+      window.open('https://suno.com/create', '_blank');
+      appendLog('수동 모드로 수노 창을 열었습니다.');
+      setMiniStatus(topMiniStatus, '수동 모드: 수노 열기');
+    });
+
+    document.getElementById('manualCopyBtn').addEventListener('click', async () => {
+      const payload = await prepareSunoData();
+      const text = `제목: ${payload.title}\n스타일: ${payload.style}\n가사:\n${payload.lyrics}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        setSunoMode('manual');
+        appendLog('수동 입력용 제목/스타일/가사를 한 번에 복사했습니다.');
+        setMiniStatus(topMiniStatus, '수동 입력용 복사 완료');
+      } catch {
+        setMiniStatus(topMiniStatus, '복사 실패');
+        appendLog('수동 입력용 데이터 복사에 실패했습니다.');
+      }
+    });
+
+    document.getElementById('manualNextCopyBtn').addEventListener('click', async () => {
+      setSunoMode('manual');
+      buildCopyItems();
+      showCopyItem(state.copyIndex + 1);
+      await copyQuickText();
+      appendLog('수동 모드에서 다음 복사 항목으로 이동했습니다.');
+    });
+
+    document.getElementById('manualGenerateGuideBtn').addEventListener('click', async () => {
+      setSunoMode('manual');
+      const payload = await prepareSunoData();
+      appendLog(`수동 생성 안내:
+1. 수노 Custom mode 열기
+2. 제목 입력: ${payload.title}
+3. 스타일 입력
+4. 가사 붙여넣기
+5. Create/Generate 클릭`);
+      setMiniStatus(topMiniStatus, '수동 생성 안내 표시');
+    });
+
+    document.getElementById('manualDownloadGuideBtn').addEventListener('click', () => {
+      setSunoMode('manual');
+      appendLog(`수동 다운로드 안내:
+1. 곡 생성 완료 확인
+2. Download 또는 mp3 버튼 클릭
+3. 저장 확인
+4. 다음 곡으로 진행`);
+      setMiniStatus(topMiniStatus, '수동 다운로드 안내 표시');
+    });
+
+    document.getElementById('switchManualModeBtn').addEventListener('click', () => {
+      setSunoMode('manual');
+      appendLog('자동 실패를 대비해 수동 모드로 전환했습니다. 수동 복사와 수동 생성 안내 버튼을 사용하세요.');
+      setMiniStatus(topMiniStatus, '수동 모드 전환 완료');
+    });
+
     async function runGenerateFlow() {
       const count = Number(document.getElementById('songCount').value || 1);
       const lang = getLyricsLanguage();
@@ -1380,6 +1557,7 @@ ${genre}, ${mood}, ${vocalType}, ${lang}, ${songLength}, ${styleStrength}`,
       createSongs(count);
       buildCopyItems();
       showCopyItem(0);
+      await prepareSunoData();
 
       document.getElementById('checkTitle').checked = true;
       document.getElementById('checkStyle').checked = true;
@@ -1458,6 +1636,8 @@ ${genre}, ${mood}, ${vocalType}, ${lang}, ${songLength}, ${styleStrength}`,
       resetProgressUI();
       buildCopyItems();
       showCopyItem(0);
+      setSunoMode('auto');
+      await prepareSunoData();
       await refreshAiStatus();
       setInterval(refreshAiStatus, 10000);
     }
