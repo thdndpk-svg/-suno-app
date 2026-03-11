@@ -2,313 +2,931 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Music Auto Studio v22 (간편 모드)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Music Auto Studio v22 Final</title>
   <style>
-    /* (기존 스타일 대부분 유지 — 상단 컨트롤 강조용만 약간 수정) */
-    :root { --bg:#f4f7ff; --card:#ffffffcc; --text:#334155; --accent:#6b5ca5; --muted:#718096; }
-    html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#f7f4ff,#eef4ff);color:var(--text);min-height:100vh;}
-    .wrap{max-width:1400px;margin:18px auto;padding:18px;box-sizing:border-box;}
-    .top-controls{background:var(--card);padding:12px;border-radius:14px;border:1px solid rgba(120,130,160,0.08);display:flex;gap:8px;align-items:center;flex-wrap:wrap;box-shadow:0 8px 20px rgba(90,100,130,0.06);}
-    .top-controls input[type="text"]{padding:8px 10px;border-radius:8px;border:1px solid rgba(120,130,160,0.12);min-width:200px;}
-    .top-controls .btn{padding:8px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:600;}
-    .btn-primary{background:linear-gradient(135deg,#8ecbff,#7aa8ff);color:white}
-    .btn-soft{background:#fff;border:1px solid rgba(120,130,160,0.08)}
-    .status-box{margin-left:auto;padding:8px 12px;border-radius:10px;background:#f7fff7;border:1px solid rgba(10,120,80,0.08);color:#065f46;font-weight:700}
-    .main{display:grid;grid-template-columns:1fr 380px;gap:18px;margin-top:14px;}
-    .card{background:var(--card);padding:16px;border-radius:14px;border:1px solid rgba(120,130,160,0.06);box-shadow:0 10px 26px rgba(100,110,160,0.05)}
-    .section-title{font-weight:700;color:var(--accent);margin-bottom:8px}
-    .small-muted{color:var(--muted);font-size:13px}
-    .controls-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
-    .result-area{margin-top:10px;padding:10px;border-radius:10px;background:#fff;border:1px dashed rgba(120,130,160,0.06);min-height:44px;white-space:pre-wrap;color:#334155}
-    .track-list{margin-top:12px;display:grid;gap:10px}
-    .track-item{padding:10px;border-radius:10px;background:#fff}
-    .checkbox{display:inline-flex;gap:6px;align-items:center}
-    @media(max-width:980px){ .main{grid-template-columns:1fr} .status-box{margin-left:0} .top-controls{flex-direction:column;align-items:stretch} }
+    * { box-sizing: border-box; min-width: 0; }
+    :root{
+      --bg1:#f7f4ff; --bg2:#eef4ff; --bg3:#eaf7ff;
+      --card:rgba(255,255,255,0.92); --card-strong:rgba(255,255,255,0.97);
+      --line:rgba(148,163,184,0.28); --text:#334155; --sub:#64748b; --muted:#94a3b8;
+      --shadow:0 18px 40px rgba(99,102,241,0.12); --shadow-strong:0 18px 50px rgba(71,85,105,0.16);
+      --radius:18px;
+    }
+    html, body { width:100%; max-width:100%; overflow-x:hidden; }
+    body{
+      margin:0; font-family:Arial,sans-serif; color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255,182,214,0.25), transparent 24%),
+        radial-gradient(circle at top right, rgba(142,203,255,0.22), transparent 22%),
+        linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3));
+      min-height:100vh; position:relative;
+    }
+    .bg-wrap{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+    .bubble{ position:absolute; border-radius:50%; opacity:.38; filter:blur(1px); animation:floatUp linear infinite; }
+    .bubble.b1{ width:120px;height:120px; left:5%; bottom:-140px; background:radial-gradient(circle,#ffd7e6,transparent 70%); animation-duration:16s; }
+    .bubble.b2{ width:180px;height:180px; left:18%; bottom:-180px; background:radial-gradient(circle,#d9e8ff,transparent 70%); animation-duration:22s; animation-delay:2s; }
+    .bubble.b3{ width:100px;height:100px; left:36%; bottom:-130px; background:radial-gradient(circle,#d8fff5,transparent 70%); animation-duration:18s; animation-delay:1s; }
+    .bubble.b4{ width:210px;height:210px; left:55%; bottom:-220px; background:radial-gradient(circle,#f1ddff,transparent 70%); animation-duration:24s; animation-delay:3s; }
+    .bubble.b5{ width:130px;height:130px; left:73%; bottom:-150px; background:radial-gradient(circle,#ffe8b5,transparent 70%); animation-duration:17s; animation-delay:4s; }
+    .bubble.b6{ width:170px;height:170px; left:88%; bottom:-190px; background:radial-gradient(circle,#d7f1ff,transparent 70%); animation-duration:20s; animation-delay:1.5s; }
+    .star{ position:absolute; width:18px; height:18px; background:linear-gradient(135deg,#fff,#ffe3f0); clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); opacity:.6; animation:twinkle 3s ease-in-out infinite; }
+    .star.s1{ top:8%; left:10%; animation-delay:0s; } .star.s2{ top:18%; left:84%; animation-delay:1s; } .star.s3{ top:40%; left:6%; animation-delay:2s; } .star.s4{ top:62%; left:92%; animation-delay:1.4s; } .star.s5{ top:78%; left:20%; animation-delay:.7s; }
+    @keyframes floatUp{ 0%{ transform:translateY(0) translateX(0) scale(1); opacity:0; } 10%{ opacity:.38; } 50%{ transform:translateY(-50vh) translateX(20px) scale(1.05); } 100%{ transform:translateY(-120vh) translateX(-20px) scale(1.1); opacity:0; } }
+    @keyframes twinkle{ 0%,100%{ transform:scale(1) rotate(0deg); opacity:.4; } 50%{ transform:scale(1.2) rotate(12deg); opacity:.9; } }
+
+    .wrap{ width:100%; max-width:1500px; margin:0 auto; padding:16px; position:relative; z-index:1; }
+    .hero{ background:linear-gradient(135deg, rgba(255,255,255,.88), rgba(248,250,255,.82)); border:1px solid rgba(148,163,184,0.24); border-radius:24px; padding:18px; box-shadow:var(--shadow-strong); margin-bottom:18px; position:relative; overflow:hidden; backdrop-filter:blur(16px); max-width:100%; }
+    .hero::after{ content:""; position:absolute; right:-30px; top:-20px; width:160px; height:160px; background:radial-gradient(circle, rgba(255,193,212,.45), transparent 65%); pointer-events:none; }
+    .topbar{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; min-width:0; }
+    .title-wrap{ display:flex; align-items:flex-start; gap:12px; min-width:0; flex:1; }
+    .mascot{ width:68px; height:68px; border-radius:20px; background:linear-gradient(135deg,#ffd1e2,#b9e4ff); display:flex; align-items:center; justify-content:center; font-size:30px; box-shadow:0 14px 26px rgba(255, 182, 214, 0.25); border:1px solid rgba(255,255,255,.95); flex-shrink:0; }
+    .title{ min-width:0; }
+    .title h1{ margin:0; font-size:30px; color:#5b5bd6; letter-spacing:-0.4px; line-height:1.2; word-break:break-word; }
+    .title p{ margin:8px 0 0; color:var(--sub); line-height:1.6; font-size:14px; max-width:760px; word-break:break-word; }
+    .hero-right{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; min-width:220px; max-width:100%; }
+
+    .badge{ background:linear-gradient(135deg,#ffd9e8,#dff4ff); color:#6b5ca5; padding:10px 12px; border-radius:999px; font-size:12px; border:1px solid rgba(255,255,255,0.9); box-shadow:0 8px 22px rgba(255, 182, 214, 0.16); word-break:break-word; text-align:center; }
+    .ai-status{ padding:10px 12px; border-radius:14px; font-size:12px; font-weight:bold; border:1px solid rgba(148,163,184,.18); background:rgba(255,255,255,.92); box-shadow:0 6px 14px rgba(148,163,184,.08); text-align:center; min-width:180px; max-width:100%; }
+    .ai-offline{ color:#dc2626; } .ai-online{ color:#059669; } .ai-working{ color:#d97706; }
+
+    .menu-bar{ display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 0; min-width:0; }
+    .menu-btn{ padding:10px 14px; border-radius:12px; border:1px solid rgba(148,163,184,.20); background:rgba(255,255,255,.88); color:#6d6db8; font-weight:bold; cursor:pointer; transition:.2s ease; box-shadow:0 6px 14px rgba(148,163,184,0.08); font-size:14px; }
+    .menu-btn:hover{ transform:translateY(-2px); } .menu-btn.active{ background:linear-gradient(135deg,#ff9fbe,#bda4ff); color:white; border-color:transparent; }
+
+    .grid{ display:grid; grid-template-columns:minmax(0, 1.15fr) minmax(320px, 0.85fr); gap:18px; align-items:start; min-width:0; }
+    .card{ background:var(--card); border:1px solid rgba(148,163,184,0.26); border-radius:18px; padding:16px; box-shadow:var(--shadow-strong); backdrop-filter:blur(12px); max-width:100%; overflow-wrap:break-word; word-break:break-word; }
+    .card h2{ margin:0 0 12px; font-size:18px; color:#6b5ca5; }
+    .section-title{ margin:14px 0 8px; font-size:14px; color:#5f84d8; font-weight:bold; }
+    .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; min-width:0; }
+    .triple{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px; min-width:0; }
+    .full{ grid-column:1 / -1; } label{ display:block; margin-bottom:8px; font-size:13px; color:#64748b; font-weight:bold; }
+
+    input[type="text"], input[type="number"], select, textarea{ width:100%; max-width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(148,163,184,.28); background:rgba(255,255,255,.96); color:var(--text); font-size:14px; outline:none; transition:.2s ease; box-shadow: inset 0 1px 0 rgba(255,255,255,.75); }
+    input:focus, select:focus, textarea:focus{ border-color:#b3c8ff; box-shadow:0 0 0 4px rgba(179,200,255,.28); } textarea{ min-height:84px; resize:vertical; line-height:1.5; }
+
+    .btns{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; min-width:0; } button{ border:none; padding:10px 14px; border-radius:12px; cursor:pointer; font-size:13px; font-weight:bold; transition:.16s ease; box-shadow:0 8px 18px rgba(157, 178, 255, 0.16); } button:hover{ transform:translateY(-2px) scale(1.01); }
+    .primary{ background:linear-gradient(135deg,#8ecbff,#7aa8ff); color:white; } .secondary{ background:linear-gradient(135deg,#fff,#eef4ff); color:#617399; border:1px solid rgba(255,255,255,.95); } .success{ background:linear-gradient(135deg,#8be8d4,#65d8c0); color:white; } .warning{ background:linear-gradient(135deg,#ffd37a,#ffb86c); color:white; } .danger{ background:linear-gradient(135deg,#ff9db5,#ff7f9d); color:white; } .purple{ background:linear-gradient(135deg,#b99cff,#8f8dff); color:white; }
+
+    .listen-box{ margin-top:12px; padding:11px 14px; border-radius:16px; background:rgba(255,255,255,.86); border:1px solid rgba(148,163,184,.22); display:inline-block; font-size:14px; color:#64748b; max-width:100%; }
+    .listening{ color:#ff6a95; font-weight:bold; }
+
+    .check-group{ display:flex; flex-wrap:wrap; gap:10px; min-width:0; }
+    .option{ display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.88); border:1px solid rgba(148,163,184,.20); padding:10px 12px; border-radius:14px; font-size:13px; color:#50627e; min-height:42px; max-width:100%; }
+    .option input{ accent-color:#7aa8ff; flex-shrink:0; }
+
+    details{ margin-top:12px; background:rgba(250,252,255,.96); border:1px solid rgba(148,163,184,.22); border-radius:16px; padding:12px; max-width:100%; } summary{ cursor:pointer; font-weight:bold; color:#6b7fd1; outline:none; list-style:none; } summary::-webkit-details-marker{ display:none; } summary::before{ content:"▸"; display:inline-block; margin-right:8px; transition:transform .2s ease; } details[open] summary::before{ transform:rotate(90deg); }
+
+    .steps{ display:grid; gap:8px; } .step{ padding:10px 12px; border-radius:12px; background:rgba(250,252,255,.96); border:1px solid rgba(148,163,184,.22); display:flex; justify-content:space-between; align-items:center; gap:10px; max-width:100%; }
+    .status{ font-size:11px; padding:6px 9px; border-radius:999px; background:linear-gradient(135deg,#eef4ff,#fff); color:#5f84d8; border:1px solid rgba(148,163,184,.18); flex-shrink:0; }
+    .progress-wrap{ margin-top:12px; } .progress-bar{ height:12px; background:rgba(255,255,255,.88); border-radius:999px; overflow:hidden; border:1px solid rgba(148,163,184,.18); } .progress{ width:8%; height:100%; background:linear-gradient(90deg,#8ecbff,#8be8d4,#b99cff,#ff9db5); }
+
+    .log{ margin-top:10px; padding:12px; background:rgba(255,255,255,.88); border:1px solid rgba(148,163,184,.20); border-radius:14px; min-height:170px; font-size:12px; color:#64748b; line-height:1.6; white-space:pre-line; max-width:100%; overflow-wrap:break-word; word-break:break-word; }
+
+    .output-box, .quick-copy-box, .folder-guide, .help-panel, .save-load-box{ margin-top:12px; padding:12px; border-radius:14px; background:rgba(250,252,255,.96); border:1px solid rgba(148,163,184,.24); box-shadow:0 6px 16px rgba(148,163,184,0.06); max-width:100%; overflow-wrap:break-word; word-break:break-word; }
+    .output-box h3, .save-load-box h3{ margin:0 0 10px; font-size:15px; color:#5f84d8; }
+    .summary-line{ font-size:13px; color:#64748b; line-height:1.7; overflow-wrap:break-word; word-break:break-word; }
+
+    .track-list{ display:grid; gap:12px; margin-top:12px; } .track-item{ padding:14px; border-radius:16px; background:var(--card-strong); border:1px solid rgba(148,163,184,.24); box-shadow:0 10px 22px rgba(99,102,241,0.08); max-width:100%; overflow-wrap:break-word; word-break:break-word; }
+
+    .track-header{ display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; min-width:0; } .track-title{ font-size:17px; font-weight:bold; color:#6b5ca5; } .small{ font-size:12px; color:#94a3b8; word-break:break-word; } .mini-box{ margin-top:8px; padding:10px; border-radius:12px; background:rgba(248,250,255,.98); border:1px solid rgba(148,163,184,.22); max-width:100%; }
+
+    .mini-box strong{ display:block; margin-bottom:6px; color:#5f84d8; font-size:13px; } .mini-text{ font-size:13px; line-height:1.55; color:#4b5563; white-space:pre-wrap; overflow-wrap:break-word; word-break:break-word; }
+
+    .copy-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; min-width:0; } .help-panel{ display:none; color:#5b6575; line-height:1.7; font-size:13px; } .help-panel.show{ display:block; } .help-panel strong{ color:#5668b4; }
+
+    .pill{ display:inline-block; padding:5px 9px; border-radius:999px; background:linear-gradient(135deg,#fff,#f4f8ff); border:1px solid rgba(148,163,184,.14); color:#6b5ca5; font-size:12px; margin:3px 6px 3px 0; }
+
+    .status-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; min-width:0; } .status-chip{ padding:10px 12px; border-radius:14px; background:rgba(255,255,255,.92); border:1px solid rgba(148,163,184,.20); font-size:13px; color:#5b6575; }
+
+    @media (max-width:1100px){ .grid{ grid-template-columns:1fr; } }
+    @media (max-width:768px){
+      .wrap{ padding:12px; } .hero, .card, .track-item{ padding:14px; border-radius:16px; } .topbar, .title-wrap, .menu-bar, .btns, .copy-row, .check-group, .track-header, .status-grid, .candidate-list, .hero-right{ flex-direction:column; align-items:stretch; } .row, .triple{ grid-template-columns:1fr !important; } .menu-btn, .btns button, .copy-row button, .candidate-btn{ width:100%; } .mascot{ width:56px; height:56px; font-size:24px; } .title h1{ font-size:24px; } .title p{ font-size:13px; } .status{ align-self:flex-start; } .ai-status{ width:100%; min-width:0; }
+    }
+
+    /* 작고 눈에 띄는 보조 버튼 스타일 */
+    .tiny-btn { font-size:12px; padding:8px 10px; border-radius:10px; background:linear-gradient(135deg,#fff,#f0f4ff); border:1px solid rgba(148,163,184,.16); color:#435; cursor:pointer; }
+    .ops-panel { margin-top:12px; display:none; }
+    .ops-panel.show { display:block; }
+    .field-row { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+    .mono { font-family:monospace; font-size:13px; color:#555; background:#fff; padding:6px 8px; border-radius:8px; border:1px solid rgba(148,163,184,.12); }
   </style>
 </head>
 <body>
+  <div class="bg-wrap">
+    <div class="bubble b1"></div><div class="bubble b2"></div><div class="bubble b3"></div><div class="bubble b4"></div><div class="bubble b5"></div><div class="bubble b6"></div>
+    <div class="star s1"></div><div class="star s2"></div><div class="star s3"></div><div class="star s4"></div><div class="star s5"></div>
+  </div>
+
   <div class="wrap">
-    <h1 style="margin:0 0 8px;color:var(--accent)">AI Music Auto Studio v22 — 간편 모드</h1>
-    <p class="small-muted" style="margin:0 0 12px">AI만 연결해서 제목/가사/스타일 미리보기 → 필요하면 저장합니다. (맥북 꺼져있을 때는 저장 금지 가능)</p>
+    <div class="hero">
+      <div class="topbar">
+        <div class="title-wrap">
+          <div class="mascot">🎀</div>
+          <div class="title">
+            <h1>AI Music Auto Studio v22 Final</h1>
+            <p>귀여운 엔터테인먼트 제작툴 UI · 저장/불러오기 · 곡별 상태 · 메모 · 제목 후보 · 체크리스트</p>
+          </div>
+        </div>
 
-    <!-- 상단 간편 컨트롤 -->
-    <div class="top-controls">
-      <input id="apiUrl" type="text" value="http://localhost:4000" placeholder="API 주소 (예: http://localhost:4000)" />
-      <input id="downloadKey" type="text" placeholder="다운로드 키 (예: 1773206..._test-presign.txt)" style="min-width:260px"/>
-      <input id="downloadToken" type="text" placeholder="다운로드 토큰" style="min-width:220px"/>
-      <div class="controls-row" style="margin-left:6px;">
-        <button class="btn btn-primary" onclick="checkServer()">서버 상태 확인</button>
-        <button class="btn btn-primary" onclick="testDownload()">다운로드 테스트</button>
-        <button class="btn btn-soft" onclick="checkMobileConnection()">모바일 연결 확인</button>
-        <button class="btn btn-soft" onclick="publishBlog()">블로그 제작</button>
-        <button class="btn btn-soft" onclick="clearAllTracks()" title="화면에서 생성된 트랙 모두 삭제">모두 지우기</button>
+        <div class="hero-right">
+          <div class="badge">실행 → 노래 제작 → Suno 제작 → mp3 저장 → 노래 편집 시작</div>
+
+          <!-- 기존 AI 상태 -->
+          <div id="aiStatus" class="ai-status ai-online">🟢 AI ONLINE - 대기중</div>
+
+          <!-- 새로 추가한 운영 버튼들 (간단히 눈에 띄게) -->
+          <div style="display:flex; gap:8px; margin-top:8px; width:100%; flex-direction:column; align-items:stretch;">
+            <div style="display:flex; gap:8px;">
+              <button class="tiny-btn" onclick="checkServerStatus()">서버 상태 확인</button>
+              <button class="tiny-btn" onclick="toggleOpsPanel()">다운로드 테스트</button>
+              <button class="tiny-btn" onclick="checkMobileConnection()">모바일 연결 확인</button>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="tiny-btn" onclick="generateBlogDraft()">블로그 초안 만들기</button>
+              <button class="tiny-btn" onclick="copyGitDeleteCmd()">GitHub: 파일 한 번에 지우기(명령 복사)</button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div style="display:flex;gap:8px;align-items:center;margin-left:auto">
-        <label class="checkbox"><input id="mobileOnly" type="checkbox" /> <span class="small-muted">로컬 저장 안함 (모바일 전용)</span></label>
-        <div id="globalStatus" class="status-box">AI ONLINE - 대기중</div>
+      <div class="menu-bar">
+        <button class="menu-btn active">음악 제작</button>
+        <button class="menu-btn">동화 제작</button>
+        <button class="menu-btn">소설 제작</button>
+        <button class="menu-btn">영상 관리</button>
+        <button class="menu-btn">업로드 관리</button>
       </div>
     </div>
 
-    <div class="main">
-      <!-- 왼쪽: 주요 조작 -->
+    <div class="grid">
       <div class="card">
-        <div class="section-title">프로젝트 (간단)</div>
+        <h2>프로젝트 설정</h2>
 
-        <label>음성/텍스트 지시</label>
-        <textarea id="commandInput" placeholder="예: 비 오는 날 분위기 발라드 10곡" style="width:100%;min-height:80px;padding:10px;border-radius:8px;border:1px solid rgba(120,130,160,0.06)"></textarea>
+        <div class="row">
+          <div class="full">
+            <label>음성 또는 텍스트 지시</label>
+            <textarea id="commandInput" placeholder="예: 비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘&#10;예: 중간에 랩이 들어가는 힙합 8곡 만들어줘&#10;예: 1번곡 조금 더 경쾌하게 만들어줘"></textarea>
 
-        <div class="controls-row">
-          <button class="btn btn-primary" onclick="startVoice()">음성</button>
-          <button class="btn btn-primary" onclick="runCommand()">분석 실행</button>
-          <button class="btn btn-soft" onclick="generateTracks()">노래 제작 (미리보기)</button>
-          <button class="btn btn-soft" onclick="startSongEditing()">노래 편집 시작</button>
-        </div>
+            <div class="btns">
+              <button class="primary" onclick="startVoice()">음성</button>
+              <button class="success" onclick="runCommand()">실행</button>
+              <button class="secondary" onclick="toggleHelp()">설명</button>
+            </div>
 
-        <div style="margin-top:12px">
-          <div class="section-title">간단 설정</div>
-          <div style="display:flex;gap:12px;flex-wrap:wrap">
-            <label>곡 수
-              <select id="trackCount"><option>6</option><option>8</option><option selected>10</option><option>12</option></select>
-            </label>
-            <label>곡 길이
-              <select id="songDuration"><option>2분</option><option selected>3분</option><option>4분</option></select>
-            </label>
-            <label>장르
-              <select id="genreSelect"><option selected>발라드</option><option>팝</option><option>힙합</option></select>
-            </label>
+            <div class="listen-box" id="listenStatus">상태: 대기중</div>
+
+            <div class="help-panel" id="helpPanel">
+              <strong>사용 방법 (아주 쉽게)</strong><br>
+              1) '음성' 버튼 누르고 말하거나 텍스트 입력. 2) '실행' 누르면 AI가 분석해요. 3) '노래 제작' 누르면 제목/스타일/가사가 화면에 생겨요. 4) '다운로드 테스트'로 파일 가져오기 확인 가능.
+            </div>
           </div>
         </div>
 
-        <div style="margin-top:12px">
-          <div class="section-title">AI 분석 결과</div>
-          <div id="analysisResult" class="result-area">여기에 AI 분석(제목/스타일 요약)이 표시됩니다.</div>
+        <div class="save-load-box">
+          <h3>프로젝트 저장 / 불러오기</h3>
+          <div class="row">
+            <div>
+              <label>프로젝트 이름</label>
+              <input type="text" id="projectName" placeholder="예: 비오는날_발라드_10곡" />
+            </div>
+            <div>
+              <label>저장된 프로젝트</label>
+              <select id="savedProjects"></select>
+            </div>
+          </div>
+          <div class="btns">
+            <button class="secondary" onclick="saveProject()">저장</button>
+            <button class="secondary" onclick="loadProject()">불러오기</button>
+            <button class="secondary" onclick="deleteProject()">삭제</button>
+          </div>
         </div>
 
-        <div style="margin-top:12px">
-          <div class="section-title">출력 / 로그</div>
-          <div id="logBox" class="result-area">작업 로그가 여기 표시됩니다.</div>
+        <h3 class="section-title">기본 설정</h3>
+
+        <div class="triple">
+          <div>
+            <label>곡 수</label>
+            <select id="trackCount">
+              <option>6</option>
+              <option>8</option>
+              <option selected>10</option>
+              <option>12</option>
+              <option>15</option>
+              <option>20</option>
+            </select>
+          </div>
+          <div>
+            <label>곡 길이</label>
+            <select id="songDuration">
+              <option>2분</option>
+              <option selected>3분</option>
+              <option>4분</option>
+              <option>5분</option>
+            </select>
+          </div>
+          <div>
+            <label>Style 강도</label>
+            <select id="styleStrength">
+              <option>기본</option>
+              <option>더 감성적으로</option>
+              <option>더 대중적으로</option>
+              <option>더 강렬하게</option>
+              <option>더 단순하게</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>최종 앨범 길이</label>
+            <select id="albumDuration">
+              <option>30분</option>
+              <option>1시간</option>
+              <option selected>2시간</option>
+              <option>3시간</option>
+              <option>4시간</option>
+            </select>
+          </div>
+          <div>
+            <label>확장 방식</label>
+            <select id="albumExpansionMode">
+              <option>1회 재생</option>
+              <option selected>순차 반복</option>
+              <option>랜덤 반복</option>
+              <option>자연스러운 믹스 반복</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>장르</label>
+            <select id="genreSelect">
+              <option selected>발라드</option>
+              <option>힙합</option>
+              <option>트로트</option>
+              <option>락</option>
+              <option>헤비메탈</option>
+              <option>카페음악</option>
+              <option>가사 없는 연주곡</option>
+              <option>팝</option>
+              <option>R&B</option>
+              <option>재즈</option>
+              <option>로파이</option>
+              <option>EDM</option>
+              <option>클래식 크로스오버</option>
+              <option>OST 스타일</option>
+              <option>동요</option>
+            </select>
+          </div>
+          <div>
+            <label>분위기</label>
+            <select id="moodSelect">
+              <option selected>비 오는 날</option>
+              <option>로맨틱</option>
+              <option>슬픔 / 감성</option>
+              <option>따뜻함 / 위로</option>
+              <option>밝고 경쾌함</option>
+              <option>몽환적</option>
+              <option>어둡고 강렬함</option>
+              <option>새벽 감성</option>
+              <option>공부 집중</option>
+              <option>수면 / 편안함</option>
+              <option>드라이브</option>
+              <option>카페 휴식</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>보컬 타입</label>
+            <select id="vocalSelect">
+              <option selected>여성 보컬</option>
+              <option>남성 보컬</option>
+              <option>듀엣 보컬</option>
+              <option>연주곡 전용</option>
+              <option>부드러운 여성 보컬</option>
+              <option>허스키한 남성 보컬</option>
+              <option>맑고 밝은 보컬</option>
+              <option>감정적인 코러스 보컬</option>
+            </select>
+          </div>
+          <div>
+            <label>가사 언어</label>
+            <select id="lyricsLang">
+              <option value="korean" selected>한국어</option>
+              <option value="english">영어</option>
+              <option value="japanese">일본어</option>
+            </select>
+          </div>
+        </div>
+
+        <details>
+          <summary>악기 추가</summary>
+          <div class="check-group" style="margin-top:12px;">
+            <label class="option"><input type="checkbox" class="instrument" value="piano"> 피아노</label>
+            <label class="option"><input type="checkbox" class="instrument" value="acoustic guitar"> 어쿠스틱 기타</label>
+            <label class="option"><input type="checkbox" class="instrument" value="electric guitar"> 일렉기타</label>
+            <label class="option"><input type="checkbox" class="instrument" value="bass"> 베이스</label>
+            <label class="option"><input type="checkbox" class="instrument" value="drums"> 드럼</label>
+            <label class="option"><input type="checkbox" class="instrument" value="violin"> 바이올린</label>
+            <label class="option"><input type="checkbox" class="instrument" value="cello"> 첼로</label>
+            <label class="option"><input type="checkbox" class="instrument" value="flute"> 플루트</label>
+            <label class="option"><input type="checkbox" class="instrument" value="saxophone"> 색소폰</label>
+            <label class="option"><input type="checkbox" class="instrument" value="synth"> 신스</label>
+            <label class="option"><input type="checkbox" class="instrument" value="pad"> 패드</label>
+            <label class="option"><input type="checkbox" class="instrument" value="orchestra"> 오케스트라</label>
+            <label class="option"><input type="checkbox" class="instrument" value="korean traditional instruments"> 국악기</label>
+            <label class="option"><input type="checkbox" class="instrument" value="strong beat"> 비트 강조</label>
+          </div>
+        </details>
+
+        <details>
+          <summary>세부 선택</summary>
+          <div class="check-group" style="margin-top:12px;">
+            <label class="option"><input type="checkbox" id="instrumentalOnly"> 가사 없는 연주곡</label>
+            <label class="option"><input type="checkbox" id="rapOption"> 중간 랩 파트</label>
+            <label class="option"><input type="checkbox" id="englishHookOption"> 영어 후렴</label>
+            <label class="option"><input type="checkbox" id="repeatChorusOption"> 후렴 반복형</label>
+            <label class="option"><input type="checkbox" id="shortIntroOption"> 짧은 인트로</label>
+            <label class="option"><input type="checkbox" id="longIntroOption"> 긴 인트로</label>
+            <label class="option"><input type="checkbox" id="bridgeOption"> 브릿지 강조</label>
+          </div>
+        </details>
+
+        <!-- 분석 결과 -->
+        <div class="output-box">
+          <h3>AI 분석 결과</h3>
+          <div class="summary-line" id="analysisResult">
+주제: 사용자 명령 기반 음악 제작<br>
+곡 수: 10<br>
+곡 길이: 3분<br>
+최종 앨범 길이: 2시간<br>
+확장 방식: 순차 반복<br>
+장르: 발라드<br>
+분위기: 비 오는 날<br>
+보컬: 여성 보컬<br>
+가사 언어: 한국어<br>
+추천 작업: 실행 → 노래 제작 → Suno 제작 → mp3 저장 → 노래 편집 시작
+          </div>
+        </div>
+
+        <div class="save-load-box">
+          <h3>파일 / 진행 관리</h3>
+          <div class="row">
+            <div>
+              <label>입력 폴더</label>
+              <input type="text" id="inputFolder" value="project/music-input/" />
+            </div>
+            <div>
+              <label>편집 출력 폴더</label>
+              <input type="text" id="outputFolder" value="project/music-output/" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label>영상 출력 폴더</label>
+              <input type="text" id="videoFolder" value="project/video-output/" />
+            </div>
+            <div>
+              <label>현재 mp3 개수</label>
+              <input type="number" id="mp3Count" value="0" min="0" />
+            </div>
+          </div>
+          <div class="status-grid">
+            <div class="status-chip" id="targetTrackStatus">목표 곡 수: 10곡</div>
+            <div class="status-chip" id="mp3CheckStatus">현재 mp3: 0곡 / 부족: 10곡</div>
+          </div>
+        </div>
+
+        <div class="quick-copy-box">
+          <h3 style="margin:0 0 10px; color:#5f84d8;">빠른 붙여넣기 복사</h3>
+          <div class="btns">
+            <button class="purple" onclick="copyNextStep()">⏭ Next Copy</button>
+            <button class="secondary" onclick="resetCopySequence()">🔄 복사 초기화</button>
+            <button class="warning" onclick="openSuno()">🎵 Suno 열기</button>
+          </div>
+          <div class="quick-copy-status" id="copySequenceStatus">
+            다음 복사 대상: 아직 생성된 곡이 없습니다.
+          </div>
+        </div>
+
+        <div class="btns">
+          <button class="success" onclick="generateTracks()">노래 제작</button>
+          <button class="warning" onclick="startSongEditing()">노래 편집 시작</button>
+          <button class="danger" onclick="makeVideo()">영상 만들기</button>
+          <!-- 새로 추가: 화면 지우기(완료 후) -->
+          <button class="secondary" id="clearTracksBtn" onclick="clearGeneratedTracks()" style="display:none">완료 후 화면 지우기</button>
         </div>
       </div>
 
-      <!-- 오른쪽: 상태 + 결과 표시 -->
-      <div>
-        <div class="card">
-          <div class="section-title">빠른 상태</div>
-          <div id="serverStatus" class="small-muted">서버 상태: -</div>
-          <div style="margin-top:8px">
-            <div class="section-title">다운로드 테스트 결과</div>
-            <div id="downloadResult" class="result-area">테스트 결과가 여기 표시됩니다.</div>
-          </div>
-          <div style="margin-top:8px">
-            <div class="section-title">모바일 연결</div>
-            <div id="mobileResult" class="result-area">모바일 연결 상태가 여기 표시됩니다.</div>
+      <div class="card">
+        <h2>작업 진행 상태</h2>
+
+        <div class="steps">
+          <div class="step"><span>명령 분석 및 설정 반영</span><span class="status" id="st1">대기중</span></div>
+          <div class="step"><span>Suno용 노래 자료 생성</span><span class="status" id="st2">대기중</span></div>
+          <div class="step"><span>개별 곡 수정 반영</span><span class="status" id="st3">대기중</span></div>
+          <div class="step"><span>mp3 편집 시작</span><span class="status" id="st4">대기중</span></div>
+          <div class="step"><span>긴 영상 제작 준비</span><span class="status" id="st5">대기중</span></div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="summary-line">전체 진행률</div>
+          <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
           </div>
         </div>
 
-        <div class="card" style="margin-top:12px">
-          <div class="section-title">생성된 트랙</div>
-          <div id="trackList" class="track-list">
-            <!-- 트랙 항목들 -->
+        <div class="output-box">
+          <h3>최종 체크리스트</h3>
+          <div class="checklist">
+            <label class="check-item"><input type="checkbox" id="checkTitle"> Title 확인</label>
+            <label class="check-item"><input type="checkbox" id="checkStyle"> Style 확인</label>
+            <label class="check-item"><input type="checkbox" id="checkLyrics"> Lyrics 확인</label>
+            <label class="check-item"><input type="checkbox" id="checkSuno"> Suno 제작 완료</label>
+            <label class="check-item"><input type="checkbox" id="checkMp3"> mp3 저장 완료</label>
+            <label class="check-item"><input type="checkbox" id="checkEdit"> 노래 편집 시작 가능</label>
           </div>
-          <div style="margin-top:10px">
-            <button class="btn btn-soft" onclick="copyAllToClipboard()">모두 복사</button>
-            <button class="btn btn-soft" onclick="clearAllTracks()">화면에서 삭제</button>
-          </div>
+        </div>
+
+        <div class="log" id="logBox">여기에 분석 로그와 작업 로그가 표시됩니다.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>Suno 붙여넣기용 곡별 결과</h2>
+      <div class="track-list" id="trackList"></div>
+    </div>
+
+    <!-- 운영(Ops) 패널: 기본은 숨김, 다운로드 테스트와 서버 상태를 여기서 보여줌 -->
+    <div id="opsPanel" class="output-box ops-panel" aria-hidden="true">
+      <h3>운영 도구 (테스트용)</h3>
+
+      <div class="field-row">
+        <label style="min-width:80px;">서버 주소</label>
+        <input type="text" id="serverBase" class="mono" value="https://tricky-bats-start.loca.lt" />
+      </div>
+
+      <div class="field-row">
+        <label style="min-width:80px;">파일 키</label>
+        <input type="text" id="testFileKey" class="mono" value="1773206138312_test-presign.txt" />
+      </div>
+
+      <div class="field-row">
+        <label style="min-width:80px;">다운로드 토큰</label>
+        <input type="text" id="downloadToken" class="mono" value="1586b87c02d0cdac8345192b8845dfb920b879adb8107916" />
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:8px; margin-bottom:8px;">
+        <button class="primary" onclick="runDownloadTest()">다운로드 테스트 실행</button>
+        <button class="secondary" onclick="checkServerStatus(true)">서버 헬스 체크</button>
+        <button class="secondary" onclick="toggleOpsPanel()">숨기기</button>
+      </div>
+
+      <div id="opsResult" class="log" style="min-height:80px;">결과가 여기 표시됩니다.</div>
+
+      <div style="margin-top:12px;">
+        <strong>블로그 초안(저장 안 함)</strong>
+        <div id="blogDraft" class="mini-box" style="margin-top:8px; display:none;"></div>
+        <div style="margin-top:8px;">
+          <button class="secondary" onclick="copyBlogDraft()">초안 복사</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <strong>GitHub에서 파일을 한 번에 지우는 명령(복사해서 터미널에 붙여넣기)</strong>
+        <div style="margin-top:8px;">
+          <button class="secondary" onclick="copyGitDeleteCmd()">명령 복사</button>
         </div>
       </div>
     </div>
 
-    <p style="margin-top:12px;color:var(--muted);font-size:13px">
-      설명: 서버가 외부 접속 가능한 터널(localtunnel/ngrok 등)에 연결되어 있으면 모바일에서도 동일 주소로 테스트 가능합니다.
-    </p>
   </div>
 
   <script>
-    // 기존 스크립트와 호환되도록 주요 함수들만 간단히 추가/재정의
+    /***********************
+     * 기본 상태값 및 유틸
+     ***********************/
     let tracks = [];
-    function log(msg){ const box=document.getElementById('logBox'); box.textContent += '\\n['+new Date().toLocaleTimeString()+'] '+msg; box.scrollTop = box.scrollHeight; }
+    let copySteps = [];
+    let copySequenceIndex = 0;
+    let aiConnectionState = "online";
 
-    function updateAIStatus(state){
-      const s = document.getElementById('globalStatus');
-      if(state==='working'){ s.textContent='AI 작업중...'; s.style.background='#fff7ed'; s.style.color='#92400e'; }
-      else if(state==='offline'){ s.textContent='AI 오프라인'; s.style.background='#fff1f2'; s.style.color='#9f1239'; }
-      else { s.textContent='AI ONLINE - 대기중'; s.style.background='#f7fff7'; s.style.color='#065f46'; }
+    function log(message) {
+      const logBox = document.getElementById("logBox");
+      const time = new Date().toLocaleTimeString("ko-KR");
+      logBox.textContent += `\n[${time}] ${message}`;
+      logBox.scrollTop = logBox.scrollHeight;
+      // ops 패널에도 간단히 남기기
+      const ops = document.getElementById("opsResult");
+      if (ops) ops.textContent = `[${time}] ${message}\n` + ops.textContent;
     }
 
-    async function checkServer(){
-      const base = (document.getElementById('apiUrl').value||'').replace(/\\/$/,'');
-      const out = document.getElementById('serverStatus');
-      if(!base){ out.textContent='서버 주소를 입력하세요.'; return; }
-      out.textContent='서버에 접속 중...';
-      try{
-        const res = await fetch(base + '/api/health', {method:'GET'});
-        if(!res.ok) { out.textContent = '서버 응답 오류: ' + res.status; log('서버 health 실패: '+res.status); return; }
-        const data = await res.json();
-        out.textContent = '서버 정상: ' + JSON.stringify(data);
-        log('서버 상태 확인 OK');
-      }catch(e){
-        out.textContent = '서버에 연결할 수 없음: ' + e.message;
-        log('서버 상태 확인 실패: '+ e.message);
+    function updateAIStatus(state) {
+      aiConnectionState = state;
+      const el = document.getElementById("aiStatus");
+      el.className = "ai-status";
+      if (state === "offline") { el.classList.add("ai-offline"); el.innerHTML = "🔴 AI OFFLINE"; }
+      else if (state === "working") { el.classList.add("ai-working"); el.innerHTML = "🟡 AI 작업중..."; }
+      else { el.classList.add("ai-online"); el.innerHTML = "🟢 AI ONLINE - 대기중"; }
+    }
+
+    /***********************
+     * OPS 패널 열기/닫기
+     ***********************/
+    function toggleOpsPanel() {
+      const panel = document.getElementById("opsPanel");
+      if (!panel) return;
+      panel.classList.toggle("show");
+      panel.setAttribute("aria-hidden", panel.classList.contains("show") ? "false" : "true");
+      if (panel.classList.contains("show")) {
+        // 포커스 이동
+        panel.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
 
-    async function testDownload(){
-      const base = (document.getElementById('apiUrl').value||'').replace(/\\/$/,'');
-      const key = (document.getElementById('downloadKey').value||'').trim();
-      const token = (document.getElementById('downloadToken').value||'').trim();
-      const out = document.getElementById('downloadResult');
-      if(!base || !key || !token){ out.textContent='API 주소, 키, 토큰을 모두 입력하세요.'; return; }
-      out.textContent = '다운로드 시도 중...';
-      try{
-        const url = base + '/api/download?key=' + encodeURIComponent(key) + '&token=' + encodeURIComponent(token);
+    /***********************
+     * 서버 상태 확인 (헬스 체크)
+     * - serverBase 입력값 사용 (기본값은 localtunnel)
+     * - showResult 가 true면 opsResult에 결과를 출력
+     ***********************/
+    async function checkServerStatus(showResult = true) {
+      const base = (document.getElementById("serverBase") || {}).value || window.location.origin;
+      const url = base.replace(/\/$/, '') + '/api/health';
+      try {
+        const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+        const text = await res.text();
+        const msg = `서버 응답: ${res.status} — ${text}`;
+        if (showResult) document.getElementById('opsResult').textContent = msg;
+        log(msg);
+        return { ok: true, status: res.status, text };
+      } catch (err) {
+        const msg = `서버 연결 실패: ${err.message || err}`;
+        if (showResult) document.getElementById('opsResult').textContent = msg;
+        log(msg);
+        return { ok: false, error: err };
+      }
+    }
+
+    /***********************
+     * 모바일 연결 확인
+     * - navigator.onLine
+     * - 서버 헬스 체크 시도
+     ***********************/
+    async function checkMobileConnection() {
+      const online = navigator.onLine;
+      let msg = online ? "기기 네트워크: 온라인" : "기기 네트워크: 오프라인";
+      document.getElementById('opsResult').textContent = msg + "\n";
+      log(msg);
+      // 서버 체크도 해보기
+      const serverRes = await checkServerStatus(true);
+      if (serverRes.ok) {
+        document.getElementById('opsResult').textContent += "\n서버 연결됨 (헬스 OK)";
+      } else {
+        document.getElementById('opsResult').textContent += "\n서버 연결 실패 (헬스 에러)";
+      }
+      toggleOpsPanel(); // ops 열어서 보여주기
+    }
+
+    /***********************
+     * 다운로드 테스트
+     * - 서버의 /api/download?key=...&token=... 사용
+     * - CORS 또는 네트워크 에러를 친절하게 설명
+     ***********************/
+    async function runDownloadTest() {
+      const base = (document.getElementById("serverBase") || {}).value.replace(/\/$/, '') || window.location.origin;
+      const key = (document.getElementById("testFileKey") || {}).value || '';
+      const token = (document.getElementById("downloadToken") || {}).value || '';
+      const ops = document.getElementById('opsResult');
+      if (!key) { ops.textContent = "테스트할 파일 키를 입력해 주세요."; return; }
+      ops.textContent = `다운로드 시도: ${base}/api/download?key=${key}&token=••••\n(실제 토큰은 서버 요청에 포함됩니다)\n\n---\n`;
+
+      const url = `${base}/api/download?key=${encodeURIComponent(key)}&token=${encodeURIComponent(token)}`;
+      try {
         const res = await fetch(url, { method: 'GET' });
-        if(res.ok){
+        if (!res.ok) {
+          // 서버에서 XML 에러 등 반환 가능 -> 텍스트 읽어서 보여주기
           const txt = await res.text();
-          const preview = txt.length>300 ? txt.slice(0,300) + '...' : txt;
-          out.textContent = '다운로드 성공 — 파일 내용(미리보기):\\n' + preview;
-          log('다운로드 테스트 성공: key=' + key);
-        } else {
-          const txt = await res.text().catch(()=>res.statusText);
-          out.textContent = '다운로드 실패: ' + res.status + '\\n' + txt;
-          log('다운로드 테스트 실패: ' + res.status);
+          ops.textContent += `HTTP ${res.status} 응답\n${txt}`;
+          log(`다운로드 실패: HTTP ${res.status}`);
+          return { ok:false, status: res.status, text: txt };
         }
-      }catch(e){
-        out.textContent = '다운로드 테스트 에러: ' + e.message;
-        log('다운로드 테스트 에러: '+ e.message);
+        // 파일 가져오기 성공: 작은 파일은 텍스트로 표시
+        const blob = await res.blob();
+        const size = blob.size;
+        let display = '';
+        if (size < 200 * 1024) {
+          // 텍스트로 보여주기 시도
+          const text = await blob.text();
+          display = text;
+        } else {
+          display = `파일 크기 ${size} 바이트 — 정상적으로 다운로드 되었음 (크기가 커서 미리보기 생략)`;
+        }
+        ops.textContent += `다운로드 성공\n파일 크기: ${size} 바이트\n---- 파일 내용 시작 ----\n${display}\n---- 파일 내용 끝 ----`;
+        log(`다운로드 성공: ${key} (${size} bytes)`);
+        return { ok:true, size, text: display };
+      } catch (err) {
+        // CORS 또는 네트워크 에러 처리
+        const em = err && err.message ? err.message : String(err);
+        ops.textContent += `다운로드 에러: ${em}\n가능 원인: 서버가 닫혀있거나 CORS 정책, 또는 잘못된 주소/토큰입니다.`;
+        log(`다운로드 에러: ${em}`);
+        return { ok:false, error: em };
       }
     }
 
-    // 모바일 연결 확인: API health 호출로 검사 + 현재 페이지에서 입력한 apiUrl과 비교
-    async function checkMobileConnection(){
-      const base = (document.getElementById('apiUrl').value||'').replace(/\\/$/,'');
-      const out = document.getElementById('mobileResult');
-      out.textContent = '모바일 연결 확인 중...';
-      if(!base){ out.textContent='API 주소를 입력하세요.'; return; }
-      try{
-        const controller = new AbortController();
-        const t = setTimeout(()=>controller.abort(), 8000);
-        const res = await fetch(base + '/api/health', {signal: controller.signal});
-        clearTimeout(t);
-        if(res.ok){
-          out.textContent = '외부(모바일)에서 접근 가능: 서버가 응답합니다.';
-          log('모바일 연결 확인: OK');
-        } else {
-          out.textContent = '서버는 보이나 응답 코드: ' + res.status;
-          log('모바일 연결 확인: 응답 코드 ' + res.status);
-        }
-      }catch(e){
-        out.textContent = '모바일에서 접근 불가하거나 CORS/네트워크 문제: ' + (e.message||e);
-        log('모바일 연결 확인 실패: '+ (e.message||e));
-      }
+    /***********************
+     * 블로그 초안 생성 (저장하지 않음)
+     * - 프로젝트 데이터로 글 제목/본문/태그 생성 (로컬에서만)
+     ***********************/
+    function generateBlogDraft() {
+      const data = collectProjectData();
+      const title = `${data.projectName || 'AI 음악 프로젝트'} — ${data.trackCount}곡 ${data.genreSelect || ''}`;
+      const tags = [data.genreSelect, data.moodSelect, data.vocalSelect].filter(Boolean).join(', ');
+      const body =
+`안녕하세요. 자동 생성된 블로그 초안입니다.
+
+프로젝트: ${data.projectName || '(이름 없음)'}
+곡 수: ${data.trackCount}
+장르: ${data.genreSelect}
+분위기: ${data.moodSelect}
+보컬: ${data.vocalSelect}
+
+요약:
+- ${data.trackCount}개의 트랙을 생성했고, 각 트랙은 Suno에 붙여넣을 수 있도록 Title / Style / Lyrics가 준비됩니다.
+- 사용한 설정: ${data.songDuration}, ${data.albumDuration}, 확장방식: ${data.albumExpansionMode}
+
+(이 글은 로컬에서만 생성된 초안입니다. 서버에 저장하지 않았습니다.)`;
+
+      const box = document.getElementById('blogDraft');
+      box.style.display = 'block';
+      box.textContent = `제목: ${title}\n\n태그: ${tags}\n\n본문:\n${body}`;
+      log('블로그 초안 생성됨 (저장 안 함).');
+      toggleOpsPanel(); // 열어 보여주기
     }
 
-    // 트랙 생성(미리보기) — 기존 generateTracks를 간단히 가져와서 우측 리스트로 표시
-    function generateTracks(){
-      const total = parseInt(document.getElementById('trackCount').value||'10',10);
-      tracks = [];
-      for(let i=1;i<=total;i++){
-        const title = `샘플 곡 ${i}`;
-        const style = (document.getElementById('genreSelect').value||'발라드') + ' 스타일';
-        const lyrics = `가사 미리보기: ${i}번곡 가사...`;
-        tracks.push({index:i,title,style,lyrics});
+    function copyBlogDraft() {
+      const box = document.getElementById('blogDraft');
+      if (!box || !box.textContent) { alert('먼저 블로그 초안을 생성하세요.'); return; }
+      navigator.clipboard.writeText(box.textContent).then(()=>alert('블로그 초안 복사됨')).catch(()=>alert('복사 실패'));
+    }
+
+    /***********************
+     * GitHub에서 파일 한 번에 지우기 (명령 생성 복사)
+     * - 직접 실행 권한 없으니 "명령 복사"로 지원
+     ***********************/
+    function copyGitDeleteCmd() {
+      const cmd = `# 로컬에서: 깃허브에 있는 파일(예: index.html)을 한 번에 삭제하고 새 파일로 교체하는 명령 예시
+git rm -f path/to/index.html
+git commit -m "replace index.html"
+git push origin main
+
+# 또는 (덮어쓰기)
+cp /path/to/new_index.html path/to/index.html
+git add path/to/index.html
+git commit -m "update index.html"
+git push origin main`;
+      navigator.clipboard.writeText(cmd).then(()=>{ alert('Git 명령 복사됨 — 터미널에 붙여넣기 하세요.'); log('Git 삭제/덮어쓰기 명령이 클립보드에 복사되었습니다.'); }).catch(()=>alert('복사 실패'));
+    }
+
+    /***********************
+     * 기존 UI 기능 (generateTracks 등) — 핵심만 보존
+     ***********************/
+    function updateAnalysis(rawText = "") {
+      const total = document.getElementById("trackCount").value;
+      const duration = document.getElementById("songDuration").value;
+      const albumDuration = document.getElementById("albumDuration").value;
+      const albumMode = document.getElementById("albumExpansionMode").value;
+      const genre = document.getElementById("genreSelect").value;
+      const mood = document.getElementById("moodSelect").value;
+      const vocal = document.getElementById("vocalSelect").value;
+      const strength = document.getElementById("styleStrength").value;
+      const langMap = { korean: "한국어", english: "영어", japanese: "일본어" };
+      const lang = langMap[document.getElementById("lyricsLang").value];
+      const instruments = Array.from(document.querySelectorAll(".instrument:checked")).map(el=>el.value);
+      const extras=[];
+      if (document.getElementById("instrumentalOnly").checked) extras.push("가사 없는 연주곡");
+      if (document.getElementById("rapOption").checked) extras.push("중간 랩 파트");
+      if (document.getElementById("englishHookOption").checked) extras.push("영어 후렴");
+      if (document.getElementById("repeatChorusOption").checked) extras.push("후렴 반복형");
+      if (document.getElementById("shortIntroOption").checked) extras.push("짧은 인트로");
+      if (document.getElementById("longIntroOption").checked) extras.push("긴 인트로");
+      if (document.getElementById("bridgeOption").checked) extras.push("브릿지 강조");
+
+      document.getElementById("analysisResult").innerHTML =
+        `주제: ${rawText || "사용자 명령 기반 음악 제작"}<br>` +
+        `곡 수: ${total}<br>` +
+        `곡 길이: ${duration}<br>` +
+        `최종 앨범 길이: ${albumDuration}<br>` +
+        `확장 방식: ${albumMode}<br>` +
+        `장르: ${genre}<br>` +
+        `분위기: ${mood}<br>` +
+        `보컬: ${vocal}<br>` +
+        `가사 언어: ${lang}<br>` +
+        `Style 강도: ${strength}<br>` +
+        `악기: ${instruments.length ? instruments.join(", ") : "기본 구성"}<br>` +
+        `추가 옵션: ${extras.length ? extras.join(", ") : "없음"}<br>` +
+        `추천 작업: 실행 → 노래 제작 → Suno 제작 → mp3 저장 → 노래 편집 시작`;
+      updateMp3Status();
+    }
+
+    function updateMp3Status() {
+      const target = parseInt(document.getElementById("trackCount").value || 0, 10);
+      const current = parseInt(document.getElementById("mp3Count").value || 0, 10);
+      const missing = Math.max(target - current, 0);
+      document.getElementById("targetTrackStatus").textContent = `목표 곡 수: ${target}곡`;
+      document.getElementById("mp3CheckStatus").textContent = `현재 mp3: ${current}곡 / 부족: ${missing}곡`;
+    }
+
+    // 간단 생성 로직 (원래 코드에서 발췌하여 유지)
+    function titlePoolByMood(moodKr) {
+      const mood = { "비 오는 날":"rainy mood" }[moodKr] || moodKr;
+      const map = { "rainy mood": ["Rainy Window","Midnight Rain","Falling Rain","Rainy Memory","Silent Rain"] };
+      return map[mood] || ["Hidden Song","Open Sky","New Feeling","Blue Song","Quiet Light"];
+    }
+    function titleCandidates(moodKr, index) {
+      const pool = titlePoolByMood(moodKr);
+      const results = [];
+      while (results.length<3) {
+        const candidate = `${pool[Math.floor(Math.random()*pool.length)]} ${index}`;
+        if (!results.includes(candidate)) results.push(candidate);
+      }
+      return results;
+    }
+    function buildStyle() { return (document.getElementById("genreSelect").value || '') + ", polished arrangement"; }
+    function generateLyrics(lang, options) {
+      if (options.instrumentalOnly) return "[Instrumental]\\nNo lyrics - instrumental track only";
+      return `[Verse]\\n간단한 가사 예시...`;
+    }
+
+    function generateTracks() {
+      updateAIStatus("working");
+      tracks=[]; copySteps=[]; copySequenceIndex=0;
+      const total = parseInt(document.getElementById("trackCount").value,10);
+      const mood = document.getElementById("moodSelect").value;
+      const lang = document.getElementById("lyricsLang").value;
+      const options = {
+        instrumentalOnly: document.getElementById("instrumentalOnly").checked,
+        rapOption: document.getElementById("rapOption").checked,
+        englishHookOption: document.getElementById("englishHookOption").checked,
+        repeatChorusOption: document.getElementById("repeatChorusOption").checked,
+        bridgeOption: document.getElementById("bridgeOption").checked
+      };
+      for (let i=1;i<=total;i++){
+        const candidates = titleCandidates(mood,i);
+        const title = candidates[0];
+        const style = buildStyle();
+        const lyrics = generateLyrics(lang,options);
+        tracks.push({ index:i, title, style, lyrics, titleCandidates:candidates, memo:"", status:"대기중"});
+        copySteps.push({ id:`title-${i}`, label:`${i}번곡 Title` });
+        copySteps.push({ id:`style-${i}`, label:`${i}번곡 Style` });
+        copySteps.push({ id:`lyrics-${i}`, label:`${i}번곡 Lyrics` });
       }
       renderTracks();
-      document.getElementById('analysisResult').textContent = `곡 생성(미리보기) ${total}개 완료 — 필요한 경우 '모두 복사'로 Suno에 붙여넣기`;
-      log('노래 제작(미리보기) 완료: ' + total + '곡');
+      updateCopySequenceStatus();
+      setStatus("st2","완료"); setProgress(45);
+      log("노래 제작 완료: Title 후보 / Style / Lyrics 생성");
+      updateAIStatus("online");
+      // 화면 지우기 버튼 보이게
+      document.getElementById("clearTracksBtn").style.display = 'inline-block';
     }
 
-    function renderTracks(){
-      const box = document.getElementById('trackList');
-      box.innerHTML = '';
-      tracks.forEach(t=>{
-        const div = document.createElement('div');
-        div.className='track-item';
-        div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong>${t.index}번</strong> ${t.title}</div>
-            <div><button onclick="copyTrack(${t.index})" class="btn btn-soft">복사</button></div>
+    function renderTracks() {
+      const trackList = document.getElementById("trackList");
+      trackList.innerHTML = "";
+      tracks.forEach(track => {
+        const div=document.createElement("div"); div.className="track-item";
+        div.innerHTML = `
+          <div class="track-header">
+            <div class="track-title">${track.index}번곡</div>
+            <div class="small">상태: ${track.status}</div>
           </div>
-          <div class="small-muted" style="margin-top:6px">${t.style}</div>
-          <div style="margin-top:6px;color:#334">${t.lyrics.slice(0,200)}</div>`;
-        box.appendChild(div);
+          <div class="mini-box"><strong>Title</strong><div class="mini-text" id="title-${track.index}">${escapeHtml(track.title)}</div>
+            <div class="candidate-list">${track.titleCandidates.map(t=>`<button type="button" class="candidate-btn" onclick="chooseTitle(${track.index}, '${escapeJs(t)}')">${escapeHtml(t)}</button>`).join("")}</div>
+          </div>
+          <div class="mini-box"><strong>Style</strong><div class="mini-text" id="style-${track.index}">${escapeHtml(track.style)}</div></div>
+          <div class="mini-box"><strong>Lyrics</strong><div class="mini-text" id="lyrics-${track.index}">${escapeHtml(track.lyrics)}</div></div>
+          <div class="mini-box"><strong>곡 상태 체크</strong>
+            <select onchange="updateTrackStatus(${track.index}, this.value)">
+              <option ${track.status==="대기중" ? "selected" : ""}>대기중</option>
+              <option ${track.status==="Suno 제작 완료" ? "selected" : ""}>Suno 제작 완료</option>
+              <option ${track.status==="mp3 저장 완료" ? "selected" : ""}>mp3 저장 완료</option>
+              <option ${track.status==="수정 필요" ? "selected" : ""}>수정 필요</option>
+              <option ${track.status==="편집 준비 완료" ? "selected" : ""}>편집 준비 완료</option>
+            </select>
+          </div>
+          <div class="mini-box"><strong>곡 메모</strong><textarea class="memo-area" placeholder="예: 후렴은 좋지만 보컬이 약함 / 다시 제작 필요" oninput="updateTrackMemo(${track.index}, this.value)">${escapeHtml(track.memo)}</textarea></div>
+          <div class="copy-row">
+            <button class="secondary" onclick="copyText('title-${track.index}', '${track.index}번곡 Title')">Title 복사</button>
+            <button class="secondary" onclick="copyText('style-${track.index}', '${track.index}번곡 Style')">Style 복사</button>
+            <button class="secondary" onclick="copyText('lyrics-${track.index}', '${track.index}번곡 Lyrics')">Lyrics 복사</button>
+            <button class="purple" onclick="copyAllTrack(${track.index})">전체 복사</button>
+            <button class="secondary" onclick="loadTrackEdit(${track.index})">${track.index}번곡 수정</button>
+          </div>
+        `;
+        trackList.appendChild(div);
       });
     }
 
-    function copyTrack(index){
-      const t = tracks.find(x=>x.index===index);
-      if(!t) return alert('트랙 없음');
-      const txt = `[Title]\\n${t.title}\\n\\n[Style]\\n${t.style}\\n\\n[Lyrics]\\n${t.lyrics}`;
-      navigator.clipboard.writeText(txt).then(()=>{ alert('클립보드로 복사됨'); log(index + '번곡 복사'); }).catch(()=>alert('복사 실패'));
-    }
+    function escapeHtml(text){ return String(text).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+    function escapeJs(text){ return String(text).replaceAll("\\","\\\\").replaceAll("'", "\\'"); }
+    function chooseTitle(index,title){ const t = tracks.find(x=>x.index===index); if(!t) return; t.title = title; renderTracks(); log(`${index}번곡 제목 선택: ${title}`); }
+    function updateTrackMemo(index,value){ const t=tracks.find(x=>x.index===index); if(!t) return; t.memo=value; }
+    function updateTrackStatus(index,value){ const t=tracks.find(x=>x.index===index); if(!t) return; t.status=value; log(`${index}번곡 상태 변경: ${value}`); }
+    function copyText(id,label){ const text = document.getElementById(id).innerText; navigator.clipboard.writeText(text).then(()=>log(`${label} 복사 완료`)).catch(()=>alert("복사에 실패했습니다.")); }
+    function copyAllTrack(index){ const track = tracks.find(t=>t.index===index); if(!track) return; const allText = `[Title]\n${track.title}\n\n[Style]\n${track.style}\n\n[Lyrics]\n${track.lyrics}`; navigator.clipboard.writeText(allText).then(()=>log(`${index}번곡 전체 자료 복사 완료`)).catch(()=>alert("복사에 실패했습니다.")); }
 
-    function copyAllToClipboard(){
-      if(!tracks.length) return alert('생성된 트랙이 없습니다.');
-      const txt = tracks.map(t=>`[${t.index}]\\nTitle: ${t.title}\\nStyle: ${t.style}\\nLyrics:\\n${t.lyrics}\\n`).join('\\n----\\n');
-      navigator.clipboard.writeText(txt).then(()=>{ alert('모든 트랙 복사 완료'); log('모든 트랙 복사'); }).catch(()=>alert('복사 실패'));
+    function copyNextStep() {
+      if (!copySteps.length) { alert("먼저 노래 제작을 해 주세요."); return; }
+      if (copySequenceIndex >= copySteps.length) { alert("모든 복사를 완료했습니다. 복사 초기화를 눌러 다시 시작하세요."); return; }
+      const step = copySteps[copySequenceIndex];
+      const text = document.getElementById(step.id).innerText;
+      navigator.clipboard.writeText(text).then(()=>{ log(`${step.label} 복사 완료`); copySequenceIndex++; updateCopySequenceStatus(); }).catch(()=>alert("복사에 실패했습니다."));
     }
+    function resetCopySequence(){ copySequenceIndex=0; updateCopySequenceStatus(); log("복사 순서를 처음으로 초기화했습니다."); }
+    function updateCopySequenceStatus(){ const el = document.getElementById("copySequenceStatus"); if(!copySteps.length){ el.textContent = "다음 복사 대상: 아직 생성된 곡이 없습니다."; return; } if(copySequenceIndex>=copySteps.length){ el.textContent = "복사 완료: 모든 곡 자료를 순서대로 복사했습니다."; return; } el.textContent = `다음 복사 대상: ${copySteps[copySequenceIndex].label}`; }
 
-    function clearAllTracks(){
-      if(!confirm('생성된 트랙을 화면에서 모두 지우시겠습니까?')) return;
-      tracks = [];
-      renderTracks();
-      document.getElementById('analysisResult').textContent = '트랙이 모두 지워졌습니다.';
-      log('트랙 전부 삭제');
-    }
+    function loadTrackEdit(index){ document.getElementById("commandInput").value = `${index}번곡 조금 더 경쾌하게 만들어줘`; log(`${index}번곡 수정 명령 입력 준비 완료`); }
+    function handleTrackEdit(text,trackNumber){ const track = tracks.find(t=>t.index===trackNumber); if(!track){ alert(`${trackNumber}번곡이 아직 생성되지 않았습니다. 먼저 노래 제작을 해 주세요.`); return; } updateAIStatus("working"); if(text.includes("경쾌")){ track.title += " Bright Ver."; track.style += ", brighter energy"; } else { track.title += " Edited Ver."; track.style += ", refined"; } track.status="수정 필요"; renderTracks(); copySteps=[]; tracks.forEach(track=>{ copySteps.push({ id:`title-${track.index}`, label:`${track.index}번곡 Title`}); copySteps.push({ id:`style-${track.index}`, label:`${track.index}번곡 Style`}); copySteps.push({ id:`lyrics-${track.index}`, label:`${track.index}번곡 Lyrics`}); }); copySequenceIndex=0; updateCopySequenceStatus(); setStatus("st3","완료"); setProgress(62); log(`${trackNumber}번곡 수정 반영 완료: ${text}`); updateAIStatus("online"); }
 
-    function publishBlog(){
-      // 모바일에서 저장하지 않고 AI만으로 제목/태그/요약 생성: 여기선 미리보기용으로 동작
-      const mobileOnly = document.getElementById('mobileOnly').checked;
-      const cmd = document.getElementById('commandInput').value || '자동 생성';
-      // 간단한 시뮬레이션: 실제로는 서버/AI 호출
-      const title = `(AI제목) ${cmd.slice(0,24)}`;
-      const summary = `AI 요약: ${cmd}. (미리보기 — 저장 안됨)`;
-      const tags = ['AI','음악','자동생성'];
-      document.getElementById('analysisResult').textContent = `블로그 미리보기 생성됨\\n제목: ${title}\\n태그: ${tags.join(', ')}\\n요약: ${summary}`;
-      log('블로그 미리보기 생성 (저장 안함=' + mobileOnly + ')');
-      if(!mobileOnly){
-        // 로컬 저장: 프로젝트 저장 기능이 있는 경우 호출 (생략)
-        log('로컬 저장 허용 상태 — 자동 저장은 하지 않습니다 (설정 필요)');
-      }
-      alert('블로그 미리보기가 생성되었습니다. 페이지의 분석 결과를 확인하세요.');
-    }
+    function startSongEditing(){ updateAIStatus("working"); setStatus("st4","완료"); setProgress(82); log("노래 편집 시작"); updateAIStatus("online"); }
+    function makeVideo(){ updateAIStatus("working"); setStatus("st5","완료"); setProgress(100); log("긴 영상 제작 준비 완료"); updateAIStatus("online"); }
 
-    // 음성 인식(기본)
+    function collectProjectData(){ return {
+      projectName: document.getElementById("projectName").value,
+      trackCount: document.getElementById("trackCount").value,
+      songDuration: document.getElementById("songDuration").value,
+      styleStrength: document.getElementById("styleStrength").value,
+      albumDuration: document.getElementById("albumDuration").value,
+      albumExpansionMode: document.getElementById("albumExpansionMode").value,
+      genreSelect: document.getElementById("genreSelect").value,
+      moodSelect: document.getElementById("moodSelect").value,
+      vocalSelect: document.getElementById("vocalSelect").value,
+      lyricsLang: document.getElementById("lyricsLang").value,
+      instrumentalOnly: document.getElementById("instrumentalOnly").checked,
+      rapOption: document.getElementById("rapOption").checked,
+      englishHookOption: document.getElementById("englishHookOption").checked,
+      repeatChorusOption: document.getElementById("repeatChorusOption").checked,
+      shortIntroOption: document.getElementById("shortIntroOption").checked,
+      longIntroOption: document.getElementById("longIntroOption").checked,
+      bridgeOption: document.getElementById("bridgeOption").checked,
+      inputFolder: document.getElementById("inputFolder").value,
+      outputFolder: document.getElementById("outputFolder").value,
+      videoFolder: document.getElementById("videoFolder").value,
+      mp3Count: document.getElementById("mp3Count").value,
+      instruments: Array.from(document.querySelectorAll(".instrument:checked")).map(el => el.value),
+      commandInput: document.getElementById("commandInput").value,
+      tracks
+    }; }
+
+    function applyProjectData(data){ if(!data) return; document.getElementById("projectName").value = data.projectName || ""; document.getElementById("trackCount").value = data.trackCount || "10"; document.getElementById("songDuration").value = data.songDuration || "3분"; document.getElementById("styleStrength").value = data.styleStrength || "기본"; document.getElementById("albumDuration").value = data.albumDuration || "2시간"; document.getElementById("albumExpansionMode").value = data.albumExpansionMode || "순차 반복"; document.getElementById("genreSelect").value = data.genreSelect || "발라드"; document.getElementById("moodSelect").value = data.moodSelect || "비 오는 날"; document.getElementById("vocalSelect").value = data.vocalSelect || "여성 보컬"; document.getElementById("lyricsLang").value = data.lyricsLang || "korean"; document.getElementById("instrumentalOnly").checked = !!data.instrumentalOnly; document.getElementById("rapOption").checked = !!data.rapOption; document.getElementById("englishHookOption").checked = !!data.englishHookOption; document.getElementById("repeatChorusOption").checked = !!data.repeatChorusOption; document.getElementById("shortIntroOption").checked = !!data.shortIntroOption; document.getElementById("longIntroOption").checked = !!data.longIntroOption; document.getElementById("bridgeOption").checked = !!data.bridgeOption; document.getElementById("inputFolder").value = data.inputFolder || "project/music-input/"; document.getElementById("outputFolder").value = data.outputFolder || "project/music-output/"; document.getElementById("videoFolder").value = data.videoFolder || "project/video-output/"; document.getElementById("mp3Count").value = data.mp3Count || "0"; document.getElementById("commandInput").value = data.commandInput || ""; document.querySelectorAll(".instrument").forEach(el => { el.checked = (data.instruments || []).includes(el.value); }); tracks = data.tracks || []; renderTracks(); copySteps=[]; tracks.forEach(track => { copySteps.push({ id:`title-${track.index}`, label:`${track.index}번곡 Title` }); copySteps.push({ id:`style-${track.index}`, label:`${track.index}번곡 Style` }); copySteps.push({ id:`lyrics-${track.index}`, label:`${track.index}번곡 Lyrics` }); }); copySequenceIndex=0; updateCopySequenceStatus(); updateAnalysis(document.getElementById("commandInput").value.trim()); }
+
+    function getProjects(){ try{ return JSON.parse(localStorage.getItem("aiMusicProjects") || "{}"); }catch{ return {}; } }
+    function setProjects(obj){ localStorage.setItem("aiMusicProjects", JSON.stringify(obj)); }
+    function refreshSavedProjects(){ const select = document.getElementById("savedProjects"); const projects = getProjects(); select.innerHTML=""; const keys=Object.keys(projects); if(!keys.length){ const opt=document.createElement("option"); opt.textContent="저장된 프로젝트 없음"; opt.value=""; select.appendChild(opt); return; } keys.forEach(key=>{ const opt=document.createElement("option"); opt.textContent=key; opt.value=key; select.appendChild(opt); }); }
+
+    function saveProject(){ const name = document.getElementById("projectName").value.trim(); if(!name){ alert("프로젝트 이름을 입력해 주세요."); return; } const projects = getProjects(); projects[name] = collectProjectData(); setProjects(projects); refreshSavedProjects(); document.getElementById("savedProjects").value = name; log(`프로젝트 저장 완료: ${name}`); }
+    function loadProject(){ const name = document.getElementById("savedProjects").value; if(!name) return; const projects = getProjects(); if(!projects[name]) return; applyProjectData(projects[name]); log(`프로젝트 불러오기 완료: ${name}`); }
+    function deleteProject(){ const name = document.getElementById("savedProjects").value; if(!name) return; const projects=getProjects(); delete projects[name]; setProjects(projects); refreshSavedProjects(); log(`프로젝트 삭제 완료: ${name}`); }
+
     function startVoice(){
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if(!SpeechRecognition){ alert('이 브라우저는 음성 인식을 지원하지 않습니다. 크롬을 사용하세요.'); return; }
-      const r = new SpeechRecognition();
-      r.lang='ko-KR'; r.interimResults=false; r.maxAlternatives=1;
-      updateAIStatus('working');
-      r.onresult = e => {
-        const text = e.results[0][0].transcript;
-        document.getElementById('commandInput').value = text;
-        document.getElementById('analysisResult').textContent = '음성 인식 결과: ' + text;
-        updateAIStatus('online');
-        log('음성 인식: ' + text);
-      };
-      r.onerror = e => { updateAIStatus('offline'); log('음성 인식 오류: ' + e.error); alert('음성 인식 오류: ' + e.error); };
-      r.start();
+      if(!SpeechRecognition){ updateAIStatus("offline"); alert("이 브라우저는 음성 인식을 지원하지 않습니다. 크롬에서 실행해 주세요."); return; }
+      const recognition = new SpeechRecognition();
+      recognition.lang="ko-KR"; recognition.interimResults=false; recognition.maxAlternatives=1;
+      updateListeningState(true); updateAIStatus("working"); log("음성 입력 대기 시작"); recognition.start();
+      recognition.onresult = function(event){ const text = event.results[0][0].transcript; document.getElementById("commandInput").value = text; log(`음성 입력 완료: ${text}`); updateListeningState(false); updateAnalysis(text); updateAIStatus("online"); };
+      recognition.onerror = function(event){ log("음성 인식 오류: " + event.error); updateListeningState(false); updateAIStatus("offline"); };
+      recognition.onend = function(){ updateListeningState(false); if(aiConnectionState!=="offline") updateAIStatus("online"); };
     }
+    function updateListeningState(isListening){ const status=document.getElementById("listenStatus"); if(isListening) status.innerHTML='상태: <span class="listening">듣는 중...</span>'; else status.textContent="상태: 대기중"; }
 
-    function runCommand(){
-      const text = document.getElementById('commandInput').value.trim();
-      if(!text){ alert('텍스트를 입력하세요.'); return; }
-      updateAIStatus('working'); log('분석 시작: '+text);
-      // 간단 동작: 설정 반영 후 분석 결과 표시
-      const total = document.getElementById('trackCount').value;
-      const duration = document.getElementById('songDuration').value;
-      document.getElementById('analysisResult').textContent = `주제: ${text}\\n곡 수: ${total}\\n곡 길이: ${duration}\\n(미리보기)`;
-      updateAIStatus('online'); log('분석 완료');
-    }
+    // 화면 지우기 (완료 후)
+    function clearGeneratedTracks(){ tracks=[]; renderTracks(); copySteps=[]; updateCopySequenceStatus(); document.getElementById("clearTracksBtn").style.display='none'; log('화면에서 생성된 트랙을 제거했습니다.'); }
 
-    function startSongEditing(){
-      updateAIStatus('working'); setTimeout(()=>{ updateAIStatus('online'); document.getElementById('analysisResult').textContent='편집 시작 단계로 넘어갔습니다.'; log('편집 시작'); }, 600);
-    }
+    /***********************
+     * 보조: setStatus / setProgress
+     ***********************/
+    function setStatus(id, text){ const el=document.getElementById(id); if(el) el.textContent=text; }
+    function setProgress(percent){ const el=document.getElementById("progressBar"); if(el) el.style.width = percent + "%"; }
 
-    // 초기화
-    refreshUI();
-    function refreshUI(){ document.getElementById('analysisResult').textContent='여기에 AI 분석 결과가 표시됩니다.'; document.getElementById('downloadResult').textContent='테스트 결과가 여기 표시됩니다.'; }
+    /***********************
+     * 시작시 설정
+     ***********************/
+    document.querySelectorAll("select, input").forEach(el=>{
+      el.addEventListener("change", ()=>{ updateAnalysis(document.getElementById("commandInput").value.trim()); updateMp3Status(); });
+      el.addEventListener("input", ()=>{ updateAnalysis(document.getElementById("commandInput").value.trim()); updateMp3Status(); });
+    });
+    refreshSavedProjects(); updateAnalysis(); updateMp3Status(); updateAIStatus("online");
+
+    /***********************
+     * 편의: 서버 기본값 빠르게 채우기 (a 옵션)
+     * - 사용자가 토큰 길게 입력하기 싫다길래, ops 패널에 기본값을 넣어둠
+     ***********************/
+    // (이미 HTML에 기본값이 들어가 있음)
+
   </script>
 </body>
 </html>
