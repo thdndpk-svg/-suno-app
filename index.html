@@ -8,18 +8,11 @@
     :root{
       --bg1:#f8f5ff;
       --bg2:#eef5ff;
-      --card:#ffffffcc;
-      --line:#e8eaf4;
       --text:#4a4f68;
       --title:#5a5fcf;
-      --pink:#f7b2e3;
-      --pink2:#ffd7ec;
-      --blue:#7ab8ff;
-      --mint:#79dfd1;
       --green:#35a853;
       --red:#d84b5b;
-      --shadow:0 10px 30px rgba(114, 132, 181, 0.12);
-      --radius:22px;
+      --shadow:0 10px 30px rgba(114,132,181,.12);
     }
 
     *{box-sizing:border-box}
@@ -28,9 +21,9 @@
       font-family:"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
       color:var(--text);
       background:
-        radial-gradient(circle at top left, #ffe8f4 0%, transparent 32%),
-        radial-gradient(circle at top right, #f9dff2 0%, transparent 30%),
-        linear-gradient(135deg, var(--bg1), var(--bg2));
+        radial-gradient(circle at top left,#ffe8f4 0%,transparent 32%),
+        radial-gradient(circle at top right,#f9dff2 0%,transparent 30%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
       min-height:100vh;
       padding:18px;
     }
@@ -41,9 +34,9 @@
     }
 
     .hero{
-      background:rgba(255,255,255,0.66);
-      border:1px solid rgba(255,255,255,0.85);
-      backdrop-filter: blur(10px);
+      background:rgba(255,255,255,.66);
+      border:1px solid rgba(255,255,255,.85);
+      backdrop-filter:blur(10px);
       border-radius:30px;
       box-shadow:var(--shadow);
       padding:20px;
@@ -126,23 +119,19 @@
       height:12px;
       border-radius:50%;
       background:#b8bcc8;
-      box-shadow:0 0 0 4px rgba(184,188,200,0.15);
+      box-shadow:0 0 0 4px rgba(184,188,200,.15);
     }
 
-    .ai-badge.online{
-      color:var(--green);
-    }
+    .ai-badge.online{ color:var(--green); }
     .ai-badge.online .ai-dot{
       background:var(--green);
-      box-shadow:0 0 0 4px rgba(53,168,83,0.12);
+      box-shadow:0 0 0 4px rgba(53,168,83,.12);
     }
 
-    .ai-badge.offline{
-      color:var(--red);
-    }
+    .ai-badge.offline{ color:var(--red); }
     .ai-badge.offline .ai-dot{
       background:var(--red);
-      box-shadow:0 0 0 4px rgba(216,75,91,0.12);
+      box-shadow:0 0 0 4px rgba(216,75,91,.12);
     }
 
     .compact-status{
@@ -169,6 +158,14 @@
       align-items:center;
     }
 
+    .tab-btn,.action-btn,.mini-btn,.soft-btn,.danger-btn,.primary-btn,.tiny-btn,.copy-btn{
+      border:none;
+      cursor:pointer;
+      transition:.18s ease;
+      font-weight:700;
+      border-radius:14px;
+    }
+
     .tab-btn{
       padding:14px 18px;
       background:#fff;
@@ -176,14 +173,9 @@
       color:#6b7090;
       box-shadow:var(--shadow);
       font-size:15px;
-      border:none;
-      border-radius:14px;
-      font-weight:700;
-      cursor:pointer;
-      transition:.18s ease;
     }
 
-    .tab-btn:hover{
+    .tab-btn:hover,.action-btn:hover,.mini-btn:hover,.soft-btn:hover,.danger-btn:hover,.primary-btn:hover,.tiny-btn:hover,.copy-btn:hover{
       transform:translateY(-1px);
     }
 
@@ -200,16 +192,14 @@
     .blog-panel{
       margin-top:14px;
       display:none;
-      background:rgba(255,255,255,0.82);
+      background:rgba(255,255,255,.82);
       border:1px solid #edf0f7;
       border-radius:20px;
       box-shadow:var(--shadow);
       padding:16px;
     }
 
-    .blog-panel.show{
-      display:block;
-    }
+    .blog-panel.show{ display:block; }
 
     .panel-title{
       font-size:18px;
@@ -230,18 +220,6 @@
       gap:10px;
     }
 
-    .action-btn,.mini-btn,.soft-btn,.danger-btn,.primary-btn,.tiny-btn{
-      border:none;
-      cursor:pointer;
-      transition:.18s ease;
-      font-weight:700;
-      border-radius:14px;
-    }
-
-    .action-btn:hover,.mini-btn:hover,.soft-btn:hover,.danger-btn:hover,.primary-btn:hover,.tiny-btn:hover{
-      transform:translateY(-1px);
-    }
-
     .action-btn{
       padding:12px 16px;
       background:#eef4ff;
@@ -257,15 +235,15 @@
     .page-grid{
       margin-top:18px;
       display:grid;
-      grid-template-columns: 1.4fr 1fr;
+      grid-template-columns:1.4fr 1fr;
       gap:18px;
       align-items:start;
     }
 
     .card{
-      background:rgba(255,255,255,0.78);
-      border:1px solid rgba(255,255,255,0.9);
-      backdrop-filter: blur(8px);
+      background:rgba(255,255,255,.78);
+      border:1px solid rgba(255,255,255,.9);
+      backdrop-filter:blur(8px);
       border-radius:26px;
       box-shadow:var(--shadow);
       padding:18px;
@@ -291,7 +269,7 @@
       border-radius:16px;
       background:#fff;
       color:#535975;
-      padding:14px 14px;
+      padding:14px;
       font-size:15px;
       outline:none;
     }
@@ -332,7 +310,6 @@
       padding:12px 18px;
       background:linear-gradient(135deg,#7bc3ff,#7be0c9);
       color:#fff;
-      border:1px solid transparent;
     }
 
     .danger-btn{
@@ -368,7 +345,7 @@
       padding:14px;
       border:1px solid #ebeff6;
       border-radius:20px;
-      background:rgba(250,252,255,0.85);
+      background:rgba(250,252,255,.85);
     }
 
     .section-title{
@@ -434,6 +411,8 @@
       border-radius:999px;
       font-size:12px;
       white-space:nowrap;
+      min-width:58px;
+      text-align:center;
     }
 
     .meter-label{
@@ -462,16 +441,32 @@
     .checklist-simple{
       display:flex;
       flex-direction:column;
-      gap:8px;
-      padding-top:2px;
+      gap:10px;
+      padding-top:4px;
     }
 
-    .checklist-simple label{
+    .check-item{
       display:flex;
       align-items:center;
       gap:10px;
-      font-weight:600;
+      min-height:26px;
       color:#5e6684;
+      font-weight:600;
+      line-height:1.3;
+    }
+
+    .check-item input[type="checkbox"]{
+      width:18px;
+      height:18px;
+      margin:0;
+      flex:0 0 18px;
+      accent-color:#7baeff;
+      border-radius:4px;
+    }
+
+    .check-item span{
+      display:inline-block;
+      transform:translateY(-1px);
     }
 
     .log-box{
@@ -505,9 +500,7 @@
       padding:12px 14px;
     }
 
-    .song-main{
-      min-width:0;
-    }
+    .song-main{ min-width:0; }
 
     .song-title{
       font-weight:800;
@@ -552,13 +545,75 @@
       background:#fcfdff;
     }
 
+    .quick-copy-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .copy-card{
+      background:#fff;
+      border:1px solid #edf1f8;
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .copy-title{
+      font-size:14px;
+      font-weight:800;
+      color:#5f6a91;
+      margin-bottom:8px;
+    }
+
+    .copy-text{
+      min-height:74px;
+      background:#f8fbff;
+      border:1px solid #e8eef8;
+      border-radius:12px;
+      padding:10px;
+      font-size:13px;
+      color:#6d7391;
+      line-height:1.5;
+      white-space:pre-line;
+    }
+
+    .copy-btn{
+      margin-top:10px;
+      padding:10px 12px;
+      background:#eef4ff;
+      color:#5570c8;
+      width:100%;
+    }
+
+    .file-progress-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .mini-info-card{
+      background:#fff;
+      border:1px solid #edf1f8;
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .mini-info-label{
+      font-size:13px;
+      color:#8390aa;
+      margin-bottom:6px;
+    }
+
+    .mini-info-value{
+      font-size:14px;
+      font-weight:800;
+      color:#55607f;
+      word-break:break-word;
+    }
+
     @media (max-width:1100px){
-      .page-grid{
-        grid-template-columns:1fr;
-      }
-      .hero-right{
-        align-items:flex-start;
-      }
+      .page-grid{ grid-template-columns:1fr; }
+      .hero-right{ align-items:flex-start; }
       .compact-status{
         justify-content:flex-start;
         text-align:left;
@@ -566,20 +621,14 @@
     }
 
     @media (max-width:720px){
-      body{padding:10px}
-      h1{font-size:23px}
-      .row,.triple{
+      body{ padding:10px; }
+      h1{ font-size:23px; }
+      .row,.triple,.quick-copy-grid,.file-progress-grid{
         grid-template-columns:1fr;
       }
-      .hero{
-        padding:14px;
-      }
-      .card{
-        padding:14px;
-      }
-      .song-item{
-        grid-template-columns:28px 1fr;
-      }
+      .hero{ padding:14px; }
+      .card{ padding:14px; }
+      .song-item{ grid-template-columns:28px 1fr; }
       .song-right{
         grid-column:1 / -1;
         justify-content:flex-start;
@@ -823,12 +872,50 @@
         <div class="section-box">
           <div class="section-title">최종 체크리스트</div>
           <div class="checklist-simple">
-            <label><input type="checkbox" id="checkTitle"> Title 확인</label>
-            <label><input type="checkbox" id="checkStyle"> Style 확인</label>
-            <label><input type="checkbox" id="checkLyrics"> Lyrics 확인</label>
-            <label><input type="checkbox" id="checkSuno"> Suno 제작 완료</label>
-            <label><input type="checkbox" id="checkMp3"> mp3 저장 완료</label>
-            <label><input type="checkbox" id="checkEdit"> 노래 편집 시작 가능</label>
+            <label class="check-item"><input type="checkbox" id="checkTitle"><span>Title 확인</span></label>
+            <label class="check-item"><input type="checkbox" id="checkStyle"><span>Style 확인</span></label>
+            <label class="check-item"><input type="checkbox" id="checkLyrics"><span>Lyrics 확인</span></label>
+            <label class="check-item"><input type="checkbox" id="checkSuno"><span>Suno 제작 완료</span></label>
+            <label class="check-item"><input type="checkbox" id="checkMp3"><span>mp3 저장 완료</span></label>
+            <label class="check-item"><input type="checkbox" id="checkEdit"><span>노래 편집 시작 가능</span></label>
+          </div>
+        </div>
+
+        <div class="section-box">
+          <div class="section-title">파일 / 진행관리</div>
+          <div class="file-progress-grid">
+            <div class="mini-info-card">
+              <div class="mini-info-label">현재 파일명</div>
+              <div class="mini-info-value" id="fileNameInfo">없음</div>
+            </div>
+            <div class="mini-info-card">
+              <div class="mini-info-label">현재 진행 상태</div>
+              <div class="mini-info-value" id="progressInfo">대기중</div>
+            </div>
+            <div class="mini-info-card">
+              <div class="mini-info-label">생성 곡 수</div>
+              <div class="mini-info-value" id="songCountInfo">0곡</div>
+            </div>
+            <div class="mini-info-card">
+              <div class="mini-info-label">가사 언어</div>
+              <div class="mini-info-value" id="langInfo">한국어</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-box">
+          <div class="section-title">빠른 붙여넣기 복사</div>
+          <div class="quick-copy-grid">
+            <div class="copy-card">
+              <div class="copy-title">제목</div>
+              <div class="copy-text" id="copyTitleText">아직 생성된 제목이 없습니다.</div>
+              <button class="copy-btn" data-copy-target="copyTitleText">제목 복사</button>
+            </div>
+            <div class="copy-card">
+              <div class="copy-title">가사/지시문</div>
+              <div class="copy-text" id="copyPromptText">아직 입력된 지시문이 없습니다.</div>
+              <button class="copy-btn" data-copy-target="copyPromptText">지시문 복사</button>
+            </div>
           </div>
         </div>
 
@@ -849,6 +936,12 @@
     const rightShortStatus = document.getElementById('rightShortStatus');
     const mainStatusChip = document.getElementById('mainStatusChip');
     const meterFill = document.getElementById('meterFill');
+    const fileNameInfo = document.getElementById('fileNameInfo');
+    const progressInfo = document.getElementById('progressInfo');
+    const songCountInfo = document.getElementById('songCountInfo');
+    const langInfo = document.getElementById('langInfo');
+    const copyTitleText = document.getElementById('copyTitleText');
+    const copyPromptText = document.getElementById('copyPromptText');
 
     function setMiniStatus(target, message) {
       if (target) target.textContent = message;
@@ -878,6 +971,22 @@
       meterFill.style.width = percent + '%';
     }
 
+    function updateFileProgressBox() {
+      const projectName = document.getElementById('projectName').value.trim();
+      const lang = document.getElementById('lyricsLanguage').value;
+      fileNameInfo.textContent = projectName || '없음';
+      progressInfo.textContent = mainStatusChip.textContent.replace('상태: ','');
+      songCountInfo.textContent = `${state.generatedSongs.length}곡`;
+      langInfo.textContent = lang || '한국어';
+    }
+
+    function updateQuickCopyBox() {
+      const prompt = document.getElementById('promptInput').value.trim();
+      const firstTitle = state.generatedSongs[0]?.title || '아직 생성된 제목이 없습니다.';
+      copyTitleText.textContent = firstTitle;
+      copyPromptText.textContent = prompt || '아직 입력된 지시문이 없습니다.';
+    }
+
     function resetProgressUI() {
       setStep('step1', '대기중');
       setStep('step2', '대기중');
@@ -891,6 +1000,7 @@
       document.getElementById('checkSuno').checked = false;
       document.getElementById('checkMp3').checked = false;
       document.getElementById('checkEdit').checked = false;
+      updateFileProgressBox();
     }
 
     function getLyricsLanguage() {
@@ -978,6 +1088,8 @@
     function renderSongs() {
       if (!state.generatedSongs.length) {
         songListEl.innerHTML = '<div class="empty-box">아직 생성된 곡이 없습니다.</div>';
+        updateFileProgressBox();
+        updateQuickCopyBox();
         return;
       }
 
@@ -994,6 +1106,9 @@
           </div>
         </div>
       `).join('');
+
+      updateFileProgressBox();
+      updateQuickCopyBox();
     }
 
     function createSongs(count) {
@@ -1038,7 +1153,6 @@
         appendLog('선택 삭제를 눌렀지만 선택된 곡이 없습니다.');
         return;
       }
-
       state.generatedSongs = state.generatedSongs.filter(song => !checked.includes(song.id));
       renderSongs();
       setMiniStatus(topMiniStatus, `선택 곡 ${checked.length}개 삭제`);
@@ -1118,17 +1232,43 @@
 
     document.getElementById('saveProjectBtn').addEventListener('click', () => {
       setMiniStatus(topMiniStatus, '프로젝트 저장');
+      updateFileProgressBox();
       appendLog('프로젝트 저장 버튼을 눌렀습니다.');
     });
 
     document.getElementById('loadProjectBtn').addEventListener('click', () => {
       setMiniStatus(topMiniStatus, '프로젝트 불러오기');
+      updateFileProgressBox();
       appendLog('프로젝트 불러오기 버튼을 눌렀습니다.');
     });
 
     document.getElementById('deleteProjectBtn').addEventListener('click', () => {
       setMiniStatus(topMiniStatus, '프로젝트 삭제');
+      document.getElementById('projectName').value = '';
+      updateFileProgressBox();
       appendLog('프로젝트 삭제 버튼을 눌렀습니다.');
+    });
+
+    document.getElementById('promptInput').addEventListener('input', updateQuickCopyBox);
+    document.getElementById('projectName').addEventListener('input', updateFileProgressBox);
+    document.getElementById('lyricsLanguage').addEventListener('change', () => {
+      updateFileProgressBox();
+      updateQuickCopyBox();
+    });
+
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const targetId = btn.getAttribute('data-copy-target');
+        const text = document.getElementById(targetId)?.textContent || '';
+        try {
+          await navigator.clipboard.writeText(text);
+          setMiniStatus(topMiniStatus, '복사 완료');
+          appendSimpleLog('복사 완료');
+        } catch (e) {
+          setMiniStatus(topMiniStatus, '복사 실패');
+          appendSimpleLog('복사 실패');
+        }
+      });
     });
 
     async function runGenerateFlow() {
@@ -1137,6 +1277,7 @@
 
       resetProgressUI();
       mainStatusChip.textContent = '상태: 작업 시작';
+      updateFileProgressBox();
       appendLog(`곡 생성 작업을 시작했습니다. 언어: ${lang}, 곡 수: ${count}`);
 
       setStep('step1', '진행중');
@@ -1176,6 +1317,8 @@
       setStep('step5', '완료');
       updateProgress(100);
       mainStatusChip.textContent = '상태: 생성 완료';
+      updateFileProgressBox();
+      updateQuickCopyBox();
       appendLog('노래 생성 흐름이 완료되었습니다.');
     }
 
@@ -1208,7 +1351,6 @@
           text.textContent = 'AI ONLINE';
           return true;
         }
-
         badge.classList.remove('online');
         badge.classList.add('offline');
         text.textContent = 'AI OFFLINE';
@@ -1249,6 +1391,8 @@
     async function init() {
       renderSongs();
       resetProgressUI();
+      updateFileProgressBox();
+      updateQuickCopyBox();
       await refreshAiStatus();
       setInterval(refreshAiStatus, 10000);
     }
