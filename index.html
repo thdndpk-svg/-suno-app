@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v26 Final</title>
+  <title>AI Music Auto Studio v26 Final Fix</title>
   <style>
     :root{
       --bg1:#f8f5ff;
@@ -158,6 +158,28 @@
       display:flex;
       align-items:center;
       justify-content:flex-end;
+    }
+
+    .api-box{
+      width:100%;
+      max-width:420px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .api-box input{
+      flex:1;
+      min-width:220px;
+      border:1px solid #e4e8f2;
+      border-radius:12px;
+      background:#fff;
+      color:#535975;
+      padding:10px 12px;
+      font-size:14px;
+      outline:none;
     }
 
     .tabs{
@@ -602,6 +624,11 @@
         text-align:left;
         max-width:none;
       }
+
+      .api-box{
+        justify-content:flex-start;
+        max-width:none;
+      }
     }
 
     @media (max-width: 760px){
@@ -712,8 +739,8 @@
         <div class="brand">
           <div class="brand-icon">🎀</div>
           <div>
-            <h1>AI Music Auto Studio v26 Final</h1>
-            <div class="subtitle">AI 연결 · 수노 자동/수동 듀얼모드 · 빠른 복사 · 곡 관리 · 모바일 최적화</div>
+            <h1>AI Music Auto Studio v26 Final Fix</h1>
+            <div class="subtitle">AI 연결 · 수노 자동/수동 듀얼모드 · 빠른 복사 · 곡 관리 · 모바일/컴퓨터 안정화</div>
           </div>
         </div>
 
@@ -721,6 +748,11 @@
           <div class="flow-badge">
             <span class="desktop-flow">실행 → 노래 제작 → 수노 자동입력/수동입력 → mp3 저장 → 노래 편집 시작</span>
             <span class="mobile-only">실행 → 노래 제작 → 수노 → mp3 → 편집</span>
+          </div>
+
+          <div class="api-box">
+            <input id="apiBaseInput" type="text" placeholder="API 서버 주소 입력 (예: http://localhost:4000)" />
+            <button class="soft-btn" id="saveApiBaseBtn">주소저장</button>
           </div>
 
           <div class="ai-top-row">
@@ -1149,6 +1181,7 @@
     const mainStatusChip = document.getElementById('mainStatusChip');
     const meterFill = document.getElementById('meterFill');
     const sunoModeStatus = document.getElementById('sunoModeStatus');
+    const apiBaseInput = document.getElementById('apiBaseInput');
 
     function setMiniStatus(target, message) {
       if (target) target.textContent = message;
@@ -1376,8 +1409,10 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
         setMiniStatus(topMiniStatus, '복사 완료');
         appendLog('빠른 붙여넣기 문구를 클립보드에 복사했습니다.');
       } catch {
-        setMiniStatus(topMiniStatus, '복사 실패');
-        appendLog('클립보드 복사에 실패했습니다.');
+        quickCopyInput.select();
+        document.execCommand('copy');
+        setMiniStatus(topMiniStatus, '복사 시도 완료');
+        appendLog('클립보드 복사를 시도했습니다. 안 되면 직접 길게 눌러 복사하세요.');
       }
     }
 
@@ -1442,6 +1477,34 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
       return payload;
     }
 
+    function normalizeBase(url) {
+      return String(url || '').trim().replace(/\/+$/, '');
+    }
+
+    function getSavedApiBase() {
+      try {
+        return normalizeBase(localStorage.getItem('APP_API_BASE') || '');
+      } catch {
+        return '';
+      }
+    }
+
+    function setSavedApiBase(url) {
+      try {
+        localStorage.setItem('APP_API_BASE', normalizeBase(url));
+      } catch {}
+    }
+
+    function getApiBase() {
+      return normalizeBase(apiBaseInput.value || getSavedApiBase());
+    }
+
+    function getHealthUrl() {
+      const apiBase = getApiBase();
+      if (!apiBase) return null;
+      return `${apiBase}/api/health`;
+    }
+
     window.deleteSong = function(id) {
       state.generatedSongs = state.generatedSongs.filter(song => song.id !== id);
       renderSongs();
@@ -1461,6 +1524,13 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
       appendLog('선택한 곡 제목을 다시 만들었습니다.');
       setMiniStatus(topMiniStatus, '제목 다시 생성 완료');
     };
+
+    document.getElementById('saveApiBaseBtn').addEventListener('click', () => {
+      const value = normalizeBase(apiBaseInput.value);
+      setSavedApiBase(value);
+      setMiniStatus(topMiniStatus, value ? `API 주소 저장 완료` : 'API 주소 비움');
+      appendLog(value ? `API 서버 주소를 저장했습니다: ${value}` : 'API 서버 주소를 비웠습니다.');
+    });
 
     document.getElementById('deleteSelectedSongsBtn').addEventListener('click', () => {
       const checked = [...document.querySelectorAll('.song-check:checked')].map(el => el.dataset.id);
@@ -1511,7 +1581,7 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
       setMiniStatus(topMiniStatus, 'AI 연결 확인 중...');
       appendLog('AI 연결 버튼을 눌렀습니다.');
       const ok = await refreshAiStatus();
-      setMiniStatus(topMiniStatus, ok ? 'AI 연결 완료' : 'AI 연결 실패');
+      setMiniStatus(topMiniStatus, ok ? 'AI 연결 완료' : 'AI 연결 실패 또는 서버주소 없음');
       appendLog(ok ? 'AI 연결이 확인되었습니다.' : 'AI 연결이 되지 않았습니다.');
     });
 
@@ -1753,8 +1823,15 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
       badge.classList.add('offline');
       text.textContent = 'AI OFFLINE';
 
+      const healthUrl = getHealthUrl();
+
+      if (!healthUrl) {
+        appendLog('API 서버 주소가 없어 AI 상태 확인을 건너뜁니다. 예: http://localhost:4000');
+        return false;
+      }
+
       try {
-        const res = await fetch('/api/health', { cache: 'no-store' });
+        const res = await fetch(healthUrl, { cache: 'no-store' });
         if (!res.ok) throw new Error('health fail');
 
         const data = await res.json();
@@ -1772,6 +1849,7 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
         text.textContent = 'AI OFFLINE';
         return false;
       } catch (err) {
+        appendLog(`AI 상태 확인 실패: ${healthUrl}`);
         badge.classList.remove('online');
         badge.classList.add('offline');
         text.textContent = 'AI OFFLINE';
@@ -1780,6 +1858,9 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
     }
 
     async function init() {
+      const savedApiBase = getSavedApiBase();
+      if (savedApiBase) apiBaseInput.value = savedApiBase;
+
       renderSongs();
       resetProgressUI();
       buildCopyItems();
