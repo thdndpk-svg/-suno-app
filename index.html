@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v26 Auto Connect</title>
+  <title>AI Music Auto Studio v27 Smart Vocal + Lyrics</title>
   <style>
     :root{
       --bg1:#f8f5ff;
@@ -496,7 +496,7 @@
     .song-item{
       display:grid;
       grid-template-columns:32px 1fr auto;
-      align-items:center;
+      align-items:flex-start;
       gap:12px;
       background:#fff;
       border:1px solid #edf1f8;
@@ -521,6 +521,18 @@
       font-size:13px;
       color:#838aa3;
       margin-top:4px;
+    }
+
+    .song-lyrics-preview{
+      margin-top:8px;
+      font-size:13px;
+      color:#6b7391;
+      white-space:pre-line;
+      line-height:1.5;
+      background:#f9fbff;
+      border:1px solid #edf1f8;
+      border-radius:12px;
+      padding:10px;
     }
 
     .song-right{
@@ -712,8 +724,8 @@
         <div class="brand">
           <div class="brand-icon">🎀</div>
           <div>
-            <h1>AI Music Auto Studio v26 Auto Connect</h1>
-            <div class="subtitle">AI 자동 연결 · 수노 자동/수동 듀얼모드 · 빠른 복사 · 곡 관리 · 모바일 최적화</div>
+            <h1>AI Music Auto Studio v27 Smart Vocal + Lyrics</h1>
+            <div class="subtitle">AI 자동 연결 · 수노 자동/수동 듀얼모드 · 보컬 분배 반영 · 가사 미리보기 · 모바일 서버 주소 지원</div>
           </div>
         </div>
 
@@ -762,7 +774,7 @@
 
         <div class="prompt-box">
           <label class="label" for="promptInput">음성 또는 텍스트 지시</label>
-          <textarea id="promptInput" placeholder="예: 비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘&#10;예: 중간에 랩이 들어가는 힙합 8곡 만들어줘&#10;예: 1번곡 조금 더 경쾌하게 만들어줘"></textarea>
+          <textarea id="promptInput" placeholder="예: 봄에 향기가 물씬 풍기는 노래로 여성보컬 3곡, 남성 3곡, 듀엣 4곡 만들어줘&#10;예: 비 오는 날 듣기 좋은 발라드 여성보컬 10곡 만들어줘&#10;예: 1번곡 조금 더 경쾌하게 만들어줘"></textarea>
         </div>
 
         <div class="toolbar">
@@ -804,7 +816,7 @@
           </div>
 
           <label class="label" for="sunoLyricsInput" style="margin-top:12px;">수노 가사</label>
-          <textarea id="sunoLyricsInput" placeholder="수노 Custom mode용 가사 입력칸입니다. 빠른 복사창 내용 또는 직접 작성한 가사가 들어갑니다."></textarea>
+          <textarea id="sunoLyricsInput" placeholder="수노 Custom mode용 가사 입력칸입니다. 선택한 곡의 가사가 들어갑니다."></textarea>
 
           <div class="toolbar" style="margin-bottom:10px;">
             <button class="soft-btn" id="prepareSunoDataBtn">수노 데이터 준비</button>
@@ -821,6 +833,21 @@
             <button class="soft-btn" id="manualGenerateGuideBtn">수동 생성 안내</button>
             <button class="soft-btn" id="manualDownloadGuideBtn">수동 다운로드 안내</button>
             <button class="danger-btn full-row" id="switchManualModeBtn">자동 실패시 수동 모드 전환</button>
+          </div>
+        </div>
+
+        <div class="section-box">
+          <div class="section-title">서버 연결 설정</div>
+          <div class="section-desc">모바일에서는 localhost 대신 맥북의 내부 IP 주소를 넣어야 합니다. 예: http://192.168.0.15:4000</div>
+
+          <div class="row">
+            <div>
+              <label class="label" for="apiBaseInput">API 주소</label>
+              <input id="apiBaseInput" type="text" placeholder="예: http://192.168.0.15:4000" />
+            </div>
+            <div style="display:flex; align-items:end;">
+              <button class="primary-btn" id="saveApiBaseBtn" style="width:100%;">주소 저장</button>
+            </div>
           </div>
         </div>
 
@@ -912,7 +939,7 @@
             <div>
               <label class="label" for="mood">분위기</label>
               <select id="mood">
-                <option selected>비 오는 날</option>
+                <option>비 오는 날</option>
                 <option>감성적인 밤</option>
                 <option>희망찬 아침</option>
                 <option>신나는 드라이브</option>
@@ -924,6 +951,7 @@
                 <option>웅장한 감동</option>
                 <option>여름 바다</option>
                 <option>겨울 감성</option>
+                <option selected>봄 향기</option>
               </select>
             </div>
           </div>
@@ -1206,7 +1234,7 @@
         .trim()
         .split(' ')
         .filter(Boolean)
-        .slice(0, 2)
+        .slice(0, 3)
         .join(' ');
     }
 
@@ -1228,40 +1256,6 @@
       };
     }
 
-    function makeSongTitle(index) {
-      const p = getMusicProfile();
-      const prompt = document.getElementById('promptInput').value.trim();
-      const keyword = sanitizeKeyword(prompt) || p.mood;
-      const lang = detectTitleLanguage();
-
-      if (lang === 'ko') {
-        const rapTag = p.rapStyle !== '없음' ? '랩' : '';
-        const instTag = p.instrumentMain === '피아노' ? '피아노' : p.instrumentMain;
-        const patterns = [
-          `${keyword}의 밤 ${index}`,
-          `${p.mood} ${p.genre} ${index}`,
-          `${keyword} 이야기 ${index}`,
-          `${p.voiceStyle} ${instTag} ${index}`,
-          `${p.mood} 속으로 ${index}`,
-          `${keyword} ${rapTag} ${index}`.trim(),
-          `${instTag} 감성 ${index}`,
-          `${p.genre} Dream ${index}`
-        ];
-        return pickRandom(patterns);
-      }
-
-      const keywordEn = keyword.replace(/[가-힣]/g, '').trim() || p.mood;
-      const patterns = [
-        `${keywordEn} ${index}`,
-        `${p.mood} ${p.genre} ${index}`,
-        `${keywordEn} Story ${index}`,
-        `${p.instrumentMain} Mood ${index}`,
-        `${p.genre} Dream ${index}`,
-        `${p.voiceStyle} Echo ${index}`
-      ];
-      return pickRandom(patterns);
-    }
-
     function escapeHtml(str) {
       return String(str)
         .replaceAll('&', '&amp;')
@@ -1269,6 +1263,139 @@
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#39;');
+    }
+
+    function parsePromptDistribution(prompt, totalCount) {
+      const text = String(prompt || '');
+
+      const getCount = (keywords) => {
+        for (const k of keywords) {
+          const m = text.match(new RegExp(`${k}\\s*(\\d+)\\s*곡`));
+          if (m) return Number(m[1]);
+        }
+        return 0;
+      };
+
+      const female = getCount(['여성보컬', '여성 보컬', '여자보컬', '여자 보컬', '여성']);
+      const male = getCount(['남성보컬', '남성 보컬', '남자보컬', '남자 보컬', '남성']);
+      const duet = getCount(['듀엣', '듀오']);
+
+      let plan = [];
+      for (let i = 0; i < female; i++) plan.push('여성 보컬');
+      for (let i = 0; i < male; i++) plan.push('남성 보컬');
+      for (let i = 0; i < duet; i++) plan.push('듀엣');
+
+      if (!plan.length) {
+        const defaultVocal = document.getElementById('vocalType').value;
+        while (plan.length < totalCount) plan.push(defaultVocal);
+      }
+
+      while (plan.length < totalCount) {
+        plan.push(plan[plan.length - 1] || document.getElementById('vocalType').value);
+      }
+
+      return plan.slice(0, totalCount);
+    }
+
+    function makeSongTitle(index, vocalType) {
+      const prompt = document.getElementById('promptInput').value.trim();
+      const keyword = sanitizeKeyword(prompt) || '봄';
+      const lang = detectTitleLanguage();
+
+      if (lang !== 'ko') {
+        const englishTitles = [
+          'Spring Scent Memory',
+          'Blooming Daylight',
+          'Whisper of Blossom',
+          'Soft Petal Night',
+          'Your Name in Spring',
+          'Warm Breeze Story',
+          'Flower Road Echo',
+          'Light of April'
+        ];
+        return `${pickRandom(englishTitles)} ${index}`;
+      }
+
+      const springWords = ['봄바람', '꽃향기', '벚꽃길', '햇살', '라일락', '봄비', '산책길', '꽃잎', '봄빛'];
+      const feelingWords = ['기억', '고백', '편지', '숨결', '온기', '속삭임', '하루', '장면', '그리움'];
+      const duetWord =
+        vocalType === '듀엣' ? '우리' :
+        vocalType === '남성 보컬' ? '그의' :
+        '그녀의';
+
+      const patterns = [
+        `${pickRandom(springWords)}에 머문 ${pickRandom(feelingWords)}`,
+        `${duetWord} ${pickRandom(springWords)} 노래`,
+        `${keyword}처럼 스며든 하루`,
+        `${pickRandom(springWords)} 따라 걷는 밤`,
+        `${pickRandom(feelingWords)}이 된 ${pickRandom(springWords)}`,
+        `${keyword} 향기 머문 자리`,
+        `${pickRandom(springWords)} 끝에서 너를 만나`,
+        `${pickRandom(feelingWords)}으로 번진 봄`
+      ];
+
+      return `${pickRandom(patterns)} ${index}`;
+    }
+
+    function makeLyrics(song, index) {
+      const prompt = document.getElementById('promptInput').value.trim() || '봄 향기가 물씬 풍기는 감성적인 노래';
+      const p = getMusicProfile();
+
+      const vocalLine =
+        song.vocalType === '여성 보컬' ? '[Female Vocal]' :
+        song.vocalType === '남성 보컬' ? '[Male Vocal]' :
+        song.vocalType === '듀엣' ? '[Duet]' : '[Vocal]';
+
+      const bridgeLine =
+        song.vocalType === '듀엣'
+          ? '너와 나의 목소리가 한 장면처럼 겹쳐지고'
+          : song.vocalType === '남성 보컬'
+            ? '낮은 목소리 끝에 긴 여운이 천천히 번지고'
+            : '맑은 숨결 끝에 따뜻한 떨림이 가만히 번지고';
+
+      return `${vocalLine}
+[Title]
+${song.title}
+
+[Verse 1]
+${prompt}
+따뜻한 바람이 내 맘을 스치고
+꽃잎 같은 기억이 천천히 내려와
+오늘의 햇살은 유난히 포근해서
+네 이름마저 봄처럼 번져가
+
+[Pre-Chorus]
+조용히 스며든 향기 따라
+멈춰 있던 마음이 깨어나
+이 계절 끝에 서 있는 우리
+조금씩 가까워져 가
+
+[Chorus]
+봄 향기가 불어오면
+내 하루가 너로 물들어
+작은 미소 하나에도
+세상이 환하게 피어나
+눈부신 이 길 위에서
+우리 마음이 노래가 돼
+${song.title}
+오늘도 봄처럼 머물러줘
+
+[Verse 2]
+바람결에 실려 온 익숙한 온기
+한 걸음 뒤에서 날 감싸 안고
+흩날리는 꽃잎 사이로
+조용히 사랑이 시작돼
+
+[Bridge]
+${bridgeLine}
+이 순간이 오래 남기를 바라
+
+[Outro]
+봄 향기가 지나가도
+이 노래는 우리 곁에 남아
+
+[Style Note]
+${p.genre}, ${song.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p.instrumentSub}, ${p.instrumentMood}`;
     }
 
     function renderSongs() {
@@ -1283,8 +1410,10 @@
           <div class="song-main">
             <div class="song-title">${escapeHtml(song.title)}</div>
             <div class="song-meta">${escapeHtml(song.meta)}</div>
+            <div class="song-lyrics-preview">${escapeHtml((song.lyrics || '가사 없음').slice(0, 220))}${song.lyrics && song.lyrics.length > 220 ? '...' : ''}</div>
           </div>
           <div class="song-right">
+            <button class="tiny-btn" onclick="loadSongToSuno('${song.id}')">이 곡 불러오기</button>
             <button class="tiny-btn" onclick="renameSong('${song.id}')">제목 다시 만들기</button>
             <button class="tiny-btn delete" onclick="deleteSong('${song.id}')">삭제</button>
           </div>
@@ -1294,14 +1423,26 @@
 
     function createSongs(count) {
       const p = getMusicProfile();
+      const prompt = document.getElementById('promptInput').value.trim();
+      const vocalPlan = parsePromptDistribution(prompt, count);
+
       const newSongs = [];
       for (let i = 1; i <= count; i++) {
-        newSongs.push({
+        const songVocal = vocalPlan[i - 1] || p.vocalType;
+        const title = makeSongTitle(i, songVocal);
+
+        const song = {
           id: 'song_' + Date.now() + '_' + i + '_' + Math.random().toString(36).slice(2, 7),
-          title: makeSongTitle(i),
-          meta: `${p.genre} · ${p.mood} · ${p.vocalType} · ${p.voiceStyle} · ${p.instrumentMain}/${p.instrumentSub} · ${p.rapStyle} · ${p.songLength} · ${p.lyricsLanguage}`
-        });
+          title,
+          vocalType: songVocal,
+          meta: `${p.genre} · ${p.mood} · ${songVocal} · ${p.voiceStyle} · ${p.instrumentMain}/${p.instrumentSub} · ${p.rapStyle} · ${p.songLength} · ${p.lyricsLanguage}`,
+          lyrics: ''
+        };
+
+        song.lyrics = makeLyrics(song, i);
+        newSongs.push(song);
       }
+
       state.generatedSongs = newSongs;
       renderSongs();
     }
@@ -1313,8 +1454,12 @@
       const expandMethod = document.getElementById('expandMethod').value;
 
       const titleText = state.generatedSongs.length
-        ? state.generatedSongs.map((song, i) => `${i + 1}. ${song.title}`).join('\n')
+        ? state.generatedSongs.map((song, i) => `${i + 1}. ${song.title} (${song.vocalType})`).join('\n')
         : '생성된 곡 제목이 아직 없습니다.';
+
+      const lyricText = state.generatedSongs.length
+        ? state.generatedSongs.map((song, i) => `${i + 1}. ${song.title}\n${song.lyrics.slice(0, 220)}...`).join('\n\n')
+        : '생성된 가사가 아직 없습니다.';
 
       state.copyItems = [
         prompt || `${p.mood} 느낌의 ${p.genre} 노래를 만들어줘`,
@@ -1334,6 +1479,8 @@
 랩 비중: ${p.rapAmount}`,
         `제목 후보
 ${titleText}`,
+        `가사 미리보기
+${lyricText}`,
         `Suno 입력용 스타일
 ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p.instrumentSub}, ${p.instrumentMood}, ${p.rapStyle}, ${p.rapAmount}, ${p.tempo}, ${p.lyricsLanguage}, ${p.songLength}, ${p.styleStrength}`,
         `노래 편집 메모
@@ -1389,17 +1536,20 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
       }
     }
 
-    function buildSunoPayload() {
-      const firstSong = state.generatedSongs[0] || {};
+    function buildSunoPayload(songId = null) {
       const p = getMusicProfile();
-      const promptText = document.getElementById('promptInput').value.trim();
-      const quickText = document.getElementById('quickCopyInput').value.trim();
-      const songTitle = firstSong.title || makeSongTitle(1);
+      const selectedSong = songId
+        ? state.generatedSongs.find(song => song.id === songId)
+        : (state.generatedSongs[0] || null);
+
+      const songTitle = selectedSong?.title || makeSongTitle(1, p.vocalType);
+      const songLyrics = selectedSong?.lyrics || '가사가 아직 준비되지 않았습니다.';
+      const songVocal = selectedSong?.vocalType || p.vocalType;
 
       const styleParts = [
         p.genre,
         p.mood,
-        p.vocalType,
+        songVocal,
         p.voiceStyle,
         p.instrumentMain,
         p.instrumentSub,
@@ -1415,7 +1565,7 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
       const payload = {
         title: songTitle,
         style: styleParts.join(', '),
-        lyrics: quickText || promptText || '여기에 수노 가사가 들어갑니다.'
+        lyrics: songLyrics
       };
 
       state.sunoPayload = payload;
@@ -1441,8 +1591,8 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
         : '모드: 자동 + 수동 백업 준비';
     }
 
-    async function prepareSunoData() {
-      const payload = buildSunoPayload();
+    async function prepareSunoData(songId = null) {
+      const payload = buildSunoPayload(songId);
       fillSunoFields(payload);
       saveSunoPayloadLocal(payload);
       setMiniStatus(topMiniStatus, '수노 데이터 준비 완료');
@@ -1485,8 +1635,17 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
     }
 
     async function detectApiBase() {
+      const manualInput = normalizeBase(document.getElementById('apiBaseInput')?.value || '');
+      const saved = getSavedApiBase();
+      const host = window.location.hostname;
+      const inferredLan = host && host !== 'localhost' && host !== '127.0.0.1'
+        ? `http://${host}:4000`
+        : '';
+
       const candidates = [
-        getSavedApiBase(),
+        manualInput,
+        saved,
+        inferredLan,
         window.location.origin,
         'http://localhost:4000',
         'http://127.0.0.1:4000'
@@ -1497,6 +1656,8 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
         if (okBase) {
           setSavedApiBase(okBase);
           state.currentApiBase = okBase;
+          const input = document.getElementById('apiBaseInput');
+          if (input && !input.value.trim()) input.value = okBase;
           return okBase;
         }
       }
@@ -1517,12 +1678,20 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
     window.renameSong = function(id) {
       const index = state.generatedSongs.findIndex(song => song.id === id);
       if (index === -1) return;
-      state.generatedSongs[index].title = makeSongTitle(index + 1);
+      const song = state.generatedSongs[index];
+      song.title = makeSongTitle(index + 1, song.vocalType);
+      song.lyrics = makeLyrics(song, index + 1);
       renderSongs();
       buildCopyItems();
       showCopyItem(state.copyIndex);
-      appendLog('선택한 곡 제목을 다시 만들었습니다.');
+      appendLog('선택한 곡 제목과 가사를 다시 만들었습니다.');
       setMiniStatus(topMiniStatus, '제목 다시 생성 완료');
+    };
+
+    window.loadSongToSuno = async function(id) {
+      const payload = await prepareSunoData(id);
+      setMiniStatus(topMiniStatus, '선택한 곡 데이터를 수노 입력칸에 불러왔습니다');
+      appendLog(`선택한 곡 "${payload.title}" 데이터를 수노 입력칸에 반영했습니다.`);
     };
 
     document.getElementById('deleteSelectedSongsBtn').addEventListener('click', () => {
@@ -1617,7 +1786,7 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
 
     document.getElementById('helpBtn').addEventListener('click', () => {
       setMiniStatus(topMiniStatus, '간단 설명 표시');
-      appendLog('설명: 실행 후 수노 데이터 준비를 누르면 제목, 스타일, 가사가 자동으로 채워집니다. 자동 실패 시 수동 모드 버튼을 사용하세요.');
+      appendLog('설명: 실행 후 곡이 생성되면 각 곡의 제목/가사/보컬이 자동 반영됩니다. 모바일은 서버 주소 입력칸에 맥북 내부 IP를 넣으세요.');
     });
 
     document.getElementById('nextCopyBtn').addEventListener('click', async () => {
@@ -1749,9 +1918,25 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
       setMiniStatus(topMiniStatus, '수동 모드 전환 완료');
     });
 
+    document.getElementById('saveApiBaseBtn').addEventListener('click', async () => {
+      const input = document.getElementById('apiBaseInput');
+      const value = normalizeBase(input.value);
+
+      if (!value) {
+        setMiniStatus(topMiniStatus, '주소를 먼저 입력해 주세요');
+        appendLog('API 주소가 비어 있어 저장하지 않았습니다.');
+        return;
+      }
+
+      setSavedApiBase(value);
+      const ok = await refreshAiStatus(true);
+      setMiniStatus(topMiniStatus, ok ? '주소 저장 및 연결 성공' : '주소 저장됨, 연결 실패');
+    });
+
     async function runGenerateFlow() {
       const count = Number(document.getElementById('songCount').value || 1);
       const lang = getLyricsLanguage();
+      const prompt = document.getElementById('promptInput').value.trim();
 
       resetProgressUI();
       mainStatusChip.textContent = '상태: 작업 시작';
@@ -1773,7 +1958,14 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
 
       document.getElementById('checkTitle').checked = true;
       document.getElementById('checkStyle').checked = true;
-      appendLog(`${count}곡 제목을 생성했습니다.`);
+      document.getElementById('checkLyrics').checked = true;
+
+      const plan = parsePromptDistribution(prompt, count);
+      const femaleCount = plan.filter(v => v === '여성 보컬').length;
+      const maleCount = plan.filter(v => v === '남성 보컬').length;
+      const duetCount = plan.filter(v => v === '듀엣').length;
+
+      appendLog(`${count}곡 제목과 가사를 생성했습니다. 보컬 분배: 여성 ${femaleCount}곡 / 남성 ${maleCount}곡 / 듀엣 ${duetCount}곡`);
       setMiniStatus(topMiniStatus, `${count}곡 생성 완료`);
 
       setStep('step2', '완료');
@@ -1781,7 +1973,6 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
       updateProgress(63);
       await wait(450);
 
-      document.getElementById('checkLyrics').checked = true;
       setStep('step3', '완료');
       setStep('step4', '진행중');
       updateProgress(82);
@@ -1821,7 +2012,7 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
 
       if (!apiBase) {
         if (showLog) {
-          appendLog('자동 서버 탐색 실패: 같은 주소, localhost:4000, 127.0.0.1:4000 에서 서버를 찾지 못했습니다.');
+          appendLog('자동 서버 탐색 실패: 입력 주소, 저장 주소, 현재 주소, localhost:4000, 127.0.0.1:4000 에서 서버를 찾지 못했습니다.');
         }
         return false;
       }
@@ -1843,6 +2034,12 @@ ${p.genre}, ${p.mood}, ${p.vocalType}, ${p.voiceStyle}, ${p.instrumentMain}, ${p
       buildCopyItems();
       showCopyItem(0);
       setSunoMode('auto');
+
+      const savedApi = getSavedApiBase();
+      if (savedApi) {
+        document.getElementById('apiBaseInput').value = savedApi;
+      }
+
       await prepareSunoData();
       await refreshAiStatus(false);
       setInterval(() => refreshAiStatus(false), 10000);
