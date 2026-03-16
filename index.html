@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v28</title>
+  <title>AI Music Auto Studio v29</title>
   <style>
     :root{
       --bg1:#f7f8ff;
@@ -31,17 +31,37 @@
         radial-gradient(circle at top right, rgba(91,108,255,.10), transparent 26%),
         linear-gradient(180deg,var(--bg1),var(--bg2));
     }
-    .wrap{max-width:1520px;margin:0 auto;padding:16px}
+    .wrap{max-width:1540px;margin:0 auto;padding:16px}
     .topbar{
-      display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
       margin-bottom:16px;
     }
-    .brand h1{margin:0;font-size:30px;font-weight:900;letter-spacing:-.5px}
-    .brand p{margin:5px 0 0;color:var(--sub);font-size:14px}
+    .brand h1{
+      margin:0;
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:-.5px;
+    }
+    .brand p{
+      margin:5px 0 0;
+      color:var(--sub);
+      font-size:14px;
+    }
     .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      background:#fff;border:1px solid var(--line);border-radius:999px;
-      padding:10px 14px;box-shadow:var(--shadow);font-weight:800;font-size:14px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:10px 14px;
+      box-shadow:var(--shadow);
+      font-weight:800;
+      font-size:14px;
     }
     .dot{width:10px;height:10px;border-radius:50%;background:#c5cad3}
     .dot.ok{background:var(--ok)}
@@ -50,7 +70,7 @@
 
     .layout{
       display:grid;
-      grid-template-columns: 390px minmax(0,1fr) 390px;
+      grid-template-columns:390px minmax(0,1fr) 390px;
       gap:16px;
       align-items:start;
     }
@@ -64,16 +84,21 @@
     }
     .card h2{
       margin:0 0 12px;
-      font-size:18px;font-weight:900;
+      font-size:18px;
+      font-weight:900;
     }
     .card h3{
       margin:16px 0 10px;
-      font-size:15px;font-weight:900;
+      font-size:15px;
+      font-weight:900;
     }
     .field{margin-bottom:10px}
     .label{
-      display:block;margin-bottom:6px;
-      font-size:13px;color:var(--sub);font-weight:800;
+      display:block;
+      margin-bottom:6px;
+      font-size:13px;
+      color:var(--sub);
+      font-weight:800;
     }
     input[type="text"], input[type="number"], textarea, select{
       width:100%;
@@ -86,7 +111,9 @@
       outline:none;
     }
     textarea{
-      resize:vertical;min-height:92px;line-height:1.55;
+      resize:vertical;
+      min-height:92px;
+      line-height:1.55;
     }
     .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
@@ -99,8 +126,13 @@
     .btns.one{grid-template-columns:1fr}
     .btns.three{grid-template-columns:repeat(3,minmax(0,1fr))}
     button{
-      border:none;border-radius:14px;padding:11px 14px;
-      font-size:14px;font-weight:900;cursor:pointer;transition:.18s ease;
+      border:none;
+      border-radius:14px;
+      padding:11px 14px;
+      font-size:14px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.18s ease;
       width:100%;
     }
     button:hover{transform:translateY(-1px)}
@@ -110,7 +142,11 @@
     .warn{background:linear-gradient(135deg,#ff9d2f,#f79009);color:#fff}
     .bad{background:linear-gradient(135deg,#f04438,#d92d20);color:#fff}
     .ghost{background:#f8fafc;color:#344054;border:1px solid var(--line)}
-    .tiny{font-size:12px;color:var(--sub);line-height:1.55}
+    .tiny{
+      font-size:12px;
+      color:var(--sub);
+      line-height:1.55;
+    }
 
     .opt-grid{
       display:grid;
@@ -118,7 +154,9 @@
       gap:8px;
     }
     .check{
-      display:flex;align-items:center;gap:8px;
+      display:flex;
+      align-items:center;
+      gap:8px;
       border:1px solid var(--line);
       background:#fbfcff;
       border-radius:12px;
@@ -135,17 +173,60 @@
       display:block;
     }
 
+    .accordion{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fbfcff;
+      overflow:hidden;
+    }
+    .accordion summary{
+      list-style:none;
+      cursor:pointer;
+      padding:14px 16px;
+      font-weight:900;
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .accordion summary::-webkit-details-marker{display:none}
+    .accordion summary::after{
+      content:"▼";
+      font-size:12px;
+      color:var(--sub);
+      transition:transform .2s ease;
+    }
+    .accordion[open] summary::after{
+      transform:rotate(180deg);
+    }
+    .accordion-body{
+      padding:0 14px 14px;
+      border-top:1px solid var(--line);
+    }
+
     .status-list{display:grid;gap:10px}
     .status-item{
-      border:1px solid var(--line);border-radius:14px;padding:12px;
-      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
       background:#fbfcff;
     }
     .status-item b{font-size:14px}
     .badge{
-      display:inline-flex;align-items:center;gap:6px;
-      padding:7px 10px;border-radius:999px;font-size:12px;font-weight:900;
-      background:#eef2f6;color:#425466;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      background:#eef2f6;
+      color:#425466;
       white-space:nowrap;
     }
     .badge.ok{background:#e9fff3;color:#067647}
@@ -153,13 +234,23 @@
     .badge.bad{background:#ffe9e7;color:#b42318}
 
     .quick{
-      border:1px dashed #c7d2fe;border-radius:16px;padding:14px;background:#f8faff;
+      border:1px dashed #c7d2fe;
+      border-radius:16px;
+      padding:14px;
+      background:#f8faff;
     }
     .preview{
       margin-top:10px;
-      background:#fff;border:1px solid var(--line);border-radius:14px;
-      padding:12px;min-height:150px;max-height:260px;overflow:auto;
-      white-space:pre-wrap;line-height:1.55;font-size:14px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      min-height:150px;
+      max-height:260px;
+      overflow:auto;
+      white-space:pre-wrap;
+      line-height:1.55;
+      font-size:14px;
     }
 
     .song-list{display:grid;gap:12px}
@@ -171,21 +262,31 @@
       min-width:0;
     }
     .song-head{
-      display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
       padding:14px;
       background:linear-gradient(180deg,#f9fbff,#f3f6ff);
       border-bottom:1px solid var(--line);
     }
     .song-head-left{min-width:0;flex:1}
     .song-title{
-      font-size:19px;font-weight:900;margin-bottom:6px;
+      font-size:19px;
+      font-weight:900;
+      margin-bottom:6px;
       word-break:break-word;
     }
     .meta{display:flex;flex-wrap:wrap;gap:6px}
     .tag{
-      display:inline-flex;align-items:center;
-      padding:6px 10px;border-radius:999px;
-      background:#eef2ff;color:#3949ab;font-size:12px;font-weight:900;
+      display:inline-flex;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#eef2ff;
+      color:#3949ab;
+      font-size:12px;
+      font-weight:900;
     }
     .song-actions{
       display:grid;
@@ -194,7 +295,11 @@
       width:240px;
       flex:0 0 240px;
     }
-    .song-body{padding:14px;display:grid;gap:12px}
+    .song-body{
+      padding:14px;
+      display:grid;
+      gap:12px;
+    }
     .box{
       border:1px solid var(--line);
       border-radius:14px;
@@ -203,7 +308,12 @@
       min-width:0;
     }
     .box b{display:block;margin-bottom:8px}
-    .lyrics{white-space:pre-wrap;line-height:1.62;font-size:14px;word-break:break-word}
+    .lyrics{
+      white-space:pre-wrap;
+      line-height:1.62;
+      font-size:14px;
+      word-break:break-word;
+    }
 
     .sticky{position:sticky;top:12px}
 
@@ -227,7 +337,7 @@
     <div class="topbar">
       <div class="brand">
         <h1>🎵 AI Music Auto Studio</h1>
-        <p>정렬 개선 · 영어 가사 옵션 추가 · 장르/악기/보컬 선택 확장</p>
+        <p>펼침형 선택 옵션 · 한글 표시 · 음성제작 복구 · 정렬 안정화</p>
       </div>
       <div class="pill">
         <span class="dot warn" id="aiDot"></span>
@@ -300,51 +410,79 @@
           </div>
         </div>
 
-        <h3>🎹 장르 선택</h3>
-        <div class="opt-grid" id="genreOptions">
-          <label class="check"><input type="checkbox" value="K-pop" checked><span>K-pop</span></label>
-          <label class="check"><input type="checkbox" value="Ballad"><span>Ballad</span></label>
-          <label class="check"><input type="checkbox" value="Dance Pop"><span>Dance Pop</span></label>
-          <label class="check"><input type="checkbox" value="Acoustic Pop"><span>Acoustic Pop</span></label>
-          <label class="check"><input type="checkbox" value="R&B"><span>R&B</span></label>
-          <label class="check"><input type="checkbox" value="Indie Pop"><span>Indie Pop</span></label>
-          <label class="check"><input type="checkbox" value="Synth Pop"><span>Synth Pop</span></label>
-          <label class="check"><input type="checkbox" value="Cinematic Pop"><span>Cinematic Pop</span></label>
-          <label class="check"><input type="checkbox" value="Lo-fi Pop"><span>Lo-fi Pop</span></label>
-          <label class="check"><input type="checkbox" value="Rock Ballad"><span>Rock Ballad</span></label>
-          <label class="check"><input type="checkbox" value="City Pop"><span>City Pop</span></label>
-          <label class="check"><input type="checkbox" value="EDM Pop"><span>EDM Pop</span></label>
-        </div>
+        <h3>🎼 선택 옵션</h3>
 
-        <h3>🎸 악기 선택</h3>
-        <div class="opt-grid" id="instrumentOptions">
-          <label class="check"><input type="checkbox" value="piano" checked><span>Piano</span></label>
-          <label class="check"><input type="checkbox" value="acoustic guitar" checked><span>Acoustic Guitar</span></label>
-          <label class="check"><input type="checkbox" value="electric guitar"><span>Electric Guitar</span></label>
-          <label class="check"><input type="checkbox" value="strings"><span>Strings</span></label>
-          <label class="check"><input type="checkbox" value="synth pad"><span>Synth Pad</span></label>
-          <label class="check"><input type="checkbox" value="bass"><span>Bass</span></label>
-          <label class="check"><input type="checkbox" value="drums"><span>Drums</span></label>
-          <label class="check"><input type="checkbox" value="violin"><span>Violin</span></label>
-          <label class="check"><input type="checkbox" value="cello"><span>Cello</span></label>
-          <label class="check"><input type="checkbox" value="flute"><span>Flute</span></label>
-          <label class="check"><input type="checkbox" value="brass"><span>Brass</span></label>
-          <label class="check"><input type="checkbox" value="ambient textures"><span>Ambient Textures</span></label>
-        </div>
+        <details class="accordion">
+          <summary>🎵 장르 선택 펼치기</summary>
+          <div class="accordion-body">
+            <div class="opt-grid" id="genreOptions">
+              <label class="check"><input type="checkbox" value="K-pop" checked><span>케이팝</span></label>
+              <label class="check"><input type="checkbox" value="Ballad"><span>발라드</span></label>
+              <label class="check"><input type="checkbox" value="Dance Pop"><span>댄스팝</span></label>
+              <label class="check"><input type="checkbox" value="Acoustic Pop"><span>어쿠스틱 팝</span></label>
+              <label class="check"><input type="checkbox" value="R&B"><span>알앤비</span></label>
+              <label class="check"><input type="checkbox" value="Indie Pop"><span>인디팝</span></label>
+              <label class="check"><input type="checkbox" value="Synth Pop"><span>신스팝</span></label>
+              <label class="check"><input type="checkbox" value="Cinematic Pop"><span>시네마틱 팝</span></label>
+              <label class="check"><input type="checkbox" value="Lo-fi Pop"><span>로파이 팝</span></label>
+              <label class="check"><input type="checkbox" value="Rock Ballad"><span>록 발라드</span></label>
+              <label class="check"><input type="checkbox" value="City Pop"><span>시티팝</span></label>
+              <label class="check"><input type="checkbox" value="EDM Pop"><span>EDM 팝</span></label>
+              <label class="check"><input type="checkbox" value="Hip Hop"><span>힙합</span></label>
+              <label class="check"><input type="checkbox" value="Trap Pop"><span>트랩 팝</span></label>
+              <label class="check"><input type="checkbox" value="Jazz Pop"><span>재즈 팝</span></label>
+              <label class="check"><input type="checkbox" value="Folk Pop"><span>포크 팝</span></label>
+            </div>
+          </div>
+        </details>
 
-        <h3>🎤 보컬 스타일</h3>
-        <div class="opt-grid" id="vocalOptions">
-          <label class="check"><input type="checkbox" value="soft vocal" checked><span>Soft Vocal</span></label>
-          <label class="check"><input type="checkbox" value="sweet vocal"><span>Sweet Vocal</span></label>
-          <label class="check"><input type="checkbox" value="emotional vocal"><span>Emotional Vocal</span></label>
-          <label class="check"><input type="checkbox" value="powerful vocal"><span>Powerful Vocal</span></label>
-          <label class="check"><input type="checkbox" value="airy vocal"><span>Airy Vocal</span></label>
-          <label class="check"><input type="checkbox" value="breathy vocal"><span>Breathy Vocal</span></label>
-          <label class="check"><input type="checkbox" value="clear tone"><span>Clear Tone</span></label>
-          <label class="check"><input type="checkbox" value="warm tone"><span>Warm Tone</span></label>
-          <label class="check"><input type="checkbox" value="youthful tone"><span>Youthful Tone</span></label>
-          <label class="check"><input type="checkbox" value="duet harmony"><span>Duet Harmony</span></label>
-        </div>
+        <div style="height:10px"></div>
+
+        <details class="accordion">
+          <summary>🎸 악기 선택 펼치기</summary>
+          <div class="accordion-body">
+            <div class="opt-grid" id="instrumentOptions">
+              <label class="check"><input type="checkbox" value="piano" checked><span>피아노</span></label>
+              <label class="check"><input type="checkbox" value="acoustic guitar" checked><span>어쿠스틱 기타</span></label>
+              <label class="check"><input type="checkbox" value="electric guitar"><span>일렉기타</span></label>
+              <label class="check"><input type="checkbox" value="strings"><span>스트링</span></label>
+              <label class="check"><input type="checkbox" value="synth pad"><span>신스 패드</span></label>
+              <label class="check"><input type="checkbox" value="bass"><span>베이스</span></label>
+              <label class="check"><input type="checkbox" value="drums"><span>드럼</span></label>
+              <label class="check"><input type="checkbox" value="violin"><span>바이올린</span></label>
+              <label class="check"><input type="checkbox" value="cello"><span>첼로</span></label>
+              <label class="check"><input type="checkbox" value="flute"><span>플루트</span></label>
+              <label class="check"><input type="checkbox" value="brass"><span>브라스</span></label>
+              <label class="check"><input type="checkbox" value="ambient textures"><span>앰비언트 텍스처</span></label>
+              <label class="check"><input type="checkbox" value="pluck synth"><span>플럭 신스</span></label>
+              <label class="check"><input type="checkbox" value="choir pad"><span>코러스 패드</span></label>
+              <label class="check"><input type="checkbox" value="percussion"><span>퍼커션</span></label>
+              <label class="check"><input type="checkbox" value="music box"><span>오르골</span></label>
+            </div>
+          </div>
+        </details>
+
+        <div style="height:10px"></div>
+
+        <details class="accordion">
+          <summary>🎤 보컬 스타일 펼치기</summary>
+          <div class="accordion-body">
+            <div class="opt-grid" id="vocalOptions">
+              <label class="check"><input type="checkbox" value="soft vocal" checked><span>부드러운 보컬</span></label>
+              <label class="check"><input type="checkbox" value="sweet vocal"><span>달콤한 보컬</span></label>
+              <label class="check"><input type="checkbox" value="emotional vocal"><span>감성 보컬</span></label>
+              <label class="check"><input type="checkbox" value="powerful vocal"><span>파워풀 보컬</span></label>
+              <label class="check"><input type="checkbox" value="airy vocal"><span>에어리 보컬</span></label>
+              <label class="check"><input type="checkbox" value="breathy vocal"><span>숨결감 있는 보컬</span></label>
+              <label class="check"><input type="checkbox" value="clear tone"><span>맑은 톤</span></label>
+              <label class="check"><input type="checkbox" value="warm tone"><span>따뜻한 톤</span></label>
+              <label class="check"><input type="checkbox" value="youthful tone"><span>청량한 톤</span></label>
+              <label class="check"><input type="checkbox" value="duet harmony"><span>듀엣 하모니</span></label>
+              <label class="check"><input type="checkbox" value="whisper vocal"><span>속삭이는 보컬</span></label>
+              <label class="check"><input type="checkbox" value="modern pop vocal"><span>모던 팝 보컬</span></label>
+            </div>
+          </div>
+        </details>
 
         <div style="height:12px"></div>
         <div class="btns">
@@ -353,8 +491,9 @@
         </div>
 
         <h3>🎬 작업 메뉴</h3>
-        <div class="btns">
+        <div class="btns three">
           <button class="warn" id="btnOpenSunoLeft">🎵 수노 열기</button>
+          <button class="soft" id="btnVoiceMake">🎤 음성제작</button>
           <button class="soft" id="btnSongMake">🎼 노래 제작</button>
           <button class="soft" id="btnSongEdit">✂️ 노래 편집 시작</button>
           <button class="soft" id="btnVideoMake">🎥 영상 만들기</button>
@@ -436,6 +575,7 @@
       btnGenerate: $('btnGenerate'),
       btnClearSongs: $('btnClearSongs'),
       btnOpenSunoLeft: $('btnOpenSunoLeft'),
+      btnVoiceMake: $('btnVoiceMake'),
       btnSongMake: $('btnSongMake'),
       btnSongEdit: $('btnSongEdit'),
       btnVideoMake: $('btnVideoMake'),
@@ -460,7 +600,7 @@
       btnSelectFirstSong: $('btnSelectFirstSong')
     };
 
-    const STORE = 'ai_music_auto_studio_v28_rich_options';
+    const STORE = 'ai_music_auto_studio_v29_full';
 
     let state = {
       songs: [],
@@ -1234,6 +1374,7 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
     el.btnNextSong.addEventListener('click', nextSongSelect);
     el.btnSelectFirstSong.addEventListener('click', selectFirstSong);
 
+    el.btnVoiceMake.addEventListener('click', () => alert('음성제작 버튼입니다.'));
     el.btnSongMake.addEventListener('click', () => alert('노래 제작 작업 버튼입니다.'));
     el.btnSongEdit.addEventListener('click', () => {
       setStatus('mp3Edit','대기중');
