@@ -3,81 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio - Fixed</title>
+  <title>AI Music Auto Studio v27</title>
   <style>
     :root{
-      --bg:#f5f7fb;
+      --bg1:#f7f8ff;
+      --bg2:#eef4ff;
       --card:#ffffff;
-      --line:#dfe5f0;
-      --text:#243042;
+      --text:#344054;
       --sub:#667085;
-      --primary:#5b6cff;
-      --primary2:#7c4dff;
+      --line:#dbe3f0;
+      --pri:#5b6cff;
+      --pri2:#7c4dff;
       --ok:#17b26a;
       --warn:#f79009;
       --bad:#f04438;
-      --shadow:0 10px 28px rgba(25,42,70,.08);
-      --radius:18px;
+      --soft:#eef2ff;
+      --shadow:0 12px 30px rgba(52,64,84,.10);
+      --radius:20px;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      background:
-        radial-gradient(circle at top left, rgba(124,77,255,.12), transparent 25%),
-        radial-gradient(circle at top right, rgba(91,108,255,.10), transparent 25%),
-        var(--bg);
+      font-family:"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",sans-serif;
       color:var(--text);
-      font-family: "Apple SD Gothic Neo","Malgun Gothic","Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(124,77,255,.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(91,108,255,.10), transparent 26%),
+        linear-gradient(180deg,var(--bg1),var(--bg2));
     }
-    .wrap{
-      max-width:1400px;
-      margin:0 auto;
-      padding:16px;
-    }
+    .wrap{max-width:1500px;margin:0 auto;padding:16px}
     .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:14px;
+      display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+      margin-bottom:16px;
     }
-    .titlebox{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .title{
-      font-size:28px;
-      font-weight:800;
-      letter-spacing:-0.3px;
-    }
-    .subtitle{
-      color:var(--sub);
-      font-size:14px;
-    }
+    .brand h1{margin:0;font-size:30px;font-weight:900;letter-spacing:-.5px}
+    .brand p{margin:5px 0 0;color:var(--sub);font-size:14px}
     .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:10px 14px;
-      box-shadow:var(--shadow);
-      font-size:14px;
-      font-weight:700;
+      display:inline-flex;align-items:center;gap:8px;
+      background:#fff;border:1px solid var(--line);border-radius:999px;
+      padding:10px 14px;box-shadow:var(--shadow);font-weight:800;font-size:14px;
     }
-    .dot{
-      width:10px;height:10px;border-radius:999px;background:#c5cad3;
-    }
+    .dot{width:10px;height:10px;border-radius:50%;background:#c5cad3}
     .dot.ok{background:var(--ok)}
-    .dot.bad{background:var(--bad)}
     .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
 
-    .grid{
+    .layout{
       display:grid;
-      grid-template-columns: 360px 1fr 350px;
+      grid-template-columns: 360px 1fr 360px;
       gap:16px;
       align-items:start;
     }
@@ -90,21 +63,16 @@
     }
     .card h2{
       margin:0 0 12px;
-      font-size:18px;
-      font-weight:800;
+      font-size:18px;font-weight:900;
     }
     .card h3{
-      margin:14px 0 8px;
-      font-size:15px;
-      font-weight:800;
+      margin:16px 0 10px;
+      font-size:15px;font-weight:900;
     }
     .field{margin-bottom:10px}
     .label{
-      display:block;
-      margin-bottom:6px;
-      font-size:13px;
-      color:var(--sub);
-      font-weight:700;
+      display:block;margin-bottom:6px;
+      font-size:13px;color:var(--sub);font-weight:800;
     }
     input[type="text"], input[type="number"], textarea, select{
       width:100%;
@@ -112,205 +80,96 @@
       border-radius:14px;
       padding:12px 13px;
       font-size:14px;
-      outline:none;
       background:#fff;
       color:var(--text);
+      outline:none;
     }
     textarea{
-      min-height:96px;
-      resize:vertical;
-      line-height:1.5;
+      resize:vertical;min-height:92px;line-height:1.55;
     }
-    .row{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-    .row3{
-      display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      gap:10px;
-    }
-    .btns{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    .btns{display:flex;flex-wrap:wrap;gap:8px}
     button{
-      border:none;
-      border-radius:14px;
-      padding:11px 14px;
-      font-size:14px;
-      font-weight:800;
-      cursor:pointer;
-      transition:.18s ease;
+      border:none;border-radius:14px;padding:11px 14px;
+      font-size:14px;font-weight:900;cursor:pointer;transition:.18s ease;
     }
     button:hover{transform:translateY(-1px)}
-    .btn-primary{
-      color:#fff;
-      background:linear-gradient(135deg,var(--primary),var(--primary2));
-    }
-    .btn-soft{
-      color:var(--text);
-      background:#eef2ff;
-      border:1px solid #d9e1ff;
-    }
-    .btn-ok{
-      color:#fff;
-      background:linear-gradient(135deg,#17b26a,#12a150);
-    }
-    .btn-warn{
-      color:#fff;
-      background:linear-gradient(135deg,#ff9d2f,#f79009);
-    }
-    .btn-bad{
-      color:#fff;
-      background:linear-gradient(135deg,#f04438,#d92d20);
-    }
-    .small{
-      font-size:12px;
-      color:var(--sub);
-      line-height:1.5;
-    }
-    .status-list{
-      display:grid;
-      gap:10px;
-    }
+    .pri{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff}
+    .soft{background:#eef2ff;color:#334155;border:1px solid #d9e2ff}
+    .ok{background:linear-gradient(135deg,#17b26a,#12a150);color:#fff}
+    .warn{background:linear-gradient(135deg,#ff9d2f,#f79009);color:#fff}
+    .bad{background:linear-gradient(135deg,#f04438,#d92d20);color:#fff}
+    .ghost{background:#f8fafc;color:#344054;border:1px solid var(--line)}
+    .tiny{font-size:12px;color:var(--sub);line-height:1.55}
+
+    .status-list{display:grid;gap:10px}
     .status-item{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
+      border:1px solid var(--line);border-radius:14px;padding:12px;
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
       background:#fbfcff;
     }
-    .status-name{
-      font-size:14px;
-      font-weight:800;
-    }
+    .status-item b{font-size:14px}
     .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      border-radius:999px;
-      padding:7px 10px;
-      font-size:12px;
-      font-weight:800;
-      background:#eef2f6;
-      color:#425466;
-      white-space:nowrap;
+      display:inline-flex;align-items:center;gap:6px;
+      padding:7px 10px;border-radius:999px;font-size:12px;font-weight:900;
+      background:#eef2f6;color:#425466;
     }
     .badge.ok{background:#e9fff3;color:#067647}
     .badge.warn{background:#fff3df;color:#b54708}
     .badge.bad{background:#ffe9e7;color:#b42318}
 
-    .paste-box{
-      background:#f8faff;
-      border:1px dashed #c7d2fe;
-      border-radius:16px;
-      padding:14px;
-      margin-top:8px;
+    .quick{
+      border:1px dashed #c7d2fe;border-radius:16px;padding:14px;background:#f8faff;
     }
-    .copy-preview{
-      min-height:120px;
-      max-height:220px;
-      overflow:auto;
-      white-space:pre-wrap;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      font-size:14px;
-      line-height:1.55;
-    }
-    .mini{
-      font-size:12px;
-      color:var(--sub);
+    .preview{
+      margin-top:10px;
+      background:#fff;border:1px solid var(--line);border-radius:14px;
+      padding:12px;min-height:150px;max-height:260px;overflow:auto;
+      white-space:pre-wrap;line-height:1.55;font-size:14px;
     }
 
-    .song-list{
-      display:grid;
-      gap:12px;
-    }
-    .song-item{
+    .song-list{display:grid;gap:12px}
+    .song{
       border:1px solid var(--line);
-      border-radius:16px;
+      border-radius:18px;
       overflow:hidden;
       background:#fff;
     }
     .song-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:10px;
+      display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
       padding:14px;
-      background:linear-gradient(180deg,#f9fbff,#f4f7ff);
+      background:linear-gradient(180deg,#f9fbff,#f3f6ff);
       border-bottom:1px solid var(--line);
     }
-    .song-title{
-      font-size:18px;
-      font-weight:900;
-      margin-bottom:6px;
-    }
-    .song-meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-    }
+    .song-title{font-size:19px;font-weight:900;margin-bottom:6px}
+    .meta{display:flex;flex-wrap:wrap;gap:6px}
     .tag{
-      display:inline-flex;
-      align-items:center;
-      padding:6px 10px;
-      font-size:12px;
-      border-radius:999px;
-      background:#eef2ff;
-      color:#3949ab;
-      font-weight:800;
+      display:inline-flex;align-items:center;
+      padding:6px 10px;border-radius:999px;
+      background:#eef2ff;color:#3949ab;font-size:12px;font-weight:900;
     }
-    .song-body{
-      padding:14px;
-      display:grid;
-      gap:12px;
-    }
+    .song-body{padding:14px;display:grid;gap:12px}
     .box{
       border:1px solid var(--line);
       border-radius:14px;
       padding:12px;
       background:#fff;
     }
-    .box b{
-      display:block;
-      margin-bottom:8px;
-    }
-    .lyrics{
-      white-space:pre-wrap;
-      line-height:1.62;
-      font-size:14px;
-    }
+    .box b{display:block;margin-bottom:8px}
+    .lyrics{white-space:pre-wrap;line-height:1.62;font-size:14px}
 
-    .right-sticky{
-      position:sticky;
-      top:12px;
-    }
+    .sticky{position:sticky;top:12px}
 
-    .footer-note{
-      margin-top:10px;
-      font-size:12px;
-      color:var(--sub);
-      line-height:1.55;
-    }
-
-    @media (max-width: 1120px){
-      .grid{grid-template-columns:1fr}
-      .right-sticky{position:static}
+    @media (max-width: 1180px){
+      .layout{grid-template-columns:1fr}
+      .sticky{position:static}
     }
     @media (max-width: 640px){
-      .title{font-size:22px}
+      .brand h1{font-size:24px}
       .row,.row3{grid-template-columns:1fr}
-      button{width:100%}
       .btns{display:grid;grid-template-columns:1fr}
+      button{width:100%}
       .song-head{flex-direction:column}
     }
   </style>
@@ -318,34 +177,34 @@
 <body>
   <div class="wrap">
     <div class="topbar">
-      <div class="titlebox">
-        <div class="title">🎵 AI Music Auto Studio</div>
-        <div class="subtitle">붙여넣기 순서 수정 · 스타일 영문화 · 곡별 고유 가사 · 모바일 최적화</div>
+      <div class="brand">
+        <h1>🎵 AI Music Auto Studio</h1>
+        <p>기능 유지 + 중복만 제거 + 넥스트카피/가사/스타일 문제 수정 버전</p>
       </div>
-      <div class="pill" id="globalAiStatus">
-        <span class="dot warn" id="globalAiDot"></span>
-        <span id="globalAiText">AI 상태 확인 전</span>
+      <div class="pill">
+        <span class="dot warn" id="aiDot"></span>
+        <span id="aiText">AI 상태 확인 전</span>
       </div>
     </div>
 
-    <div class="grid">
+    <div class="layout">
       <!-- LEFT -->
       <div class="card">
         <h2>⚙️ 기본 설정</h2>
 
         <div class="field">
           <label class="label">서버 주소</label>
-          <input type="text" id="apiBase" placeholder="예: http://172.30.1.62:4000" value="http://172.30.1.62:4000" />
+          <input type="text" id="apiBase" value="http://172.30.1.62:4000" placeholder="예: http://172.30.1.62:4000" />
         </div>
 
         <div class="field">
-          <label class="label">AI 생성 엔드포인트 경로</label>
-          <input type="text" id="generatePath" placeholder="/api/ai/generate-song-pack" value="/api/ai/generate-song-pack" />
+          <label class="label">AI 생성 경로</label>
+          <input type="text" id="generatePath" value="/api/ai/generate-song-pack" placeholder="/api/ai/generate-song-pack" />
         </div>
 
         <div class="btns">
-          <button class="btn-primary" id="btnCheckAi">🔌 AI 연결 확인</button>
-          <button class="btn-soft" id="btnSaveServer">💾 서버 주소 저장</button>
+          <button class="pri" id="btnCheckAi">🔌 AI 연결 확인</button>
+          <button class="soft" id="btnSaveServer">💾 서버 저장</button>
         </div>
 
         <h3>🎼 제작 조건</h3>
@@ -372,61 +231,74 @@
 
         <div class="row">
           <div class="field">
-            <label class="label">전체 분위기</label>
+            <label class="label">분위기</label>
             <select id="moodInput">
               <option value="warm romantic spring">따뜻한 로맨틱</option>
               <option value="bright hopeful spring">밝고 희망적</option>
               <option value="dreamy emotional spring">몽환적 감성</option>
-              <option value="fresh youthful spring">상큼하고 젊은 느낌</option>
+              <option value="fresh youthful spring">상큼하고 산뜻함</option>
               <option value="soft sentimental spring">부드러운 감성</option>
             </select>
           </div>
           <div class="field">
-            <label class="label">언어</label>
+            <label class="label">가사 언어</label>
             <select id="lyricsLang">
-              <option value="ko">한국어 가사</option>
-              <option value="ko-mix">한국어 중심 / 일부 영어 훅</option>
+              <option value="ko">한국어</option>
+              <option value="ko-mix">한국어 중심 + 약간의 영어 훅</option>
             </select>
           </div>
         </div>
 
         <div class="btns">
-          <button class="btn-ok" id="btnGenerate">✨ 곡 세트 생성</button>
-          <button class="btn-soft" id="btnClearSongs">🧹 생성 결과 초기화</button>
+          <button class="ok" id="btnGenerate">✨ 곡 세트 생성</button>
+          <button class="soft" id="btnClearSongs">🧹 결과 초기화</button>
         </div>
 
-        <div class="footer-note">
-          스타일은 자동으로 <b>영문</b>으로 생성되며, 넥스트 카피는 <b>제목 → 스타일 → 가사</b> 순서로만 진행됩니다.
+        <h3>🎬 작업 메뉴</h3>
+        <div class="btns">
+          <button class="warn" id="btnOpenSunoLeft">🎵 수노 열기</button>
+          <button class="soft" id="btnSongMake">🎼 노래 제작</button>
+          <button class="soft" id="btnSongEdit">✂️ 노래 편집 시작</button>
+          <button class="soft" id="btnVideoMake">🎥 영상 만들기</button>
+          <button class="soft" id="btnOpenBlog">📝 블로그 도구</button>
+        </div>
+
+        <div class="tiny" style="margin-top:10px">
+          이번 버전은 기능을 빼지 않고 유지하면서, 겹치는 버튼만 정리했습니다.
         </div>
       </div>
 
       <!-- CENTER -->
       <div class="card">
         <h2>🎧 생성된 곡 관리</h2>
-        <div class="small" id="songSummary">아직 생성된 곡이 없습니다.</div>
+        <div class="tiny" id="songSummary">아직 생성된 곡이 없습니다.</div>
         <div style="height:10px"></div>
+        <div class="btns">
+          <button class="ghost" id="btnDeleteCurrentSong">🗑️ 현재 곡 삭제</button>
+          <button class="bad" id="btnDeleteAllSongs">🧨 전체 곡 삭제</button>
+        </div>
+        <div style="height:12px"></div>
         <div class="song-list" id="songList"></div>
       </div>
 
       <!-- RIGHT -->
-      <div class="right-sticky">
+      <div class="sticky">
         <div class="card">
           <h2>📋 빠르게 붙여넣기</h2>
-
-          <div class="paste-box">
-            <div class="mini">복사 순서: <b>1번 제목 → 1번 스타일 → 1번 가사 → 2번 제목 → 2번 스타일 → 2번 가사</b></div>
-            <div style="height:10px"></div>
-
-            <div class="btns">
-              <button class="btn-primary" id="btnNextCopy">⏭️ 넥스트 카피</button>
-              <button class="btn-soft" id="btnResetCopy">🔄 복사 초기화</button>
-              <button class="btn-warn" id="btnOpenSuno">🎵 수노 열기</button>
+          <div class="quick">
+            <div class="tiny">
+              복사 순서: <b>1번 제목 → 1번 스타일 → 1번 가사 → 2번 제목 → 2번 스타일 → 2번 가사</b>
             </div>
-
             <div style="height:10px"></div>
-            <div class="mini" id="copyProgress">복사 대기중</div>
-            <div style="height:8px"></div>
-            <div class="copy-preview" id="copyPreview">복사할 내용이 여기에 표시됩니다.</div>
+            <div class="btns">
+              <button class="pri" id="btnNextCopy">⏭️ 넥스트 카피</button>
+              <button class="soft" id="btnResetCopy">🔄 복사 초기화</button>
+              <button class="warn" id="btnOpenSuno">🎵 수노 열기</button>
+              <button class="soft" id="btnCopyCurrentAll">📦 현재곡 전체복사</button>
+            </div>
+            <div style="height:10px"></div>
+            <div class="tiny" id="copyProgress">복사 대기중</div>
+            <div class="preview" id="copyPreview">복사할 내용이 여기에 표시됩니다.</div>
           </div>
         </div>
 
@@ -438,12 +310,14 @@
         <div class="card" style="margin-top:16px">
           <h2>🛠️ 수노 자동/수동 제어</h2>
           <div class="btns">
-            <button class="btn-soft" id="btnCopyCurrentTitle">🏷️ 현재 곡 제목 복사</button>
-            <button class="btn-soft" id="btnCopyCurrentStyle">🎚️ 현재 곡 스타일 복사</button>
-            <button class="btn-soft" id="btnCopyCurrentLyrics">📝 현재 곡 가사 복사</button>
+            <button class="soft" id="btnCopyTitle">🏷️ 현재 제목 복사</button>
+            <button class="soft" id="btnCopyStyle">🎚️ 현재 스타일 복사</button>
+            <button class="soft" id="btnCopyLyrics">📝 현재 가사 복사</button>
+            <button class="soft" id="btnPrevSong">⬅️ 이전 곡</button>
+            <button class="soft" id="btnNextSong">➡️ 다음 곡</button>
           </div>
-          <div class="footer-note">
-            중복되던 <b>수노열기 / 다음복사</b> 버튼은 제거했습니다.
+          <div class="tiny" style="margin-top:10px">
+            중복되던 버튼만 제거했습니다. <b>수노열기 / 다음복사</b>는 빠르게 붙여넣기에만 남겼습니다.
           </div>
         </div>
       </div>
@@ -451,35 +325,48 @@
   </div>
 
   <script>
-    const els = {
-      apiBase: document.getElementById('apiBase'),
-      generatePath: document.getElementById('generatePath'),
-      btnCheckAi: document.getElementById('btnCheckAi'),
-      btnSaveServer: document.getElementById('btnSaveServer'),
-      globalAiDot: document.getElementById('globalAiDot'),
-      globalAiText: document.getElementById('globalAiText'),
-      themeInput: document.getElementById('themeInput'),
-      femaleCount: document.getElementById('femaleCount'),
-      maleCount: document.getElementById('maleCount'),
-      duetCount: document.getElementById('duetCount'),
-      moodInput: document.getElementById('moodInput'),
-      lyricsLang: document.getElementById('lyricsLang'),
-      btnGenerate: document.getElementById('btnGenerate'),
-      btnClearSongs: document.getElementById('btnClearSongs'),
-      songSummary: document.getElementById('songSummary'),
-      songList: document.getElementById('songList'),
-      btnNextCopy: document.getElementById('btnNextCopy'),
-      btnResetCopy: document.getElementById('btnResetCopy'),
-      btnOpenSuno: document.getElementById('btnOpenSuno'),
-      copyProgress: document.getElementById('copyProgress'),
-      copyPreview: document.getElementById('copyPreview'),
-      statusList: document.getElementById('statusList'),
-      btnCopyCurrentTitle: document.getElementById('btnCopyCurrentTitle'),
-      btnCopyCurrentStyle: document.getElementById('btnCopyCurrentStyle'),
-      btnCopyCurrentLyrics: document.getElementById('btnCopyCurrentLyrics')
+    const $ = (id) => document.getElementById(id);
+
+    const el = {
+      aiDot: $('aiDot'),
+      aiText: $('aiText'),
+      apiBase: $('apiBase'),
+      generatePath: $('generatePath'),
+      btnCheckAi: $('btnCheckAi'),
+      btnSaveServer: $('btnSaveServer'),
+      themeInput: $('themeInput'),
+      femaleCount: $('femaleCount'),
+      maleCount: $('maleCount'),
+      duetCount: $('duetCount'),
+      moodInput: $('moodInput'),
+      lyricsLang: $('lyricsLang'),
+      btnGenerate: $('btnGenerate'),
+      btnClearSongs: $('btnClearSongs'),
+      btnOpenSunoLeft: $('btnOpenSunoLeft'),
+      btnSongMake: $('btnSongMake'),
+      btnSongEdit: $('btnSongEdit'),
+      btnVideoMake: $('btnVideoMake'),
+      btnOpenBlog: $('btnOpenBlog'),
+      songSummary: $('songSummary'),
+      songList: $('songList'),
+      btnDeleteCurrentSong: $('btnDeleteCurrentSong'),
+      btnDeleteAllSongs: $('btnDeleteAllSongs'),
+      btnNextCopy: $('btnNextCopy'),
+      btnResetCopy: $('btnResetCopy'),
+      btnOpenSuno: $('btnOpenSuno'),
+      btnCopyCurrentAll: $('btnCopyCurrentAll'),
+      copyProgress: $('copyProgress'),
+      copyPreview: $('copyPreview'),
+      statusList: $('statusList'),
+      btnCopyTitle: $('btnCopyTitle'),
+      btnCopyStyle: $('btnCopyStyle'),
+      btnCopyLyrics: $('btnCopyLyrics'),
+      btnPrevSong: $('btnPrevSong'),
+      btnNextSong: $('btnNextSong')
     };
 
-    const APP_KEY = 'ai_music_auto_studio_fixed_v1';
+    const STORE = 'ai_music_auto_studio_v27_keep_features';
+
     let state = {
       songs: [],
       copyQueue: [],
@@ -488,66 +375,66 @@
       aiConnected: false,
       statuses: {
         aiConnection: '대기중',
-        lyricsGenerate: '대기중',
-        styleGenerate: '대기중',
         titleGenerate: '대기중',
+        styleGenerate: '대기중',
+        lyricsGenerate: '대기중',
         copyReady: '대기중',
         mp3Edit: '대기중',
         longVideo: '대기중'
       }
     };
 
-    function saveState() {
+    function saveApp() {
       const data = {
-        apiBase: els.apiBase.value.trim(),
-        generatePath: els.generatePath.value.trim(),
-        themeInput: els.themeInput.value,
-        femaleCount: els.femaleCount.value,
-        maleCount: els.maleCount.value,
-        duetCount: els.duetCount.value,
-        moodInput: els.moodInput.value,
-        lyricsLang: els.lyricsLang.value,
+        apiBase: el.apiBase.value.trim(),
+        generatePath: el.generatePath.value.trim(),
+        themeInput: el.themeInput.value,
+        femaleCount: el.femaleCount.value,
+        maleCount: el.maleCount.value,
+        duetCount: el.duetCount.value,
+        moodInput: el.moodInput.value,
+        lyricsLang: el.lyricsLang.value,
         songs: state.songs,
         copyIndex: state.copyIndex,
         currentSongIndex: state.currentSongIndex,
         aiConnected: state.aiConnected,
         statuses: state.statuses
       };
-      localStorage.setItem(APP_KEY, JSON.stringify(data));
+      localStorage.setItem(STORE, JSON.stringify(data));
     }
 
-    function loadState() {
+    function loadApp() {
       try {
-        const raw = localStorage.getItem(APP_KEY);
+        const raw = localStorage.getItem(STORE);
         if (!raw) return;
         const data = JSON.parse(raw);
-        els.apiBase.value = data.apiBase || els.apiBase.value;
-        els.generatePath.value = data.generatePath || els.generatePath.value;
-        els.themeInput.value = data.themeInput || '';
-        els.femaleCount.value = data.femaleCount || 3;
-        els.maleCount.value = data.maleCount || 3;
-        els.duetCount.value = data.duetCount || 4;
-        els.moodInput.value = data.moodInput || els.moodInput.value;
-        els.lyricsLang.value = data.lyricsLang || els.lyricsLang.value;
+        el.apiBase.value = data.apiBase || el.apiBase.value;
+        el.generatePath.value = data.generatePath || el.generatePath.value;
+        el.themeInput.value = data.themeInput || '';
+        el.femaleCount.value = data.femaleCount || 3;
+        el.maleCount.value = data.maleCount || 3;
+        el.duetCount.value = data.duetCount || 4;
+        el.moodInput.value = data.moodInput || el.moodInput.value;
+        el.lyricsLang.value = data.lyricsLang || el.lyricsLang.value;
         state.songs = Array.isArray(data.songs) ? data.songs : [];
         state.copyIndex = Number.isFinite(data.copyIndex) ? data.copyIndex : 0;
         state.currentSongIndex = Number.isFinite(data.currentSongIndex) ? data.currentSongIndex : 0;
         state.aiConnected = !!data.aiConnected;
         state.statuses = data.statuses || state.statuses;
       } catch (e) {
-        console.warn('loadState error', e);
+        console.warn(e);
       }
     }
 
-    function setGlobalAiStatus(type, text) {
-      els.globalAiDot.className = 'dot ' + (type === 'ok' ? 'ok' : type === 'bad' ? 'bad' : 'warn');
-      els.globalAiText.textContent = text;
+    function setAiStatus(type, text) {
+      el.aiDot.className = 'dot ' + (type === 'ok' ? 'ok' : type === 'bad' ? 'bad' : 'warn');
+      el.aiText.textContent = text;
     }
 
     function setStatus(key, value) {
       state.statuses[key] = value;
       renderStatuses();
-      saveState();
+      saveApp();
     }
 
     function badgeClass(v) {
@@ -557,30 +444,24 @@
     }
 
     function renderStatuses() {
-      const map = [
-        ['aiConnection', 'AI 연결'],
-        ['titleGenerate', '제목 생성'],
-        ['styleGenerate', '스타일 생성'],
-        ['lyricsGenerate', '가사 생성'],
-        ['copyReady', '붙여넣기 준비'],
-        ['mp3Edit', 'mp3 편집'],
-        ['longVideo', '긴영상 제작 준비']
+      const items = [
+        ['aiConnection','AI 연결'],
+        ['titleGenerate','제목 생성'],
+        ['styleGenerate','스타일 생성'],
+        ['lyricsGenerate','가사 생성'],
+        ['copyReady','붙여넣기 준비'],
+        ['mp3Edit','mp3 편집'],
+        ['longVideo','긴영상 제작 준비']
       ];
-      els.statusList.innerHTML = map.map(([key, name]) => `
+      el.statusList.innerHTML = items.map(([k, name]) => `
         <div class="status-item">
-          <div class="status-name">${name}</div>
-          <div class="${badgeClass(state.statuses[key])}">${state.statuses[key]}</div>
+          <b>${name}</b>
+          <span class="${badgeClass(state.statuses[k])}">${state.statuses[k]}</span>
         </div>
       `).join('');
     }
 
-    function escapeHtml(str='') {
-      return str.replace(/[&<>"']/g, m => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
-      }[m]));
-    }
-
-    function normalizeBaseUrl(url) {
+    function normalizeBase(url) {
       return (url || '').trim().replace(/\/+$/, '');
     }
 
@@ -590,94 +471,90 @@
       return p.startsWith('/') ? p : '/' + p;
     }
 
-    async function checkAiConnection() {
-      const base = normalizeBaseUrl(els.apiBase.value);
+    function escapeHtml(str='') {
+      return str.replace(/[&<>"']/g, s => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+      }[s]));
+    }
+
+    async function checkAi() {
+      const base = normalizeBase(el.apiBase.value);
       if (!base) {
         alert('서버 주소를 입력해 주세요.');
         return false;
       }
-      setGlobalAiStatus('warn', 'AI 연결 확인 중...');
-      setStatus('aiConnection', '대기중');
-
+      setAiStatus('warn', 'AI 연결 확인 중...');
       try {
-        const res = await fetch(base + '/api/health', { method:'GET' });
-        if (!res.ok) throw new Error('health check failed');
+        const res = await fetch(base + '/api/health');
+        if (!res.ok) throw new Error('health fail');
         const data = await res.json();
         state.aiConnected = !!data.ok;
         if (state.aiConnected) {
-          setGlobalAiStatus('ok', 'AI 연결됨');
-          setStatus('aiConnection', '완료');
+          setAiStatus('ok', 'AI 연결됨');
+          setStatus('aiConnection','완료');
         } else {
-          setGlobalAiStatus('bad', 'AI 연결 실패');
-          setStatus('aiConnection', '실패');
+          setAiStatus('bad', 'AI 연결 실패');
+          setStatus('aiConnection','실패');
         }
-        saveState();
+        saveApp();
         return state.aiConnected;
-      } catch (err) {
-        console.error(err);
+      } catch (e) {
         state.aiConnected = false;
-        setGlobalAiStatus('bad', 'AI 연결 실패');
-        setStatus('aiConnection', '실패');
+        setAiStatus('bad', 'AI 연결 실패');
+        setStatus('aiConnection','실패');
         return false;
       }
     }
 
-    function buildSongPlan() {
-      const female = Math.max(0, parseInt(els.femaleCount.value || 0, 10));
-      const male = Math.max(0, parseInt(els.maleCount.value || 0, 10));
-      const duet = Math.max(0, parseInt(els.duetCount.value || 0, 10));
-      const plan = [];
-      for (let i=1; i<=female; i++) plan.push({ type:'female', index:i });
-      for (let i=1; i<=male; i++) plan.push({ type:'male', index:i });
-      for (let i=1; i<=duet; i++) plan.push({ type:'duet', index:i });
-      return plan;
+    function sanitizeTheme(text) {
+      const t = (text || '').trim();
+      if (!t) return '봄 향기 느낌이 물씬 풍기는 사랑 노래';
+      return t
+        .replace(/여자\s*\d+곡/gi, '')
+        .replace(/남자\s*\d+곡/gi, '')
+        .replace(/듀엣\s*\d+곡/gi, '')
+        .replace(/만들어줘|만들어죠|만들어 줘|제작해줘|제작해 줘/gi, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim() || '봄 향기 느낌이 물씬 풍기는 사랑 노래';
     }
 
-    function typeToKo(type) {
+    function typeKo(type) {
       if (type === 'female') return '여자 솔로';
       if (type === 'male') return '남자 솔로';
       return '듀엣';
     }
 
-    function uniqueTitle(theme, type, index) {
-      const femaleTitles = [
-        '라일락 바람의 오후',
-        '꽃잎 위의 숨결',
-        '봄빛에 젖은 고백',
-        '햇살 사이 너의 이름',
-        '벚꽃이 멈춘 자리',
-        '분홍빛 마음의 결',
-        '향기 따라 걷는 계절',
-        '조용히 피는 떨림'
-      ];
-      const maleTitles = [
-        '봄밤을 건너는 마음',
-        '따뜻한 바람 끝에서',
-        '네가 머문 햇살',
-        '꽃그늘 아래 약속',
-        '봄길에 남은 온기',
-        '한낮의 미소를 닮아',
-        '오늘도 너를 부르면',
-        '계절 끝의 설렘'
-      ];
-      const duetTitles = [
-        '우리 사이에 핀 봄',
-        '같은 계절 다른 심장',
-        '꽃향기 속 두 사람',
-        '봄바람은 우리 편',
-        '마주 본 계절의 노래',
-        '둘이 걷는 라일락 길',
-        '너와 나의 봄 문장',
-        '햇살 아래 같은 마음'
-      ];
-      const pool = type === 'female' ? femaleTitles : type === 'male' ? maleTitles : duetTitles;
-      const pick = pool[(index - 1) % pool.length];
-      const suffix = theme.includes('봄') ? '' : ' ' + theme.slice(0, 6);
-      return pick + suffix;
+    function buildPlan() {
+      const female = Math.max(0, parseInt(el.femaleCount.value || 0, 10));
+      const male = Math.max(0, parseInt(el.maleCount.value || 0, 10));
+      const duet = Math.max(0, parseInt(el.duetCount.value || 0, 10));
+      const plan = [];
+      for (let i=1;i<=female;i++) plan.push({type:'female',index:i});
+      for (let i=1;i<=male;i++) plan.push({type:'male',index:i});
+      for (let i=1;i<=duet;i++) plan.push({type:'duet',index:i});
+      return plan;
     }
 
-    function uniqueEnglishStyle(type, mood, index) {
-      const common = {
+    function makeTitle(theme, type, index) {
+      const tFemale = [
+        '라일락 바람의 오후','꽃잎 위의 숨결','봄빛에 젖은 고백','햇살 사이 너의 이름',
+        '벚꽃이 멈춘 자리','분홍빛 마음의 결','향기 따라 걷는 계절','조용히 피는 떨림'
+      ];
+      const tMale = [
+        '봄밤을 건너는 마음','따뜻한 바람 끝에서','네가 머문 햇살','꽃그늘 아래 약속',
+        '봄길에 남은 온기','한낮의 미소를 닮아','오늘도 너를 부르면','계절 끝의 설렘'
+      ];
+      const tDuet = [
+        '우리 사이에 핀 봄','같은 계절 다른 심장','꽃향기 속 두 사람','봄바람은 우리 편',
+        '마주 본 계절의 노래','둘이 걷는 라일락 길','너와 나의 봄 문장','햇살 아래 같은 마음'
+      ];
+      const pool = type === 'female' ? tFemale : type === 'male' ? tMale : tDuet;
+      const base = pool[(index - 1) % pool.length];
+      return base + (theme.includes('봄') ? '' : ' ' + theme.slice(0,6));
+    }
+
+    function makeStyle(type, mood, index) {
+      const map = {
         female: [
           'K-pop, female vocal, soft spring pop, warm, airy, melodic, romantic',
           'K-pop, female vocal, dreamy pop ballad, bright, emotional, gentle, lush',
@@ -694,18 +571,12 @@
           'K-pop, duet, bright midtempo pop, spring mood, catchy, romantic, airy'
         ]
       };
-      const pool = common[type] || common.duet;
-      const line = pool[(index - 1) % pool.length];
-      const moodTag = mood
-        .split(' ')
-        .filter(Boolean)
-        .slice(0, 3)
-        .join(' ');
-      return line + (moodTag ? ', ' + moodTag : '');
+      const moodTag = (mood || '').split(' ').slice(0,3).join(' ');
+      return map[type][(index - 1) % map[type].length] + (moodTag ? ', ' + moodTag : '');
     }
 
-    function buildUniqueLyrics({ title, type, theme, mood, langMode, index }) {
-      const introMap = {
+    function makeLyrics({ title, type, index, langMode }) {
+      const intros = {
         female: [
           '햇살이 얇게 내려앉은 거리 위에',
           '조용히 스며든 라일락 향기 속에',
@@ -725,8 +596,7 @@
           '따뜻한 계절의 문이 열리던 순간'
         ]
       };
-
-      const imageMap = [
+      const img = [
         '네 이름이 내 맘에 천천히 번져와',
         '작은 떨림 하나가 오늘을 바꿔 놓아',
         '기억은 꽃잎처럼 어깨 위로 내려와',
@@ -734,8 +604,7 @@
         '멈춰 있던 마음도 조금씩 피어나',
         '서툰 웃음마저 봄처럼 환하게 남아'
       ];
-
-      const chorusLineMap = {
+      const chorus = {
         female: [
           '이 계절 끝까지 너를 닮아가',
           '내 마음은 오늘도 봄을 입고 있어',
@@ -755,47 +624,26 @@
           '두 개의 심장이 하나의 노래가 돼'
         ]
       };
-
-      const bridgeMap = {
-        female: [
-          '혹시 스쳐 갈까 봐 더 조심스런 맘도',
-          '이젠 숨기지 않을래 환한 계절처럼'
-        ],
-        male: [
-          '길었던 망설임도 오늘은 내려놓고',
-          '네 옆에 머무는 이유가 되고 싶어'
-        ],
-        duet: [
-          '서로 다른 시간 끝에서 만난 우리',
-          '이제는 같은 방향으로 걸어가'
-        ]
-      };
-
-      const intro = introMap[type][(index - 1) % introMap[type].length];
-      const img1 = imageMap[(index * 2 - 2) % imageMap.length];
-      const img2 = imageMap[(index * 2 - 1) % imageMap.length];
-      const chorus1 = chorusLineMap[type][(index - 1) % chorusLineMap[type].length];
-      const chorus2 = chorusLineMap[type][index % chorusLineMap[type].length];
-      const bridge1 = bridgeMap[type][0];
-      const bridge2 = bridgeMap[type][1];
-
-      const englishHook = langMode === 'ko-mix'
-        ? '\nBaby, stay in this spring tonight'
-        : '';
+      const hook = langMode === 'ko-mix' ? '\nBaby, stay in this spring tonight' : '';
+      const a = intros[type][(index - 1) % intros[type].length];
+      const b = img[(index * 2 - 2) % img.length];
+      const c = img[(index * 2 - 1) % img.length];
+      const ch1 = chorus[type][(index - 1) % chorus[type].length];
+      const ch2 = chorus[type][index % chorus[type].length];
 
       if (type === 'duet') {
         return `[Title]
 ${title}
 
 [Verse 1]
-${intro}
+${a}
 너의 눈빛이 다정하게 내게 기대 오고
-${img1}
+${b}
 지나온 하루 끝에 웃음이 다시 피어나
 
 [Verse 2]
 나도 모르게 가까워진 발걸음 사이
-${img2}
+${c}
 조심스럽던 말들도 오늘은 더 쉬워져
 
 [Pre-Chorus]
@@ -803,18 +651,18 @@ ${img2}
 한 계절보다 깊은 마음이 돼
 
 [Chorus]
-${chorus1}
-${chorus2}${englishHook}
+${ch1}
+${ch2}${hook}
 오늘의 떨림을 함께 안아 줄래
 봄바람보다 오래 우리 남아 있자
 
 [Bridge]
-${bridge1}
-${bridge2}
+서로 다른 시간 끝에서 만난 우리
+이제는 같은 방향으로 걸어가
 지금 이 순간이 오래 기억되도록
 
 [Final Chorus]
-${chorus1}
+${ch1}
 같은 숨결 위로 계절이 반짝여
 너와 나의 노래가 봄이 되어 흘러가`;
       }
@@ -823,13 +671,13 @@ ${chorus1}
 ${title}
 
 [Verse 1]
-${intro}
-${img1}
+${a}
+${b}
 오늘의 공기마저 유난히 포근해져
 
 [Verse 2]
 스쳐 가던 하루가 특별해진 이유는
-${img2}
+${c}
 네 생각 하나만으로 세상이 달라져
 
 [Pre-Chorus]
@@ -839,69 +687,73 @@ ${img2}
 따뜻한 빛이 내려와
 
 [Chorus]
-${chorus1}
-${chorus2}${englishHook}
+${ch1}
+${ch2}${hook}
 서두르지 않아도 충분히 아름다워
 우리의 계절은 천천히 피어나
 
 [Bridge]
-${bridge1}
-${bridge2}
+길었던 망설임도 이제는 내려놓고
+네 쪽으로 기울어진 내 마음을 믿어
+스치는 바람까지 다 너를 닮아가
 
 [Final Chorus]
-${chorus2}
+${ch2}
 이 봄의 끝에서도 기억할 수 있게
 내 마음은 오늘도 너를 향해 있어`;
     }
 
-    function sanitizeTheme(theme) {
-      const t = (theme || '').trim();
-      if (!t) return '봄 향기 가득한 사랑 노래';
-      return t
-        .replace(/여자\s*\d+곡/gi, '')
-        .replace(/남자\s*\d+곡/gi, '')
-        .replace(/듀엣\s*\d+곡/gi, '')
-        .replace(/만들어줘|만들어죠|만들어 줘|제작해줘|제작해 줘/gi, '')
-        .replace(/\s{2,}/g, ' ')
-        .trim() || '봄 향기 가득한 사랑 노래';
+    function buildFallbackSongs() {
+      const theme = sanitizeTheme(el.themeInput.value);
+      const mood = el.moodInput.value;
+      const langMode = el.lyricsLang.value;
+      const plan = buildPlan();
+
+      return plan.map(item => {
+        const title = makeTitle(theme, item.type, item.index);
+        const style = makeStyle(item.type, mood, item.index);
+        const lyrics = makeLyrics({
+          title,
+          type: item.type,
+          index: item.index,
+          langMode
+        });
+        return { type:item.type, title, style, lyrics };
+      });
     }
 
     function buildCopyQueue(songs) {
-      return songs.flatMap((song, i) => ([
-        { songIndex:i, type:'title', text:song.title, preview:`${i+1}번 제목\n${song.title}` },
-        { songIndex:i, type:'style', text:song.style, preview:`${i+1}번 스타일\n${song.style}` },
-        { songIndex:i, type:'lyrics', text:song.lyrics, preview:`${i+1}번 가사\n${song.lyrics}` }
-      ]));
+      return songs.flatMap((song, i) => [
+        { songIndex:i, kind:'title', text:song.title, preview:`${i+1}번 제목\n${song.title}` },
+        { songIndex:i, kind:'style', text:song.style, preview:`${i+1}번 스타일\n${song.style}` },
+        { songIndex:i, kind:'lyrics', text:song.lyrics, preview:`${i+1}번 가사\n${song.lyrics}` }
+      ]);
     }
 
     function refreshCopyQueue() {
       state.copyQueue = buildCopyQueue(state.songs);
-      if (state.copyIndex >= state.copyQueue.length) {
-        state.copyIndex = 0;
-      }
-      updateCopyPreview();
+      if (state.copyIndex >= state.copyQueue.length) state.copyIndex = 0;
+      renderCopyPreview();
     }
 
-    function updateCopyPreview() {
+    function renderCopyPreview() {
       if (!state.copyQueue.length) {
-        els.copyProgress.textContent = '복사 대기중';
-        els.copyPreview.textContent = '복사할 내용이 여기에 표시됩니다.';
-        setStatus('copyReady', '대기중');
+        el.copyProgress.textContent = '복사 대기중';
+        el.copyPreview.textContent = '복사할 내용이 여기에 표시됩니다.';
+        setStatus('copyReady','대기중');
         return;
       }
-
       if (state.copyIndex >= state.copyQueue.length) {
-        els.copyProgress.textContent = `복사 완료 (${state.copyQueue.length}/${state.copyQueue.length})`;
-        els.copyPreview.textContent = '모든 복사가 끝났습니다. 복사 초기화를 눌러 다시 시작하세요.';
-        setStatus('copyReady', '완료');
+        el.copyProgress.textContent = `복사 완료 (${state.copyQueue.length}/${state.copyQueue.length})`;
+        el.copyPreview.textContent = '모든 복사가 끝났습니다. 복사 초기화를 눌러 다시 시작하세요.';
+        setStatus('copyReady','완료');
         return;
       }
-
       const item = state.copyQueue[state.copyIndex];
-      els.copyProgress.textContent = `다음 복사: ${state.copyIndex + 1} / ${state.copyQueue.length}`;
-      els.copyPreview.textContent = item.preview;
       state.currentSongIndex = item.songIndex;
-      setStatus('copyReady', '완료');
+      el.copyProgress.textContent = `다음 복사: ${state.copyIndex + 1} / ${state.copyQueue.length}`;
+      el.copyPreview.textContent = item.preview;
+      setStatus('copyReady','완료');
     }
 
     async function copyText(text) {
@@ -915,57 +767,58 @@ ${chorus2}
       }
       if (state.copyIndex >= state.copyQueue.length) {
         alert('모든 복사가 끝났습니다. 복사 초기화를 눌러 주세요.');
-        updateCopyPreview();
+        renderCopyPreview();
         return;
       }
-
       const item = state.copyQueue[state.copyIndex];
       try {
         await copyText(item.text);
         state.currentSongIndex = item.songIndex;
         state.copyIndex += 1;
-        updateCopyPreview();
-        saveState();
+        renderCopyPreview();
+        saveApp();
       } catch (e) {
-        alert('클립보드 복사에 실패했습니다.');
+        alert('복사 실패');
       }
     }
 
     function resetCopy() {
       state.copyIndex = 0;
       refreshCopyQueue();
-      saveState();
+      saveApp();
     }
 
     function renderSongs() {
-      const songs = state.songs;
-      if (!songs.length) {
-        els.songSummary.textContent = '아직 생성된 곡이 없습니다.';
-        els.songList.innerHTML = '';
+      if (!state.songs.length) {
+        el.songSummary.textContent = '아직 생성된 곡이 없습니다.';
+        el.songList.innerHTML = '';
         refreshCopyQueue();
         return;
       }
 
-      const female = songs.filter(s => s.type === 'female').length;
-      const male = songs.filter(s => s.type === 'male').length;
-      const duet = songs.filter(s => s.type === 'duet').length;
+      const female = state.songs.filter(s => s.type === 'female').length;
+      const male = state.songs.filter(s => s.type === 'male').length;
+      const duet = state.songs.filter(s => s.type === 'duet').length;
 
-      els.songSummary.textContent = `총 ${songs.length}곡 생성됨 · 여자 ${female}곡 · 남자 ${male}곡 · 듀엣 ${duet}곡`;
+      el.songSummary.textContent = `총 ${state.songs.length}곡 생성됨 · 여자 ${female}곡 · 남자 ${male}곡 · 듀엣 ${duet}곡`;
 
-      els.songList.innerHTML = songs.map((song, i) => `
-        <div class="song-item">
+      el.songList.innerHTML = state.songs.map((song, i) => `
+        <div class="song">
           <div class="song-head">
             <div>
               <div class="song-title">${i + 1}. ${escapeHtml(song.title)}</div>
-              <div class="song-meta">
-                <span class="tag">${escapeHtml(typeToKo(song.type))}</span>
+              <div class="meta">
+                <span class="tag">${escapeHtml(typeKo(song.type))}</span>
                 <span class="tag">Style EN</span>
+                ${state.currentSongIndex === i ? '<span class="tag">현재 선택</span>' : ''}
               </div>
             </div>
-            <div class="btns" style="min-width:180px">
-              <button class="btn-soft" onclick="copySongPart(${i}, 'title')">제목 복사</button>
-              <button class="btn-soft" onclick="copySongPart(${i}, 'style')">스타일 복사</button>
-              <button class="btn-soft" onclick="copySongPart(${i}, 'lyrics')">가사 복사</button>
+            <div class="btns" style="min-width:200px">
+              <button class="soft" onclick="appCopySong(${i},'title')">제목 복사</button>
+              <button class="soft" onclick="appCopySong(${i},'style')">스타일 복사</button>
+              <button class="soft" onclick="appCopySong(${i},'lyrics')">가사 복사</button>
+              <button class="ghost" onclick="appSelectSong(${i})">현재곡 선택</button>
+              <button class="bad" onclick="appDeleteSong(${i})">삭제</button>
             </div>
           </div>
           <div class="song-body">
@@ -984,69 +837,59 @@ ${chorus2}
       refreshCopyQueue();
     }
 
-    window.copySongPart = async function(index, part) {
+    window.appCopySong = async function(index, part) {
       const song = state.songs[index];
       if (!song) return;
-
-      const text = song[part];
       try {
-        await copyText(text);
+        await copyText(song[part]);
         state.currentSongIndex = index;
-        saveState();
+        saveApp();
+        renderSongs();
       } catch (e) {
         alert('복사 실패');
       }
     };
 
-    function createFallbackSongs() {
-      const theme = sanitizeTheme(els.themeInput.value);
-      const mood = els.moodInput.value;
-      const langMode = els.lyricsLang.value;
-      const plan = buildSongPlan();
-      const songs = plan.map(item => {
-        const title = uniqueTitle(theme, item.type, item.index);
-        const style = uniqueEnglishStyle(item.type, mood, item.index);
-        const lyrics = buildUniqueLyrics({
-          title,
-          type:item.type,
-          theme,
-          mood,
-          langMode,
-          index:item.index
-        });
-        return {
-          type:item.type,
-          title,
-          style,
-          lyrics
-        };
-      });
-      return songs;
-    }
+    window.appSelectSong = function(index) {
+      if (!state.songs[index]) return;
+      state.currentSongIndex = index;
+      saveApp();
+      renderSongs();
+    };
 
-    async function generateSongsWithApiOrFallback() {
-      const theme = sanitizeTheme(els.themeInput.value);
-      const mood = els.moodInput.value;
-      const langMode = els.lyricsLang.value;
-      const plan = buildSongPlan();
+    window.appDeleteSong = function(index) {
+      if (!state.songs[index]) return;
+      state.songs.splice(index, 1);
+      if (state.currentSongIndex >= state.songs.length) {
+        state.currentSongIndex = Math.max(0, state.songs.length - 1);
+      }
+      state.copyIndex = 0;
+      renderSongs();
+      saveApp();
+    };
+
+    async function generateSongs() {
+      const theme = sanitizeTheme(el.themeInput.value);
+      const mood = el.moodInput.value;
+      const langMode = el.lyricsLang.value;
+      const plan = buildPlan();
 
       if (!theme) {
-        alert('주제 / 요청을 입력해 주세요.');
+        alert('주제를 입력해 주세요.');
         return;
       }
-
       if (!plan.length) {
         alert('최소 1곡 이상 선택해 주세요.');
         return;
       }
 
-      setStatus('titleGenerate', '대기중');
-      setStatus('styleGenerate', '대기중');
-      setStatus('lyricsGenerate', '대기중');
-      setStatus('copyReady', '대기중');
+      setStatus('titleGenerate','대기중');
+      setStatus('styleGenerate','대기중');
+      setStatus('lyricsGenerate','대기중');
+      setStatus('copyReady','대기중');
 
-      const base = normalizeBaseUrl(els.apiBase.value);
-      const path = normalizePath(els.generatePath.value);
+      const base = normalizeBase(el.apiBase.value);
+      const path = normalizePath(el.generatePath.value);
 
       const payload = {
         instruction: theme,
@@ -1056,75 +899,49 @@ ${chorus2}
         rules: {
           unique_per_song: true,
           style_english_only: true,
-          order: ['title','style','lyrics'],
-          forbid_meta_instruction_in_lyrics: true,
-          format: 'json'
-        },
-        promptTemplate: `
-Create a batch of unique songs.
-Return valid JSON only.
-Each song must include:
-- type
-- title
-- style
-- lyrics
-
-Rules:
-- Every title must be different
-- Every lyrics must be different
-- Style must be English only
-- Do not put instruction text into lyrics
-- Lyrics language should be Korean unless language requests a light English mix
-- Use [Verse], [Chorus], optional [Bridge]
-- Make duet songs clearly suitable for duet
-        `.trim()
+          lyrics_korean_only_except_optional_hook: true,
+          do_not_put_instruction_into_lyrics: true,
+          output_format: 'json'
+        }
       };
 
       try {
-        const aiOk = await checkAiConnection();
-        if (!aiOk) throw new Error('AI not connected');
+        const ok = await checkAi();
+        if (!ok) throw new Error('AI not connected');
 
         const res = await fetch(base + path, {
           method:'POST',
-          headers:{ 'Content-Type':'application/json' },
+          headers:{'Content-Type':'application/json'},
           body: JSON.stringify(payload)
         });
-
-        if (!res.ok) throw new Error('generate api failed');
-
+        if (!res.ok) throw new Error('generate failed');
         const data = await res.json();
         const songs = Array.isArray(data?.songs) ? data.songs : [];
         if (!songs.length) throw new Error('empty songs');
 
         state.songs = songs.map((song, idx) => ({
           type: song.type || plan[idx]?.type || 'female',
-          title: String(song.title || uniqueTitle(theme, plan[idx]?.type || 'female', (plan[idx]?.index || 1))).trim(),
-          style: String(song.style || uniqueEnglishStyle(plan[idx]?.type || 'female', mood, (plan[idx]?.index || 1))).trim(),
-          lyrics: String(song.lyrics || buildUniqueLyrics({
-            title: song.title || uniqueTitle(theme, plan[idx]?.type || 'female', (plan[idx]?.index || 1)),
+          title: String(song.title || makeTitle(theme, plan[idx]?.type || 'female', plan[idx]?.index || 1)).trim(),
+          style: String(song.style || makeStyle(plan[idx]?.type || 'female', mood, plan[idx]?.index || 1)).trim(),
+          lyrics: String(song.lyrics || makeLyrics({
+            title: song.title || makeTitle(theme, plan[idx]?.type || 'female', plan[idx]?.index || 1),
             type: plan[idx]?.type || 'female',
-            theme,
-            mood,
-            langMode,
-            index: plan[idx]?.index || 1
+            index: plan[idx]?.index || 1,
+            langMode
           })).trim()
         }));
-
-        setStatus('titleGenerate', '완료');
-        setStatus('styleGenerate', '완료');
-        setStatus('lyricsGenerate', '완료');
-      } catch (err) {
-        console.warn('API generation failed, fallback used.', err);
-        state.songs = createFallbackSongs();
-        setStatus('titleGenerate', '완료');
-        setStatus('styleGenerate', '완료');
-        setStatus('lyricsGenerate', '완료');
+      } catch (e) {
+        state.songs = buildFallbackSongs();
       }
 
+      setStatus('titleGenerate','완료');
+      setStatus('styleGenerate','완료');
+      setStatus('lyricsGenerate','완료');
+
       state.copyIndex = 0;
+      state.currentSongIndex = 0;
       renderSongs();
-      updateCopyPreview();
-      saveState();
+      saveApp();
     }
 
     function clearSongs() {
@@ -1132,57 +949,129 @@ Rules:
       state.copyQueue = [];
       state.copyIndex = 0;
       state.currentSongIndex = 0;
-      setStatus('titleGenerate', '대기중');
-      setStatus('styleGenerate', '대기중');
-      setStatus('lyricsGenerate', '대기중');
-      setStatus('copyReady', '대기중');
+      setStatus('titleGenerate','대기중');
+      setStatus('styleGenerate','대기중');
+      setStatus('lyricsGenerate','대기중');
+      setStatus('copyReady','대기중');
       renderSongs();
-      saveState();
+      saveApp();
     }
 
-    function copyCurrent(part) {
-      const song = state.songs[state.currentSongIndex];
+    function deleteCurrentSong() {
+      if (!state.songs.length) return;
+      state.songs.splice(state.currentSongIndex, 1);
+      if (state.currentSongIndex >= state.songs.length) {
+        state.currentSongIndex = Math.max(0, state.songs.length - 1);
+      }
+      state.copyIndex = 0;
+      renderSongs();
+      saveApp();
+    }
+
+    function deleteAllSongs() {
+      if (!state.songs.length) return;
+      if (!confirm('전체 곡을 삭제할까요?')) return;
+      clearSongs();
+    }
+
+    function currentSong() {
+      return state.songs[state.currentSongIndex] || null;
+    }
+
+    async function copyCurrentPart(part) {
+      const song = currentSong();
       if (!song) {
         alert('현재 선택된 곡이 없습니다.');
         return;
       }
-      copyText(song[part]).catch(() => alert('복사 실패'));
-    }
-
-    function initDefaults() {
-      if (!els.themeInput.value.trim()) {
-        els.themeInput.value = '봄 향기 느낌이 물씬 풍기는 사랑 노래';
+      try {
+        await copyText(song[part]);
+      } catch (e) {
+        alert('복사 실패');
       }
     }
 
-    els.btnSaveServer.addEventListener('click', () => {
-      saveState();
-      alert('서버 주소가 저장되었습니다.');
-    });
+    async function copyCurrentAll() {
+      const song = currentSong();
+      if (!song) {
+        alert('현재 선택된 곡이 없습니다.');
+        return;
+      }
+      const pack = `[제목]
+${song.title}
 
-    els.btnCheckAi.addEventListener('click', checkAiConnection);
-    els.btnGenerate.addEventListener('click', generateSongsWithApiOrFallback);
-    els.btnClearSongs.addEventListener('click', clearSongs);
-    els.btnNextCopy.addEventListener('click', nextCopy);
-    els.btnResetCopy.addEventListener('click', resetCopy);
-    els.btnOpenSuno.addEventListener('click', () => {
-      window.open('https://suno.com/create', '_blank');
-    });
-    els.btnCopyCurrentTitle.addEventListener('click', () => copyCurrent('title'));
-    els.btnCopyCurrentStyle.addEventListener('click', () => copyCurrent('style'));
-    els.btnCopyCurrentLyrics.addEventListener('click', () => copyCurrent('lyrics'));
+[스타일]
+${song.style}
 
-    loadState();
-    initDefaults();
-    renderStatuses();
-    renderSongs();
-    updateCopyPreview();
-
-    if (state.aiConnected) {
-      setGlobalAiStatus('ok', 'AI 연결됨');
-    } else {
-      setGlobalAiStatus('warn', 'AI 상태 확인 전');
+[가사]
+${song.lyrics}`;
+      try {
+        await copyText(pack);
+      } catch (e) {
+        alert('복사 실패');
+      }
     }
+
+    function prevSong() {
+      if (!state.songs.length) return;
+      state.currentSongIndex = Math.max(0, state.currentSongIndex - 1);
+      saveApp();
+      renderSongs();
+    }
+
+    function nextSongSelect() {
+      if (!state.songs.length) return;
+      state.currentSongIndex = Math.min(state.songs.length - 1, state.currentSongIndex + 1);
+      saveApp();
+      renderSongs();
+    }
+
+    function initDefaults() {
+      if (!el.themeInput.value.trim()) {
+        el.themeInput.value = '봄 향기 느낌이 물씬 풍기는 사랑 노래';
+      }
+      renderStatuses();
+      renderSongs();
+      renderCopyPreview();
+      if (state.aiConnected) setAiStatus('ok','AI 연결됨');
+      else setAiStatus('warn','AI 상태 확인 전');
+    }
+
+    el.btnCheckAi.addEventListener('click', checkAi);
+    el.btnSaveServer.addEventListener('click', () => {
+      saveApp();
+      alert('서버 주소 저장 완료');
+    });
+    el.btnGenerate.addEventListener('click', generateSongs);
+    el.btnClearSongs.addEventListener('click', clearSongs);
+    el.btnDeleteCurrentSong.addEventListener('click', deleteCurrentSong);
+    el.btnDeleteAllSongs.addEventListener('click', deleteAllSongs);
+
+    el.btnNextCopy.addEventListener('click', nextCopy);
+    el.btnResetCopy.addEventListener('click', resetCopy);
+    el.btnOpenSuno.addEventListener('click', () => window.open('https://suno.com/create','_blank'));
+    el.btnOpenSunoLeft.addEventListener('click', () => window.open('https://suno.com/create','_blank'));
+    el.btnCopyCurrentAll.addEventListener('click', copyCurrentAll);
+
+    el.btnCopyTitle.addEventListener('click', () => copyCurrentPart('title'));
+    el.btnCopyStyle.addEventListener('click', () => copyCurrentPart('style'));
+    el.btnCopyLyrics.addEventListener('click', () => copyCurrentPart('lyrics'));
+    el.btnPrevSong.addEventListener('click', prevSong);
+    el.btnNextSong.addEventListener('click', nextSongSelect);
+
+    el.btnSongMake.addEventListener('click', () => alert('노래 제작 작업 버튼입니다.'));
+    el.btnSongEdit.addEventListener('click', () => {
+      setStatus('mp3Edit','대기중');
+      alert('노래 편집 시작 버튼입니다.');
+    });
+    el.btnVideoMake.addEventListener('click', () => {
+      setStatus('longVideo','대기중');
+      alert('영상 만들기 버튼입니다.');
+    });
+    el.btnOpenBlog.addEventListener('click', () => alert('블로그 도구 버튼입니다.'));
+
+    loadApp();
+    initDefaults();
   </script>
 </body>
 </html>
