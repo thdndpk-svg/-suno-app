@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v31</title>
+  <title>AI Music Auto Studio v32</title>
   <style>
     :root{
       --bg1:#f7f8ff;
@@ -202,9 +202,7 @@
       color:var(--sub);
       transition:transform .2s ease;
     }
-    .accordion[open] summary::after{
-      transform:rotate(180deg);
-    }
+    .accordion[open] summary::after{transform:rotate(180deg)}
     .accordion-body{
       padding:0 14px 14px;
       border-top:1px solid var(--line);
@@ -354,16 +352,15 @@
     <div class="topbar">
       <div class="brand">
         <h1>🎵 AI Music Auto Studio</h1>
-        <p>중복 생성 방지 + AI 생성 여부 표시 + 구글시트 저장 확장</p>
+        <p>AI 서버 연결 / 실제 AI 곡 생성 / 로컬 대체생성 상태를 분리 표시</p>
       </div>
       <div class="pill">
         <span class="dot warn" id="aiDot"></span>
-        <span id="aiText">AI 상태 확인 전</span>
+        <span id="aiText">AI 서버 상태 확인 전</span>
       </div>
     </div>
 
     <div class="layout">
-      <!-- LEFT -->
       <div class="card">
         <h2>⚙️ 기본 설정</h2>
 
@@ -526,7 +523,6 @@
         </div>
       </div>
 
-      <!-- CENTER -->
       <div class="card">
         <h2>🎧 생성된 곡 관리</h2>
         <div class="tiny" id="songSummary">아직 생성된 곡이 없습니다.</div>
@@ -539,7 +535,6 @@
         <div class="song-list" id="songList"></div>
       </div>
 
-      <!-- RIGHT -->
       <div class="sticky">
         <div class="card">
           <h2>📋 빠르게 붙여넣기</h2>
@@ -635,25 +630,26 @@
       sheetSavePreview: $('sheetSavePreview')
     };
 
-    const STORE = 'ai_music_auto_studio_v31_sheet';
+    const STORE = 'ai_music_auto_studio_v32_sheet';
 
     let state = {
       songs: [],
       copyQueue: [],
       copyIndex: 0,
       currentSongIndex: 0,
-      aiConnected: false,
+      aiServerConnected: false,
       lastSheetSave: null,
       generation: {
         isGenerating: false,
         batchId: '',
         requestId: '',
-        source: '',
+        result: 'idle',
         message: '대기중',
-        lastGeneratedAt: ''
+        lastGeneratedAt: '',
+        lastError: ''
       },
       statuses: {
-        aiConnection: '대기중',
+        aiServer: '대기중',
         aiGenerate: '대기중',
         titleGenerate: '대기중',
         styleGenerate: '대기중',
@@ -693,7 +689,7 @@
     }
 
     function shortId(v='') {
-      return String(v).slice(-8) || '-';
+      return String(v || '').slice(-8) || '-';
     }
 
     function saveApp() {
@@ -710,7 +706,7 @@
         songs: state.songs,
         copyIndex: state.copyIndex,
         currentSongIndex: state.currentSongIndex,
-        aiConnected: state.aiConnected,
+        aiServerConnected: state.aiServerConnected,
         lastSheetSave: state.lastSheetSave,
         generation: state.generation,
         statuses: state.statuses,
@@ -746,7 +742,7 @@
         state.songs = Array.isArray(data.songs) ? data.songs.map((song, idx) => normalizeSong(song, idx)) : [];
         state.copyIndex = Number.isFinite(data.copyIndex) ? data.copyIndex : 0;
         state.currentSongIndex = Number.isFinite(data.currentSongIndex) ? data.currentSongIndex : 0;
-        state.aiConnected = !!data.aiConnected;
+        state.aiServerConnected = !!data.aiServerConnected;
         state.lastSheetSave = data.lastSheetSave || null;
         state.generation = data.generation || state.generation;
         state.statuses = data.statuses || state.statuses;
@@ -761,30 +757,30 @@
     function renderAiPill() {
       if (state.generation.isGenerating) {
         el.aiDot.className = 'dot warn';
-        el.aiText.textContent = 'AI 생성중... 중복 클릭 방지중';
+        el.aiText.textContent = '곡 생성중... 중복 클릭 방지중';
         return;
       }
 
-      if (!state.aiConnected) {
+      if (!state.aiServerConnected) {
         el.aiDot.className = 'dot warn';
-        el.aiText.textContent = 'AI 상태 확인 전';
+        el.aiText.textContent = 'AI 서버 상태 확인 전 또는 연결 실패';
         return;
       }
 
-      if (state.generation.source === 'AI') {
+      if (state.generation.result === 'ai_success') {
         el.aiDot.className = 'dot ok';
-        el.aiText.textContent = 'AI 연결됨 · 최근 생성: AI';
+        el.aiText.textContent = 'AI 서버 연결됨 · 최근 곡 생성: AI 성공';
         return;
       }
 
-      if (state.generation.source === 'LOCAL_FALLBACK') {
+      if (state.generation.result === 'fallback_used') {
         el.aiDot.className = 'dot warn';
-        el.aiText.textContent = 'AI 연결됨 · 최근 생성: 로컬 대체';
+        el.aiText.textContent = 'AI 서버 연결됨 · 최근 곡 생성: 실패 → 로컬 대체생성';
         return;
       }
 
       el.aiDot.className = 'dot ok';
-      el.aiText.textContent = 'AI 연결됨';
+      el.aiText.textContent = 'AI 서버 연결됨';
     }
 
     function setStatus(key, value) {
@@ -796,14 +792,14 @@
     function badgeClass(v) {
       if (v === '완료') return 'badge ok';
       if (v === '실패') return 'badge bad';
-      if (v === '생성중') return 'badge pri';
+      if (v === '진행중') return 'badge pri';
       return 'badge warn';
     }
 
     function renderStatuses() {
       const items = [
-        ['aiConnection','AI 연결'],
-        ['aiGenerate','AI 생성엔진'],
+        ['aiServer','AI 서버 연결'],
+        ['aiGenerate','AI 곡 생성'],
         ['titleGenerate','제목 생성'],
         ['styleGenerate','스타일 생성'],
         ['lyricsGenerate','가사 생성'],
@@ -891,9 +887,6 @@
 
     function normalizeSong(song, idx) {
       const title = String(song.title || '').trim();
-      const generatedAt = song.생성시간 || song.generatedAt || nowLocalText();
-      const source = song.생성방식 || song.source || 'LOCAL_FALLBACK';
-
       return {
         type: song.type || 'female',
         title,
@@ -910,9 +903,10 @@
         saveMessage: song.saveMessage || '',
         생성묶음ID: song.생성묶음ID || '',
         생성요청ID: song.생성요청ID || '',
-        생성방식: source,
+        생성방식: song.생성방식 || 'LOCAL_FALLBACK',
+        생성결과: song.생성결과 || 'fallback_used',
         생성상태: song.생성상태 || '완료',
-        생성시간: generatedAt
+        생성시간: song.생성시간 || nowLocalText()
       };
     }
 
@@ -922,25 +916,31 @@
         alert('서버 주소를 입력해 주세요.');
         return false;
       }
+
       el.aiDot.className = 'dot warn';
-      el.aiText.textContent = 'AI 연결 확인 중...';
+      el.aiText.textContent = 'AI 서버 연결 확인 중...';
+
       try {
         const res = await fetch(base + '/api/health');
         if (!res.ok) throw new Error('health fail');
+
         const data = await res.json();
-        state.aiConnected = !!data.ok;
-        if (state.aiConnected) {
-          setStatus('aiConnection','완료');
+        state.aiServerConnected = !!data.ok;
+
+        if (state.aiServerConnected) {
+          setStatus('aiServer','완료');
         } else {
-          setStatus('aiConnection','실패');
+          setStatus('aiServer','실패');
         }
+
         renderAiPill();
         saveApp();
-        return state.aiConnected;
+        return state.aiServerConnected;
       } catch (e) {
-        state.aiConnected = false;
-        setStatus('aiConnection','실패');
+        state.aiServerConnected = false;
+        setStatus('aiServer','실패');
         renderAiPill();
+        saveApp();
         return false;
       }
     }
@@ -1159,6 +1159,7 @@ ${parts[2]}
           생성묶음ID: batchId,
           생성요청ID: requestId,
           생성방식: 'LOCAL_FALLBACK',
+          생성결과: 'fallback_used',
           생성상태: '완료',
           생성시간: nowLocalText()
         }, idx);
@@ -1250,6 +1251,10 @@ ${parts[2]}
       return source === 'AI' ? 'AI 생성' : '로컬 대체생성';
     }
 
+    function resultLabel(result) {
+      return result === 'ai_success' ? 'AI 생성 성공' : 'AI 실패 → 로컬 대체생성';
+    }
+
     function uniqueTitle(title, takenSet) {
       let base = String(title || '').trim() || '제목 없음';
       let candidate = base;
@@ -1310,7 +1315,8 @@ ${parts[2]}
           </div>
           <div class="song-body">
             <div class="box">
-              <b>🤖 AI 생성 정보</b>
+              <b>🤖 생성 상태</b>
+              <div class="tiny">생성결과: ${escapeHtml(resultLabel(song.생성결과))}</div>
               <div class="tiny">생성방식: ${escapeHtml(sourceLabel(song.생성방식))}</div>
               <div class="tiny">생성상태: ${escapeHtml(song.생성상태 || '완료')}</div>
               <div class="tiny">생성묶음ID: ${escapeHtml(song.생성묶음ID || '-')}</div>
@@ -1459,15 +1465,16 @@ ${parts[2]}
 
       state.generation.batchId = batchId;
       state.generation.requestId = requestId;
-      state.generation.source = '';
+      state.generation.result = 'idle';
       state.generation.message = '생성중';
       state.generation.lastGeneratedAt = nowIso();
+      state.generation.lastError = '';
 
       setGeneratingUi(true);
-      setStatus('aiGenerate','생성중');
-      setStatus('titleGenerate','생성중');
-      setStatus('styleGenerate','생성중');
-      setStatus('lyricsGenerate','생성중');
+      setStatus('aiGenerate','진행중');
+      setStatus('titleGenerate','진행중');
+      setStatus('styleGenerate','진행중');
+      setStatus('lyricsGenerate','진행중');
       setStatus('copyReady','대기중');
 
       const base = normalizeBase(el.apiBase.value);
@@ -1496,22 +1503,29 @@ ${parts[2]}
 
       let generatedSongs = [];
       let generationSource = 'LOCAL_FALLBACK';
+      let generationResult = 'fallback_used';
 
       try {
         const ok = await checkAi();
-        if (!ok) throw new Error('AI not connected');
+        if (!ok) throw new Error('AI server not connected');
 
         const res = await fetch(base + path, {
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body: JSON.stringify(payload)
         });
-        if (!res.ok) throw new Error('generate failed');
+
+        if (!res.ok) throw new Error(`generate failed: ${res.status}`);
+
         const data = await res.json();
         const songs = Array.isArray(data?.songs) ? data.songs : [];
-        if (!songs.length) throw new Error('empty songs');
+
+        if (!songs.length) {
+          throw new Error('empty songs');
+        }
 
         generationSource = 'AI';
+        generationResult = 'ai_success';
 
         generatedSongs = songs.map((song, idx) => {
           const finalTitle = String(
@@ -1537,13 +1551,16 @@ ${parts[2]}
             생성묶음ID: batchId,
             생성요청ID: requestId,
             생성방식: 'AI',
+            생성결과: 'ai_success',
             생성상태: '완료',
             생성시간: nowLocalText()
           }, idx);
         });
       } catch (e) {
+        state.generation.lastError = e?.message || 'AI 생성 실패';
         generatedSongs = buildFallbackSongs(batchId, requestId);
         generationSource = 'LOCAL_FALLBACK';
+        generationResult = 'fallback_used';
       }
 
       const takenTitles = new Set(state.songs.map(s => String(s.title || '').trim().toLowerCase()).filter(Boolean));
@@ -1558,6 +1575,7 @@ ${parts[2]}
           생성묶음ID: batchId,
           생성요청ID: requestId,
           생성방식: generationSource,
+          생성결과: generationResult,
           생성상태: '완료',
           생성시간: nowLocalText()
         }, startNo + idx);
@@ -1567,11 +1585,13 @@ ${parts[2]}
       state.copyIndex = 0;
       state.currentSongIndex = startNo;
 
-      state.generation.source = generationSource;
-      state.generation.message = generationSource === 'AI' ? 'AI 생성 완료' : '로컬 대체생성 완료';
+      state.generation.result = generationResult;
+      state.generation.message = generationResult === 'ai_success'
+        ? 'AI 곡 생성 성공'
+        : 'AI 곡 생성 실패 → 로컬 대체생성';
       state.generation.lastGeneratedAt = nowIso();
 
-      setStatus('aiGenerate', generationSource === 'AI' ? '완료' : '실패');
+      setStatus('aiGenerate', generationResult === 'ai_success' ? '완료' : '실패');
       setStatus('titleGenerate','완료');
       setStatus('styleGenerate','완료');
       setStatus('lyricsGenerate','완료');
@@ -1591,9 +1611,10 @@ ${parts[2]}
         isGenerating: false,
         batchId: '',
         requestId: '',
-        source: '',
+        result: 'idle',
         message: '대기중',
-        lastGeneratedAt: ''
+        lastGeneratedAt: '',
+        lastError: ''
       };
       setStatus('aiGenerate','대기중');
       setStatus('titleGenerate','대기중');
@@ -1713,6 +1734,7 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
         생성묶음ID: song.생성묶음ID || '',
         생성요청ID: song.생성요청ID || '',
         생성방식: song.생성방식 || '',
+        생성결과: song.생성결과 || '',
         생성시간: song.생성시간 || ''
       };
     }
@@ -1730,7 +1752,7 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
       song.saveState = '저장중';
       song.saveMessage = '';
       renderSongs();
-      setStatus('googleSheet','생성중');
+      setStatus('googleSheet','진행중');
 
       try {
         const payload = buildSheetPayload(song, index);
@@ -1770,16 +1792,12 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
 
       let success = 0;
       let fail = 0;
-      setStatus('googleSheet','생성중');
+      setStatus('googleSheet','진행중');
 
       for (let i = 0; i < state.songs.length; i++) {
-        try {
-          await saveSongToSheet(i);
-          if (state.songs[i].saveState === '저장완료') success++;
-          else fail++;
-        } catch (e) {
-          fail++;
-        }
+        await saveSongToSheet(i);
+        if (state.songs[i] && state.songs[i].saveState === '저장완료') success++;
+        else fail++;
       }
 
       const finalOk = fail === 0;
