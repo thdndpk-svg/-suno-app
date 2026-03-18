@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v29</title>
+  <title>AI Music Auto Studio v30</title>
   <style>
     :root{
       --bg1:#f7f8ff;
@@ -100,7 +100,7 @@
       color:var(--sub);
       font-weight:800;
     }
-    input[type="text"], input[type="number"], textarea, select{
+    input[type="text"], input[type="number"], input[type="date"], textarea, select{
       width:100%;
       border:1px solid var(--line);
       border-radius:14px;
@@ -292,8 +292,8 @@
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:8px;
-      width:240px;
-      flex:0 0 240px;
+      width:260px;
+      flex:0 0 260px;
     }
     .song-body{
       padding:14px;
@@ -314,6 +314,14 @@
       font-size:14px;
       word-break:break-word;
     }
+    .save-note{
+      font-size:12px;
+      font-weight:800;
+      margin-top:8px;
+    }
+    .save-note.ok{color:#067647}
+    .save-note.bad{color:#b42318}
+    .save-note.warn{color:#b54708}
 
     .sticky{position:sticky;top:12px}
 
@@ -337,7 +345,7 @@
     <div class="topbar">
       <div class="brand">
         <h1>🎵 AI Music Auto Studio</h1>
-        <p>펼침형 선택 옵션 · 한글 표시 · 음성제작 복구 · 정렬 안정화</p>
+        <p>기존 기능 유지 + 구글시트 저장 추가</p>
       </div>
       <div class="pill">
         <span class="dot warn" id="aiDot"></span>
@@ -360,9 +368,14 @@
           <input type="text" id="generatePath" value="/api/ai/generate-song-pack" placeholder="/api/ai/generate-song-pack" />
         </div>
 
+        <div class="field">
+          <label class="label">구글시트 저장 경로</label>
+          <input type="text" id="saveSongPath" value="/api/google/save-song" placeholder="/api/google/save-song" />
+        </div>
+
         <div class="btns">
           <button class="pri" id="btnCheckAi">🔌 AI 연결 확인</button>
-          <button class="soft" id="btnSaveServer">💾 서버 저장</button>
+          <button class="soft" id="btnSaveServer">💾 설정 저장</button>
         </div>
 
         <h3>🎼 제작 조건</h3>
@@ -499,6 +512,8 @@
           <button class="soft" id="btnVideoMake">🎥 영상 만들기</button>
           <button class="soft" id="btnOpenBlog">📝 블로그 도구</button>
           <button class="soft" id="btnCopyAllSongs">📦 전체 결과 복사</button>
+          <button class="pri" id="btnSaveCurrentSheet">💾 현재곡 시트저장</button>
+          <button class="ok" id="btnSaveAllSheet">📗 전체곡 시트저장</button>
         </div>
       </div>
 
@@ -552,6 +567,12 @@
             <button class="soft" id="btnSelectFirstSong">1️⃣ 첫 곡 선택</button>
           </div>
         </div>
+
+        <div class="card" style="margin-top:16px">
+          <h2>📤 구글시트 저장 상태</h2>
+          <div class="tiny" id="sheetSaveInfo">저장 대기중</div>
+          <div class="preview" id="sheetSavePreview">아직 저장 응답이 없습니다.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -564,6 +585,7 @@
       aiText: $('aiText'),
       apiBase: $('apiBase'),
       generatePath: $('generatePath'),
+      saveSongPath: $('saveSongPath'),
       btnCheckAi: $('btnCheckAi'),
       btnSaveServer: $('btnSaveServer'),
       themeInput: $('themeInput'),
@@ -581,6 +603,8 @@
       btnVideoMake: $('btnVideoMake'),
       btnOpenBlog: $('btnOpenBlog'),
       btnCopyAllSongs: $('btnCopyAllSongs'),
+      btnSaveCurrentSheet: $('btnSaveCurrentSheet'),
+      btnSaveAllSheet: $('btnSaveAllSheet'),
       songSummary: $('songSummary'),
       songList: $('songList'),
       btnDeleteCurrentSong: $('btnDeleteCurrentSong'),
@@ -597,10 +621,12 @@
       btnCopyLyrics: $('btnCopyLyrics'),
       btnPrevSong: $('btnPrevSong'),
       btnNextSong: $('btnNextSong'),
-      btnSelectFirstSong: $('btnSelectFirstSong')
+      btnSelectFirstSong: $('btnSelectFirstSong'),
+      sheetSaveInfo: $('sheetSaveInfo'),
+      sheetSavePreview: $('sheetSavePreview')
     };
 
-    const STORE = 'ai_music_auto_studio_v29_full';
+    const STORE = 'ai_music_auto_studio_v30_sheet';
 
     let state = {
       songs: [],
@@ -608,6 +634,7 @@
       copyIndex: 0,
       currentSongIndex: 0,
       aiConnected: false,
+      lastSheetSave: null,
       statuses: {
         aiConnection: '대기중',
         titleGenerate: '대기중',
@@ -615,14 +642,24 @@
         lyricsGenerate: '대기중',
         copyReady: '대기중',
         mp3Edit: '대기중',
-        longVideo: '대기중'
+        longVideo: '대기중',
+        googleSheet: '대기중'
       }
     };
+
+    function todayStr() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
 
     function saveApp() {
       const data = {
         apiBase: el.apiBase.value.trim(),
         generatePath: el.generatePath.value.trim(),
+        saveSongPath: el.saveSongPath.value.trim(),
         themeInput: el.themeInput.value,
         femaleCount: el.femaleCount.value,
         maleCount: el.maleCount.value,
@@ -633,6 +670,7 @@
         copyIndex: state.copyIndex,
         currentSongIndex: state.currentSongIndex,
         aiConnected: state.aiConnected,
+        lastSheetSave: state.lastSheetSave,
         statuses: state.statuses,
         genres: getCheckedValues('genreOptions'),
         instruments: getCheckedValues('instrumentOptions'),
@@ -656,19 +694,18 @@
         const data = JSON.parse(raw);
         el.apiBase.value = data.apiBase || el.apiBase.value;
         el.generatePath.value = data.generatePath || el.generatePath.value;
+        el.saveSongPath.value = data.saveSongPath || el.saveSongPath.value;
         el.themeInput.value = data.themeInput || '';
         el.femaleCount.value = data.femaleCount || 3;
         el.maleCount.value = data.maleCount || 3;
         el.duetCount.value = data.duetCount || 4;
         el.moodInput.value = data.moodInput || el.moodInput.value;
         el.lyricsLang.value = data.lyricsLang || el.lyricsLang.value;
-        state.songs = Array.isArray(data.songs) ? data.songs.map(song => ({
-          ...song,
-          lyrics: stripTitleFromLyrics(song.lyrics || '', song.title || '')
-        })) : [];
+        state.songs = Array.isArray(data.songs) ? data.songs.map((song, idx) => normalizeSong(song, idx)) : [];
         state.copyIndex = Number.isFinite(data.copyIndex) ? data.copyIndex : 0;
         state.currentSongIndex = Number.isFinite(data.currentSongIndex) ? data.currentSongIndex : 0;
         state.aiConnected = !!data.aiConnected;
+        state.lastSheetSave = data.lastSheetSave || null;
         state.statuses = data.statuses || state.statuses;
         applyChecks('genreOptions', data.genres || ['K-pop']);
         applyChecks('instrumentOptions', data.instruments || ['piano', 'acoustic guitar']);
@@ -703,7 +740,8 @@
         ['lyricsGenerate','가사 생성'],
         ['copyReady','붙여넣기 준비'],
         ['mp3Edit','mp3 편집'],
-        ['longVideo','긴영상 제작 준비']
+        ['longVideo','긴영상 제작 준비'],
+        ['googleSheet','구글시트 저장']
       ];
       el.statusList.innerHTML = items.map(([k, name]) => `
         <div class="status-item">
@@ -713,18 +751,28 @@
       `).join('');
     }
 
+    function renderSheetSaveInfo() {
+      if (!state.lastSheetSave) {
+        el.sheetSaveInfo.textContent = '저장 대기중';
+        el.sheetSavePreview.textContent = '아직 저장 응답이 없습니다.';
+        return;
+      }
+      el.sheetSaveInfo.textContent = state.lastSheetSave.ok ? '최근 저장 성공' : '최근 저장 실패';
+      el.sheetSavePreview.textContent = JSON.stringify(state.lastSheetSave, null, 2);
+    }
+
     function normalizeBase(url) {
       return (url || '').trim().replace(/\/+$/, '');
     }
 
-    function normalizePath(path) {
+    function normalizePath(path, fallback) {
       const p = (path || '').trim();
-      if (!p) return '/api/ai/generate-song-pack';
+      if (!p) return fallback;
       return p.startsWith('/') ? p : '/' + p;
     }
 
     function escapeHtml(str='') {
-      return str.replace(/[&<>"']/g, s => ({
+      return String(str).replace(/[&<>"']/g, s => ({
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
       }[s]));
     }
@@ -736,17 +784,59 @@
 
     function stripTitleFromLyrics(lyrics = '', title = '') {
       let text = String(lyrics || '').replace(/\r\n/g, '\n').trim();
-
       text = text.replace(/^\[Title\]\s*\n[^\n]*\n*/i, '').trim();
       text = text.replace(/^제목\s*[:：]\s*[^\n]*\n*/i, '').trim();
-
       if (title) {
         const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const titleOnlyRe = new RegExp(`^${escaped}\\s*\\n+`, 'i');
         text = text.replace(titleOnlyRe, '').trim();
       }
-
       return text;
+    }
+
+    function typeKo(type) {
+      if (type === 'female') return '여자 솔로';
+      if (type === 'male') return '남자 솔로';
+      return '듀엣';
+    }
+
+    function sanitizeTheme(text) {
+      const t = (text || '').trim();
+      if (!t) return '봄 향기 느낌이 물씬 풍기는 사랑 노래';
+      return t
+        .replace(/여자\s*\d+곡/gi, '')
+        .replace(/남자\s*\d+곡/gi, '')
+        .replace(/듀엣\s*\d+곡/gi, '')
+        .replace(/만들어줘|만들어죠|만들어 줘|제작해줘|제작해 줘/gi, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim() || '봄 향기 느낌이 물씬 풍기는 사랑 노래';
+    }
+
+    function normalizeSong(song, idx) {
+      const title = String(song.title || '').trim();
+      return {
+        type: song.type || 'female',
+        title,
+        style: String(song.style || '').trim(),
+        lyrics: stripTitleFromLyrics(song.lyrics || '', title),
+        곡번호: song.곡번호 || String(idx + 1),
+        썸네일문구: song.썸네일문구 || makeThumbText(title),
+        쇼츠문구: song.쇼츠문구 || makeShortsText(title),
+        수노상태: song.수노상태 || '대기',
+        이미지상태: song.이미지상태 || '대기',
+        영상상태: song.영상상태 || '대기',
+        날짜: song.날짜 || todayStr(),
+        saveState: song.saveState || '미저장',
+        saveMessage: song.saveMessage || ''
+      };
+    }
+
+    function makeThumbText(title) {
+      return title ? `${title} 감성 신곡` : '감성 신곡';
+    }
+
+    function makeShortsText(title) {
+      return title ? `${title} 쇼츠 감성 노래` : '감성 발라드 신곡';
     }
 
     async function checkAi() {
@@ -776,24 +866,6 @@
         setStatus('aiConnection','실패');
         return false;
       }
-    }
-
-    function sanitizeTheme(text) {
-      const t = (text || '').trim();
-      if (!t) return '봄 향기 느낌이 물씬 풍기는 사랑 노래';
-      return t
-        .replace(/여자\s*\d+곡/gi, '')
-        .replace(/남자\s*\d+곡/gi, '')
-        .replace(/듀엣\s*\d+곡/gi, '')
-        .replace(/만들어줘|만들어죠|만들어 줘|제작해줘|제작해 줘/gi, '')
-        .replace(/\s{2,}/g, ' ')
-        .trim() || '봄 향기 느낌이 물씬 풍기는 사랑 노래';
-    }
-
-    function typeKo(type) {
-      if (type === 'female') return '여자 솔로';
-      if (type === 'male') return '남자 솔로';
-      return '듀엣';
     }
 
     function buildPlan() {
@@ -993,7 +1065,7 @@ ${parts[2]}
       const instruments = getCheckedValues('instrumentOptions');
       const vocals = getCheckedValues('vocalOptions');
 
-      return plan.map(item => {
+      return plan.map((item, idx) => {
         const title = makeTitle(theme, item.type, item.index);
         const style = makeStyle(item.type, mood, item.index, genres, instruments, vocals);
         const lyrics = stripTitleFromLyrics(makeLyrics({
@@ -1001,7 +1073,7 @@ ${parts[2]}
           index: item.index,
           langMode
         }), title);
-        return { type:item.type, title, style, lyrics };
+        return normalizeSong({ type:item.type, title, style, lyrics, 곡번호:String(idx + 1) }, idx);
       });
     }
 
@@ -1072,6 +1144,16 @@ ${parts[2]}
       saveApp();
     }
 
+    function currentSong() {
+      return state.songs[state.currentSongIndex] || null;
+    }
+
+    function songSaveBadgeClass(v) {
+      if (v === '저장완료') return 'save-note ok';
+      if (v === '저장실패') return 'save-note bad';
+      return 'save-note warn';
+    }
+
     function renderSongs() {
       if (!state.songs.length) {
         el.songSummary.textContent = '아직 생성된 곡이 없습니다.';
@@ -1094,14 +1176,17 @@ ${parts[2]}
               <div class="meta">
                 <span class="tag">${escapeHtml(typeKo(song.type))}</span>
                 <span class="tag">Style EN</span>
+                <span class="tag">곡번호 ${escapeHtml(song.곡번호 || String(i + 1))}</span>
                 ${state.currentSongIndex === i ? '<span class="tag">현재 선택</span>' : ''}
               </div>
+              <div class="${songSaveBadgeClass(song.saveState)}">${escapeHtml(song.saveState || '미저장')} ${song.saveMessage ? '· ' + escapeHtml(song.saveMessage) : ''}</div>
             </div>
             <div class="song-actions">
               <button class="soft" onclick="appCopySong(${i},'title')">제목 복사</button>
               <button class="soft" onclick="appCopySong(${i},'style')">스타일 복사</button>
               <button class="soft" onclick="appCopySong(${i},'lyrics')">가사 복사</button>
               <button class="ghost" onclick="appSelectSong(${i})">현재곡 선택</button>
+              <button class="pri" onclick="appSaveSong(${i})">시트 저장</button>
               <button class="bad" onclick="appDeleteSong(${i})">삭제</button>
             </div>
           </div>
@@ -1110,9 +1195,61 @@ ${parts[2]}
               <b>🎚️ 스타일</b>
               <div>${escapeHtml(song.style)}</div>
             </div>
+
             <div class="box">
               <b>📝 가사</b>
               <div class="lyrics">${escapeHtml(song.lyrics)}</div>
+            </div>
+
+            <div class="box">
+              <b>📤 구글시트 저장 정보</b>
+              <div class="row3">
+                <div class="field">
+                  <label class="label">곡번호</label>
+                  <input type="text" value="${escapeHtml(song.곡번호 || String(i + 1))}" oninput="appUpdateSongField(${i}, '곡번호', this.value)" />
+                </div>
+                <div class="field">
+                  <label class="label">날짜</label>
+                  <input type="date" value="${escapeHtml(song.날짜 || todayStr())}" oninput="appUpdateSongField(${i}, '날짜', this.value)" />
+                </div>
+                <div class="field">
+                  <label class="label">수노상태</label>
+                  <select onchange="appUpdateSongField(${i}, '수노상태', this.value)">
+                    <option value="대기" ${song.수노상태 === '대기' ? 'selected' : ''}>대기</option>
+                    <option value="진행중" ${song.수노상태 === '진행중' ? 'selected' : ''}>진행중</option>
+                    <option value="완료" ${song.수노상태 === '완료' ? 'selected' : ''}>완료</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="field">
+                  <label class="label">이미지상태</label>
+                  <select onchange="appUpdateSongField(${i}, '이미지상태', this.value)">
+                    <option value="대기" ${song.이미지상태 === '대기' ? 'selected' : ''}>대기</option>
+                    <option value="진행중" ${song.이미지상태 === '진행중' ? 'selected' : ''}>진행중</option>
+                    <option value="완료" ${song.이미지상태 === '완료' ? 'selected' : ''}>완료</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="label">영상상태</label>
+                  <select onchange="appUpdateSongField(${i}, '영상상태', this.value)">
+                    <option value="대기" ${song.영상상태 === '대기' ? 'selected' : ''}>대기</option>
+                    <option value="진행중" ${song.영상상태 === '진행중' ? 'selected' : ''}>진행중</option>
+                    <option value="완료" ${song.영상상태 === '완료' ? 'selected' : ''}>완료</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">썸네일문구</label>
+                <input type="text" value="${escapeHtml(song.썸네일문구 || '')}" oninput="appUpdateSongField(${i}, '썸네일문구', this.value)" />
+              </div>
+
+              <div class="field">
+                <label class="label">쇼츠문구</label>
+                <input type="text" value="${escapeHtml(song.쇼츠문구 || '')}" oninput="appUpdateSongField(${i}, '쇼츠문구', this.value)" />
+              </div>
             </div>
           </div>
         </div>
@@ -1150,6 +1287,15 @@ ${parts[2]}
       saveApp();
     };
 
+    window.appUpdateSongField = function(index, key, value) {
+      const song = state.songs[index];
+      if (!song) return;
+      song[key] = value;
+      song.saveState = '미저장';
+      song.saveMessage = '';
+      saveApp();
+    };
+
     async function generateSongs() {
       const theme = sanitizeTheme(el.themeInput.value);
       const mood = el.moodInput.value;
@@ -1174,7 +1320,7 @@ ${parts[2]}
       setStatus('copyReady','대기중');
 
       const base = normalizeBase(el.apiBase.value);
-      const path = normalizePath(el.generatePath.value);
+      const path = normalizePath(el.generatePath.value, '/api/ai/generate-song-pack');
 
       const payload = {
         instruction: theme,
@@ -1221,14 +1367,15 @@ ${parts[2]}
             finalTitle
           );
 
-          return {
+          return normalizeSong({
             type: song.type || plan[idx]?.type || 'female',
             title: finalTitle,
             style: String(
               song.style || makeStyle(plan[idx]?.type || 'female', mood, plan[idx]?.index || 1, genres, instruments, vocals)
             ).trim(),
-            lyrics: finalLyrics
-          };
+            lyrics: finalLyrics,
+            곡번호: String(idx + 1)
+          }, idx);
         });
       } catch (e) {
         state.songs = buildFallbackSongs();
@@ -1254,7 +1401,9 @@ ${parts[2]}
       setStatus('styleGenerate','대기중');
       setStatus('lyricsGenerate','대기중');
       setStatus('copyReady','대기중');
+      setStatus('googleSheet','대기중');
       renderSongs();
+      renderSheetSaveInfo();
       saveApp();
     }
 
@@ -1273,10 +1422,6 @@ ${parts[2]}
       if (!state.songs.length) return;
       if (!confirm('전체 곡을 삭제할까요?')) return;
       clearSongs();
-    }
-
-    function currentSong() {
-      return state.songs[state.currentSongIndex] || null;
     }
 
     async function copyCurrentPart(part) {
@@ -1351,6 +1496,107 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
       renderSongs();
     }
 
+    function buildSheetPayload(song, index) {
+      return {
+        곡번호: song.곡번호 || String(index + 1),
+        제목: song.title || '',
+        스타일: song.style || '',
+        가사: song.lyrics || '',
+        썸네일문구: song.썸네일문구 || makeThumbText(song.title || ''),
+        쇼츠문구: song.쇼츠문구 || makeShortsText(song.title || ''),
+        수노상태: song.수노상태 || '대기',
+        이미지상태: song.이미지상태 || '대기',
+        영상상태: song.영상상태 || '대기',
+        날짜: song.날짜 || todayStr()
+      };
+    }
+
+    async function saveSongToSheet(index) {
+      const song = state.songs[index];
+      if (!song) {
+        alert('저장할 곡이 없습니다.');
+        return;
+      }
+
+      const base = normalizeBase(el.apiBase.value);
+      const path = normalizePath(el.saveSongPath.value, '/api/google/save-song');
+
+      song.saveState = '저장중';
+      song.saveMessage = '';
+      renderSongs();
+      setStatus('googleSheet','대기중');
+
+      try {
+        const payload = buildSheetPayload(song, index);
+        const res = await fetch(base + path, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || !data.ok) {
+          throw new Error(data.message || '저장 실패');
+        }
+
+        song.saveState = '저장완료';
+        song.saveMessage = '시트 저장 성공';
+        state.lastSheetSave = { ok:true, songIndex:index, title:song.title, response:data };
+        setStatus('googleSheet','완료');
+      } catch (e) {
+        song.saveState = '저장실패';
+        song.saveMessage = e.message || '저장 실패';
+        state.lastSheetSave = { ok:false, songIndex:index, title:song.title, message:e.message || '저장 실패' };
+        setStatus('googleSheet','실패');
+      }
+
+      renderSongs();
+      renderSheetSaveInfo();
+      saveApp();
+    }
+
+    async function saveAllSongsToSheet() {
+      if (!state.songs.length) {
+        alert('저장할 곡이 없습니다.');
+        return;
+      }
+
+      let success = 0;
+      let fail = 0;
+      setStatus('googleSheet','대기중');
+
+      for (let i = 0; i < state.songs.length; i++) {
+        try {
+          await saveSongToSheet(i);
+          if (state.songs[i].saveState === '저장완료') success++;
+          else fail++;
+        } catch (e) {
+          fail++;
+        }
+      }
+
+      const finalOk = fail === 0;
+      state.lastSheetSave = {
+        ok: finalOk,
+        mode: 'all',
+        total: state.songs.length,
+        success,
+        fail,
+        finishedAt: new Date().toISOString()
+      };
+
+      setStatus('googleSheet', finalOk ? '완료' : (success ? '완료' : '실패'));
+      renderSheetSaveInfo();
+      saveApp();
+
+      alert(`전체곡 시트 저장 완료\n성공: ${success}곡\n실패: ${fail}곡`);
+    }
+
+    window.appSaveSong = function(index) {
+      saveSongToSheet(index);
+    };
+
     function bindOptionAutosave(containerId) {
       const root = document.getElementById(containerId);
       root.querySelectorAll('input[type="checkbox"]').forEach(chk => {
@@ -1365,6 +1611,7 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
       renderStatuses();
       renderSongs();
       renderCopyPreview();
+      renderSheetSaveInfo();
       if (state.aiConnected) setAiStatus('ok','AI 연결됨');
       else setAiStatus('warn','AI 상태 확인 전');
     }
@@ -1372,7 +1619,7 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
     el.btnCheckAi.addEventListener('click', checkAi);
     el.btnSaveServer.addEventListener('click', () => {
       saveApp();
-      alert('서버 주소 저장 완료');
+      alert('설정 저장 완료');
     });
     el.btnGenerate.addEventListener('click', generateSongs);
     el.btnClearSongs.addEventListener('click', clearSongs);
@@ -1404,9 +1651,11 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
     });
     el.btnOpenBlog.addEventListener('click', () => alert('블로그 도구 버튼입니다.'));
     el.btnCopyAllSongs.addEventListener('click', copyAllSongs);
+    el.btnSaveCurrentSheet.addEventListener('click', () => saveSongToSheet(state.currentSongIndex));
+    el.btnSaveAllSheet.addEventListener('click', saveAllSongsToSheet);
 
     [
-      el.apiBase, el.generatePath, el.themeInput, el.femaleCount, el.maleCount,
+      el.apiBase, el.generatePath, el.saveSongPath, el.themeInput, el.femaleCount, el.maleCount,
       el.duetCount, el.moodInput, el.lyricsLang
     ].forEach(node => node.addEventListener('change', saveApp));
 
