@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v32</title>
+  <title>AI Music Auto Studio v33</title>
   <style>
     :root{
       --bg1:#f7f8ff;
@@ -371,7 +371,7 @@
 
         <div class="field">
           <label class="label">AI 생성 경로</label>
-          <input type="text" id="generatePath" value="/api/ai/generate-song-pack" placeholder="/api/ai/generate-song-pack" />
+          <input type="text" id="generatePath" value="/api/generate-song-pack" placeholder="/api/generate-song-pack" />
         </div>
 
         <div class="field">
@@ -630,7 +630,7 @@
       sheetSavePreview: $('sheetSavePreview')
     };
 
-    const STORE = 'ai_music_auto_studio_v32_sheet';
+    const STORE = 'ai_music_auto_studio_v33_sheet';
 
     let state = {
       songs: [],
@@ -1439,7 +1439,7 @@ ${parts[2]}
 
     async function generateSongs() {
       if (state.generation.isGenerating) {
-        alert('지금 곡 생성이 진행 중입니다. 중복 생성 방지를 위해 잠시 기다려 주세요.');
+        alert('지금 곡 생성이 진행 중입니다. 잠시만 기다려 주세요.');
         return;
       }
 
@@ -1455,6 +1455,7 @@ ${parts[2]}
         alert('주제를 입력해 주세요.');
         return;
       }
+
       if (!plan.length) {
         alert('최소 1곡 이상 선택해 주세요.');
         return;
@@ -1471,35 +1472,14 @@ ${parts[2]}
       state.generation.lastError = '';
 
       setGeneratingUi(true);
-      setStatus('aiGenerate','진행중');
-      setStatus('titleGenerate','진행중');
-      setStatus('styleGenerate','진행중');
-      setStatus('lyricsGenerate','진행중');
-      setStatus('copyReady','대기중');
+      setStatus('aiGenerate', '진행중');
+      setStatus('titleGenerate', '진행중');
+      setStatus('styleGenerate', '진행중');
+      setStatus('lyricsGenerate', '진행중');
+      setStatus('copyReady', '대기중');
 
       const base = normalizeBase(el.apiBase.value);
-      const path = normalizePath(el.generatePath.value, '/api/ai/generate-song-pack');
-
-      const payload = {
-        instruction: theme,
-        mood,
-        language: langMode,
-        plan,
-        genres,
-        instruments,
-        vocals,
-        batchId,
-        requestId,
-        nonce: `${Date.now()}-${Math.random().toString(36).slice(2,10)}`,
-        rules: {
-          unique_per_song: true,
-          style_english_only: true,
-          do_not_put_instruction_into_lyrics: true,
-          do_not_include_title_in_lyrics: true,
-          do_not_repeat_previous_titles: true,
-          output_format: 'json'
-        }
-      };
+      const path = normalizePath(el.generatePath.value, '/api/generate-song-pack');
 
       let generatedSongs = [];
       let generationSource = 'LOCAL_FALLBACK';
@@ -1509,13 +1489,28 @@ ${parts[2]}
         const ok = await checkAi();
         if (!ok) throw new Error('AI server not connected');
 
+        const totalCount = plan.length;
+        const genreText = genres.length ? genres.join(', ') : 'K-pop';
+        const mergedGenre = `${genreText}, ${mood}, ${instruments.join(', ')}, ${vocals.join(', ')}`
+          .replace(/,\s*,/g, ', ')
+          .replace(/^,\s*|\s*,\s*$/g, '');
+
+        const payload = {
+          count: totalCount,
+          topic: theme,
+          genre: mergedGenre,
+          language: langMode
+        };
+
         const res = await fetch(base + path, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
-        if (!res.ok) throw new Error(`generate failed: ${res.status}`);
+        if (!res.ok) {
+          throw new Error(`generate failed: ${res.status}`);
+        }
 
         const data = await res.json();
         const songs = Array.isArray(data?.songs) ? data.songs : [];
@@ -1527,26 +1522,32 @@ ${parts[2]}
         generationSource = 'AI';
         generationResult = 'ai_success';
 
-        generatedSongs = songs.map((song, idx) => {
+        generatedSongs = plan.map((item, idx) => {
+          const aiSong = songs[idx] || {};
+
           const finalTitle = String(
-            song.title || makeTitle(theme, plan[idx]?.type || 'female', plan[idx]?.index || 1)
+            aiSong.title || makeTitle(theme, item.type, item.index)
+          ).trim();
+
+          const finalStyle = String(
+            aiSong.style || makeStyle(item.type, mood, item.index, genres, instruments, vocals)
           ).trim();
 
           const finalLyrics = stripTitleFromLyrics(
-            String(song.lyrics || makeLyrics({
-              type: plan[idx]?.type || 'female',
-              index: plan[idx]?.index || 1,
-              langMode
-            })).trim(),
+            String(
+              aiSong.lyrics || makeLyrics({
+                type: item.type,
+                index: item.index,
+                langMode
+              })
+            ).trim(),
             finalTitle
           );
 
           return normalizeSong({
-            type: song.type || plan[idx]?.type || 'female',
+            type: item.type,
             title: finalTitle,
-            style: String(
-              song.style || makeStyle(plan[idx]?.type || 'female', mood, plan[idx]?.index || 1, genres, instruments, vocals)
-            ).trim(),
+            style: finalStyle,
             lyrics: finalLyrics,
             생성묶음ID: batchId,
             생성요청ID: requestId,
@@ -1563,7 +1564,9 @@ ${parts[2]}
         generationResult = 'fallback_used';
       }
 
-      const takenTitles = new Set(state.songs.map(s => String(s.title || '').trim().toLowerCase()).filter(Boolean));
+      const takenTitles = new Set(
+        state.songs.map(s => String(s.title || '').trim().toLowerCase()).filter(Boolean)
+      );
       const startNo = state.songs.length;
 
       generatedSongs = generatedSongs.map((song, idx) => {
@@ -1586,15 +1589,16 @@ ${parts[2]}
       state.currentSongIndex = startNo;
 
       state.generation.result = generationResult;
-      state.generation.message = generationResult === 'ai_success'
-        ? 'AI 곡 생성 성공'
-        : 'AI 곡 생성 실패 → 로컬 대체생성';
+      state.generation.message =
+        generationResult === 'ai_success'
+          ? 'AI 곡 생성 성공'
+          : 'AI 곡 생성 실패 → 로컬 대체생성';
       state.generation.lastGeneratedAt = nowIso();
 
       setStatus('aiGenerate', generationResult === 'ai_success' ? '완료' : '실패');
-      setStatus('titleGenerate','완료');
-      setStatus('styleGenerate','완료');
-      setStatus('lyricsGenerate','완료');
+      setStatus('titleGenerate', '완료');
+      setStatus('styleGenerate', '완료');
+      setStatus('lyricsGenerate', '완료');
 
       renderSongs();
       refreshCopyQueue();
