@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Music Auto Studio v30</title>
+  <title>AI Music Auto Studio v31</title>
   <style>
     :root{
       --bg1:#f7f8ff;
@@ -136,6 +136,11 @@
       width:100%;
     }
     button:hover{transform:translateY(-1px)}
+    button[disabled]{
+      opacity:.65;
+      cursor:not-allowed;
+      transform:none!important;
+    }
     .pri{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff}
     .soft{background:#eef2ff;color:#334155;border:1px solid #d9e2ff}
     .ok{background:linear-gradient(135deg,#17b26a,#12a150);color:#fff}
@@ -232,6 +237,7 @@
     .badge.ok{background:#e9fff3;color:#067647}
     .badge.warn{background:#fff3df;color:#b54708}
     .badge.bad{background:#ffe9e7;color:#b42318}
+    .badge.pri{background:#eef2ff;color:#3b4dcc}
 
     .quick{
       border:1px dashed #c7d2fe;
@@ -288,6 +294,9 @@
       font-size:12px;
       font-weight:900;
     }
+    .tag.ai{background:#e9fff3;color:#067647}
+    .tag.local{background:#fff3df;color:#b54708}
+    .tag.req{background:#f4f5f7;color:#475467}
     .song-actions{
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
@@ -345,7 +354,7 @@
     <div class="topbar">
       <div class="brand">
         <h1>🎵 AI Music Auto Studio</h1>
-        <p>기존 기능 유지 + 구글시트 저장 추가</p>
+        <p>중복 생성 방지 + AI 생성 여부 표시 + 구글시트 저장 확장</p>
       </div>
       <div class="pill">
         <span class="dot warn" id="aiDot"></span>
@@ -626,7 +635,7 @@
       sheetSavePreview: $('sheetSavePreview')
     };
 
-    const STORE = 'ai_music_auto_studio_v30_sheet';
+    const STORE = 'ai_music_auto_studio_v31_sheet';
 
     let state = {
       songs: [],
@@ -635,8 +644,17 @@
       currentSongIndex: 0,
       aiConnected: false,
       lastSheetSave: null,
+      generation: {
+        isGenerating: false,
+        batchId: '',
+        requestId: '',
+        source: '',
+        message: '대기중',
+        lastGeneratedAt: ''
+      },
       statuses: {
         aiConnection: '대기중',
+        aiGenerate: '대기중',
         titleGenerate: '대기중',
         styleGenerate: '대기중',
         lyricsGenerate: '대기중',
@@ -655,6 +673,29 @@
       return `${y}-${m}-${day}`;
     }
 
+    function nowIso() {
+      return new Date().toISOString();
+    }
+
+    function nowLocalText() {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mi = String(d.getMinutes()).padStart(2, '0');
+      const ss = String(d.getSeconds()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+    }
+
+    function createId(prefix='ID') {
+      return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
+    }
+
+    function shortId(v='') {
+      return String(v).slice(-8) || '-';
+    }
+
     function saveApp() {
       const data = {
         apiBase: el.apiBase.value.trim(),
@@ -671,6 +712,7 @@
         currentSongIndex: state.currentSongIndex,
         aiConnected: state.aiConnected,
         lastSheetSave: state.lastSheetSave,
+        generation: state.generation,
         statuses: state.statuses,
         genres: getCheckedValues('genreOptions'),
         instruments: getCheckedValues('instrumentOptions'),
@@ -706,6 +748,7 @@
         state.currentSongIndex = Number.isFinite(data.currentSongIndex) ? data.currentSongIndex : 0;
         state.aiConnected = !!data.aiConnected;
         state.lastSheetSave = data.lastSheetSave || null;
+        state.generation = data.generation || state.generation;
         state.statuses = data.statuses || state.statuses;
         applyChecks('genreOptions', data.genres || ['K-pop']);
         applyChecks('instrumentOptions', data.instruments || ['piano', 'acoustic guitar']);
@@ -715,9 +758,33 @@
       }
     }
 
-    function setAiStatus(type, text) {
-      el.aiDot.className = 'dot ' + (type === 'ok' ? 'ok' : type === 'bad' ? 'bad' : 'warn');
-      el.aiText.textContent = text;
+    function renderAiPill() {
+      if (state.generation.isGenerating) {
+        el.aiDot.className = 'dot warn';
+        el.aiText.textContent = 'AI 생성중... 중복 클릭 방지중';
+        return;
+      }
+
+      if (!state.aiConnected) {
+        el.aiDot.className = 'dot warn';
+        el.aiText.textContent = 'AI 상태 확인 전';
+        return;
+      }
+
+      if (state.generation.source === 'AI') {
+        el.aiDot.className = 'dot ok';
+        el.aiText.textContent = 'AI 연결됨 · 최근 생성: AI';
+        return;
+      }
+
+      if (state.generation.source === 'LOCAL_FALLBACK') {
+        el.aiDot.className = 'dot warn';
+        el.aiText.textContent = 'AI 연결됨 · 최근 생성: 로컬 대체';
+        return;
+      }
+
+      el.aiDot.className = 'dot ok';
+      el.aiText.textContent = 'AI 연결됨';
     }
 
     function setStatus(key, value) {
@@ -729,12 +796,14 @@
     function badgeClass(v) {
       if (v === '완료') return 'badge ok';
       if (v === '실패') return 'badge bad';
+      if (v === '생성중') return 'badge pri';
       return 'badge warn';
     }
 
     function renderStatuses() {
       const items = [
         ['aiConnection','AI 연결'],
+        ['aiGenerate','AI 생성엔진'],
         ['titleGenerate','제목 생성'],
         ['styleGenerate','스타일 생성'],
         ['lyricsGenerate','가사 생성'],
@@ -812,8 +881,19 @@
         .trim() || '봄 향기 느낌이 물씬 풍기는 사랑 노래';
     }
 
+    function makeThumbText(title) {
+      return title ? `${title} 감성 신곡` : '감성 신곡';
+    }
+
+    function makeShortsText(title) {
+      return title ? `${title} 쇼츠 감성 노래` : '감성 발라드 신곡';
+    }
+
     function normalizeSong(song, idx) {
       const title = String(song.title || '').trim();
+      const generatedAt = song.생성시간 || song.generatedAt || nowLocalText();
+      const source = song.생성방식 || song.source || 'LOCAL_FALLBACK';
+
       return {
         type: song.type || 'female',
         title,
@@ -827,16 +907,13 @@
         영상상태: song.영상상태 || '대기',
         날짜: song.날짜 || todayStr(),
         saveState: song.saveState || '미저장',
-        saveMessage: song.saveMessage || ''
+        saveMessage: song.saveMessage || '',
+        생성묶음ID: song.생성묶음ID || '',
+        생성요청ID: song.생성요청ID || '',
+        생성방식: source,
+        생성상태: song.생성상태 || '완료',
+        생성시간: generatedAt
       };
-    }
-
-    function makeThumbText(title) {
-      return title ? `${title} 감성 신곡` : '감성 신곡';
-    }
-
-    function makeShortsText(title) {
-      return title ? `${title} 쇼츠 감성 노래` : '감성 발라드 신곡';
     }
 
     async function checkAi() {
@@ -845,25 +922,25 @@
         alert('서버 주소를 입력해 주세요.');
         return false;
       }
-      setAiStatus('warn', 'AI 연결 확인 중...');
+      el.aiDot.className = 'dot warn';
+      el.aiText.textContent = 'AI 연결 확인 중...';
       try {
         const res = await fetch(base + '/api/health');
         if (!res.ok) throw new Error('health fail');
         const data = await res.json();
         state.aiConnected = !!data.ok;
         if (state.aiConnected) {
-          setAiStatus('ok', 'AI 연결됨');
           setStatus('aiConnection','완료');
         } else {
-          setAiStatus('bad', 'AI 연결 실패');
           setStatus('aiConnection','실패');
         }
+        renderAiPill();
         saveApp();
         return state.aiConnected;
       } catch (e) {
         state.aiConnected = false;
-        setAiStatus('bad', 'AI 연결 실패');
         setStatus('aiConnection','실패');
+        renderAiPill();
         return false;
       }
     }
@@ -1056,7 +1133,7 @@ ${parts[2]}
 이 봄의 끝에서도 기억할 수 있게`;
     }
 
-    function buildFallbackSongs() {
+    function buildFallbackSongs(batchId, requestId) {
       const theme = sanitizeTheme(el.themeInput.value);
       const mood = el.moodInput.value;
       const langMode = el.lyricsLang.value;
@@ -1073,7 +1150,18 @@ ${parts[2]}
           index: item.index,
           langMode
         }), title);
-        return normalizeSong({ type:item.type, title, style, lyrics, 곡번호:String(idx + 1) }, idx);
+
+        return normalizeSong({
+          type:item.type,
+          title,
+          style,
+          lyrics,
+          생성묶음ID: batchId,
+          생성요청ID: requestId,
+          생성방식: 'LOCAL_FALLBACK',
+          생성상태: '완료',
+          생성시간: nowLocalText()
+        }, idx);
       });
     }
 
@@ -1154,6 +1242,33 @@ ${parts[2]}
       return 'save-note warn';
     }
 
+    function sourceTagClass(source) {
+      return source === 'AI' ? 'tag ai' : 'tag local';
+    }
+
+    function sourceLabel(source) {
+      return source === 'AI' ? 'AI 생성' : '로컬 대체생성';
+    }
+
+    function uniqueTitle(title, takenSet) {
+      let base = String(title || '').trim() || '제목 없음';
+      let candidate = base;
+      let n = 2;
+      while (takenSet.has(candidate.toLowerCase())) {
+        candidate = `${base} (${n})`;
+        n++;
+      }
+      takenSet.add(candidate.toLowerCase());
+      return candidate;
+    }
+
+    function resequenceSongs() {
+      state.songs = state.songs.map((song, idx) => ({
+        ...song,
+        곡번호: String(idx + 1)
+      }));
+    }
+
     function renderSongs() {
       if (!state.songs.length) {
         el.songSummary.textContent = '아직 생성된 곡이 없습니다.';
@@ -1166,7 +1281,9 @@ ${parts[2]}
       const male = state.songs.filter(s => s.type === 'male').length;
       const duet = state.songs.filter(s => s.type === 'duet').length;
 
-      el.songSummary.textContent = `총 ${state.songs.length}곡 생성됨 · 여자 ${female}곡 · 남자 ${male}곡 · 듀엣 ${duet}곡`;
+      el.songSummary.textContent =
+        `총 ${state.songs.length}곡 생성됨 · 여자 ${female}곡 · 남자 ${male}곡 · 듀엣 ${duet}곡` +
+        (state.generation.batchId ? ` · 최근 생성묶음 ${shortId(state.generation.batchId)}` : '');
 
       el.songList.innerHTML = state.songs.map((song, i) => `
         <div class="song">
@@ -1175,7 +1292,8 @@ ${parts[2]}
               <div class="song-title">${i + 1}. ${escapeHtml(song.title)}</div>
               <div class="meta">
                 <span class="tag">${escapeHtml(typeKo(song.type))}</span>
-                <span class="tag">Style EN</span>
+                <span class="${sourceTagClass(song.생성방식)}">${escapeHtml(sourceLabel(song.생성방식))}</span>
+                <span class="tag req">REQ ${escapeHtml(shortId(song.생성요청ID || ''))}</span>
                 <span class="tag">곡번호 ${escapeHtml(song.곡번호 || String(i + 1))}</span>
                 ${state.currentSongIndex === i ? '<span class="tag">현재 선택</span>' : ''}
               </div>
@@ -1191,6 +1309,15 @@ ${parts[2]}
             </div>
           </div>
           <div class="song-body">
+            <div class="box">
+              <b>🤖 AI 생성 정보</b>
+              <div class="tiny">생성방식: ${escapeHtml(sourceLabel(song.생성방식))}</div>
+              <div class="tiny">생성상태: ${escapeHtml(song.생성상태 || '완료')}</div>
+              <div class="tiny">생성묶음ID: ${escapeHtml(song.생성묶음ID || '-')}</div>
+              <div class="tiny">생성요청ID: ${escapeHtml(song.생성요청ID || '-')}</div>
+              <div class="tiny">생성시간: ${escapeHtml(song.생성시간 || '-')}</div>
+            </div>
+
             <div class="box">
               <b>🎚️ 스타일</b>
               <div>${escapeHtml(song.style)}</div>
@@ -1279,6 +1406,7 @@ ${parts[2]}
     window.appDeleteSong = function(index) {
       if (!state.songs[index]) return;
       state.songs.splice(index, 1);
+      resequenceSongs();
       if (state.currentSongIndex >= state.songs.length) {
         state.currentSongIndex = Math.max(0, state.songs.length - 1);
       }
@@ -1296,7 +1424,19 @@ ${parts[2]}
       saveApp();
     };
 
+    function setGeneratingUi(isGenerating) {
+      state.generation.isGenerating = isGenerating;
+      el.btnGenerate.disabled = isGenerating;
+      el.btnGenerate.textContent = isGenerating ? '⏳ 곡 생성중...' : '✨ 곡 세트 생성';
+      renderAiPill();
+    }
+
     async function generateSongs() {
+      if (state.generation.isGenerating) {
+        alert('지금 곡 생성이 진행 중입니다. 중복 생성 방지를 위해 잠시 기다려 주세요.');
+        return;
+      }
+
       const theme = sanitizeTheme(el.themeInput.value);
       const mood = el.moodInput.value;
       const langMode = el.lyricsLang.value;
@@ -1314,9 +1454,20 @@ ${parts[2]}
         return;
       }
 
-      setStatus('titleGenerate','대기중');
-      setStatus('styleGenerate','대기중');
-      setStatus('lyricsGenerate','대기중');
+      const batchId = createId('BATCH');
+      const requestId = createId('REQ');
+
+      state.generation.batchId = batchId;
+      state.generation.requestId = requestId;
+      state.generation.source = '';
+      state.generation.message = '생성중';
+      state.generation.lastGeneratedAt = nowIso();
+
+      setGeneratingUi(true);
+      setStatus('aiGenerate','생성중');
+      setStatus('titleGenerate','생성중');
+      setStatus('styleGenerate','생성중');
+      setStatus('lyricsGenerate','생성중');
       setStatus('copyReady','대기중');
 
       const base = normalizeBase(el.apiBase.value);
@@ -1330,14 +1481,21 @@ ${parts[2]}
         genres,
         instruments,
         vocals,
+        batchId,
+        requestId,
+        nonce: `${Date.now()}-${Math.random().toString(36).slice(2,10)}`,
         rules: {
           unique_per_song: true,
           style_english_only: true,
           do_not_put_instruction_into_lyrics: true,
           do_not_include_title_in_lyrics: true,
+          do_not_repeat_previous_titles: true,
           output_format: 'json'
         }
       };
+
+      let generatedSongs = [];
+      let generationSource = 'LOCAL_FALLBACK';
 
       try {
         const ok = await checkAi();
@@ -1353,7 +1511,9 @@ ${parts[2]}
         const songs = Array.isArray(data?.songs) ? data.songs : [];
         if (!songs.length) throw new Error('empty songs');
 
-        state.songs = songs.map((song, idx) => {
+        generationSource = 'AI';
+
+        generatedSongs = songs.map((song, idx) => {
           const finalTitle = String(
             song.title || makeTitle(theme, plan[idx]?.type || 'female', plan[idx]?.index || 1)
           ).trim();
@@ -1374,21 +1534,51 @@ ${parts[2]}
               song.style || makeStyle(plan[idx]?.type || 'female', mood, plan[idx]?.index || 1, genres, instruments, vocals)
             ).trim(),
             lyrics: finalLyrics,
-            곡번호: String(idx + 1)
+            생성묶음ID: batchId,
+            생성요청ID: requestId,
+            생성방식: 'AI',
+            생성상태: '완료',
+            생성시간: nowLocalText()
           }, idx);
         });
       } catch (e) {
-        state.songs = buildFallbackSongs();
+        generatedSongs = buildFallbackSongs(batchId, requestId);
+        generationSource = 'LOCAL_FALLBACK';
       }
 
+      const takenTitles = new Set(state.songs.map(s => String(s.title || '').trim().toLowerCase()).filter(Boolean));
+      const startNo = state.songs.length;
+
+      generatedSongs = generatedSongs.map((song, idx) => {
+        const safeTitle = uniqueTitle(song.title, takenTitles);
+        return normalizeSong({
+          ...song,
+          title: safeTitle,
+          곡번호: String(startNo + idx + 1),
+          생성묶음ID: batchId,
+          생성요청ID: requestId,
+          생성방식: generationSource,
+          생성상태: '완료',
+          생성시간: nowLocalText()
+        }, startNo + idx);
+      });
+
+      state.songs = [...state.songs, ...generatedSongs];
+      state.copyIndex = 0;
+      state.currentSongIndex = startNo;
+
+      state.generation.source = generationSource;
+      state.generation.message = generationSource === 'AI' ? 'AI 생성 완료' : '로컬 대체생성 완료';
+      state.generation.lastGeneratedAt = nowIso();
+
+      setStatus('aiGenerate', generationSource === 'AI' ? '완료' : '실패');
       setStatus('titleGenerate','완료');
       setStatus('styleGenerate','완료');
       setStatus('lyricsGenerate','완료');
 
-      state.copyIndex = 0;
-      state.currentSongIndex = 0;
       renderSongs();
       refreshCopyQueue();
+      setGeneratingUi(false);
       saveApp();
     }
 
@@ -1397,6 +1587,15 @@ ${parts[2]}
       state.copyQueue = [];
       state.copyIndex = 0;
       state.currentSongIndex = 0;
+      state.generation = {
+        isGenerating: false,
+        batchId: '',
+        requestId: '',
+        source: '',
+        message: '대기중',
+        lastGeneratedAt: ''
+      };
+      setStatus('aiGenerate','대기중');
       setStatus('titleGenerate','대기중');
       setStatus('styleGenerate','대기중');
       setStatus('lyricsGenerate','대기중');
@@ -1404,12 +1603,15 @@ ${parts[2]}
       setStatus('googleSheet','대기중');
       renderSongs();
       renderSheetSaveInfo();
+      renderAiPill();
+      setGeneratingUi(false);
       saveApp();
     }
 
     function deleteCurrentSong() {
       if (!state.songs.length) return;
       state.songs.splice(state.currentSongIndex, 1);
+      resequenceSongs();
       if (state.currentSongIndex >= state.songs.length) {
         state.currentSongIndex = Math.max(0, state.songs.length - 1);
       }
@@ -1507,7 +1709,11 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
         수노상태: song.수노상태 || '대기',
         이미지상태: song.이미지상태 || '대기',
         영상상태: song.영상상태 || '대기',
-        날짜: song.날짜 || todayStr()
+        날짜: song.날짜 || todayStr(),
+        생성묶음ID: song.생성묶음ID || '',
+        생성요청ID: song.생성요청ID || '',
+        생성방식: song.생성방식 || '',
+        생성시간: song.생성시간 || ''
       };
     }
 
@@ -1524,7 +1730,7 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
       song.saveState = '저장중';
       song.saveMessage = '';
       renderSongs();
-      setStatus('googleSheet','대기중');
+      setStatus('googleSheet','생성중');
 
       try {
         const payload = buildSheetPayload(song, index);
@@ -1564,7 +1770,7 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
 
       let success = 0;
       let fail = 0;
-      setStatus('googleSheet','대기중');
+      setStatus('googleSheet','생성중');
 
       for (let i = 0; i < state.songs.length; i++) {
         try {
@@ -1612,8 +1818,8 @@ ${song.lyrics}`).join('\n\n----------------------\n\n');
       renderSongs();
       renderCopyPreview();
       renderSheetSaveInfo();
-      if (state.aiConnected) setAiStatus('ok','AI 연결됨');
-      else setAiStatus('warn','AI 상태 확인 전');
+      renderAiPill();
+      setGeneratingUi(!!state.generation.isGenerating);
     }
 
     el.btnCheckAi.addEventListener('click', checkAi);
